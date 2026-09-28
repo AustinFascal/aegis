@@ -311,7 +311,7 @@ void main() {
       expect(result.success, isFalse);
     });
 
-    test('SecureVault saves and retrieves sudo password', () async {
+    test('SecureVault and ServerProvider save, retrieve, and track sudo password', () async {
       final vault = SecureVault();
       await vault.saveSudoPassword('srv_test_01', 'Secret_Sudo_Pass_123');
       final fetched = await vault.getSudoPassword('srv_test_01');
@@ -319,6 +319,27 @@ void main() {
       await vault.deleteSudoPassword('srv_test_01');
       final afterDelete = await vault.getSudoPassword('srv_test_01');
       expect(afterDelete, isNull);
+
+      final provider = ServerProvider();
+      expect(provider.hasStoredSudoPassword('srv_test_sudo'), isFalse);
+      await provider.saveSudoPassword('srv_test_sudo', 'SuperSecretPass!');
+      expect(provider.hasStoredSudoPassword('srv_test_sudo'), isTrue);
+      final retrieved = await provider.getSavedSudoPassword('srv_test_sudo');
+      expect(retrieved, equals('SuperSecretPass!'));
+
+      // Test addServer with sudoPassword
+      await provider.addServer(
+        name: 'Sudo Server',
+        host: '10.0.0.99',
+        port: 22,
+        username: 'wito_general',
+        authType: AuthType.password,
+        credential: 'ssh_password',
+        sudoPassword: 'my_sudo_password',
+      );
+      final addedSudoServer = provider.servers.last;
+      expect(provider.hasStoredSudoPassword(addedSudoServer.id), isTrue);
+      expect(await provider.getSavedSudoPassword(addedSudoServer.id), equals('my_sudo_password'));
     });
 
     test('selectServer switches active server profile', () async {

@@ -21,6 +21,7 @@ class ServerProvider extends ChangeNotifier {
 
   // Track whether credentials exist in hardware vault for each server
   final Map<String, bool> _vaultStatus = {};
+  final Map<String, bool> _sudoStatus = {};
 
   List<ServerProfile> get servers => List.unmodifiable(_servers);
   bool get isLoading => _isLoading;
@@ -39,6 +40,10 @@ class ServerProvider extends ChangeNotifier {
 
   bool hasStoredCredential(String serverId) {
     return _vaultStatus[serverId] ?? false;
+  }
+
+  bool hasStoredSudoPassword(String serverId) {
+    return _sudoStatus[serverId] ?? false;
   }
 
   Future<String?> getCredentialForServer(ServerProfile server) async {
@@ -235,6 +240,12 @@ class ServerProvider extends ChangeNotifier {
       } catch (_) {
         _vaultStatus[server.id] = false;
       }
+      try {
+        final sudo = await _vault.getSudoPassword(server.id);
+        _sudoStatus[server.id] = (sudo != null && sudo.trim().isNotEmpty);
+      } catch (_) {
+        _sudoStatus[server.id] = false;
+      }
     }
     notifyListeners();
   }
@@ -267,6 +278,7 @@ class ServerProvider extends ChangeNotifier {
     List<String> monitoredServices = const ['mysqld', 'sshd'],
     bool has2FA = false,
     String? twoFactorSecret,
+    String? sudoPassword,
   }) async {
     final newId = 'srv_${const Uuid().v4().substring(0, 8)}';
     final profile = ServerProfile(
@@ -287,6 +299,9 @@ class ServerProvider extends ChangeNotifier {
     if (has2FA && twoFactorSecret != null && twoFactorSecret.trim().isNotEmpty) {
       await _vault.save2FASecret(newId, twoFactorSecret.trim());
     }
+    if (sudoPassword != null && sudoPassword.trim().isNotEmpty) {
+      await _vault.saveSudoPassword(newId, sudoPassword.trim());
+    }
 
     _servers.add(profile);
     _activeServerId = newId;
@@ -299,6 +314,7 @@ class ServerProvider extends ChangeNotifier {
     ServerProfile updated, [
     String? newCredential,
     String? newTwoFactorSecret,
+    String? newSudoPassword,
   ]) async {
     final index = _servers.indexWhere((s) => s.id == updated.id);
     if (index != -1) {
@@ -314,6 +330,10 @@ class ServerProvider extends ChangeNotifier {
         await _vault.delete2FASecret(updated.id);
       }
 
+      if (newSudoPassword != null && newSudoPassword.trim().isNotEmpty) {
+        await _vault.saveSudoPassword(updated.id, newSudoPassword.trim());
+      }
+
       await refreshCredentialStatus();
       notifyListeners();
     }
@@ -322,9 +342,11 @@ class ServerProvider extends ChangeNotifier {
   Future<void> deleteServer(String serverId) async {
     _servers.removeWhere((s) => s.id == serverId);
     _vaultStatus.remove(serverId);
+    _sudoStatus.remove(serverId);
     await _vault.deletePrivateKey(serverId);
     await _vault.deletePassword(serverId);
     await _vault.delete2FASecret(serverId);
+    await _vault.deleteSudoPassword(serverId);
 
     if (_activeServerId == serverId) {
       _activeServerId = _servers.isNotEmpty ? _servers.first.id : null;
@@ -338,9 +360,11 @@ class ServerProvider extends ChangeNotifier {
       await _vault.deletePrivateKey(s.id);
       await _vault.deletePassword(s.id);
       await _vault.delete2FASecret(s.id);
+      await _vault.deleteSudoPassword(s.id);
     }
     _servers.clear();
     _vaultStatus.clear();
+    _sudoStatus.clear();
     _activeServerId = null;
     await _persistServers();
     notifyListeners();
@@ -586,7 +610,15 @@ class ServerProvider extends ChangeNotifier {
   }
 
   Future<void> saveSudoPassword(String serverId, String password) async {
-    await _vault.saveSudoPassword(serverId, password.trim());
+    final trimmed = password.trim();
+    if (trimmed.isNotEmpty) {
+      await _vault.saveSudoPassword(serverId, trimmed);
+      _sudoStatus[serverId] = true;
+    } else {
+      await _vault.deleteSudoPassword(serverId);
+      _sudoStatus[serverId] = false;
+    }
+    notifyListeners();
   }
 
   Future<String?> getServerPassword(String serverId) async {

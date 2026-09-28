@@ -140,6 +140,7 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                   final server = servers[index];
                   final isActive = server.id == activeServer?.id;
                   final hasKey = serverProvider.hasStoredCredential(server.id);
+                  final hasSudo = serverProvider.hasStoredSudoPassword(server.id);
                   final isTestingThis = _testingServerId == server.id;
 
                   return Card(
@@ -307,6 +308,36 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                                     ? null
                                     : () => _showServerDialog(context, server),
                               ),
+                              if (server.username != 'root')
+                                _buildInfoTag(
+                                  context,
+                                  hasSudo
+                                      ? Icons.security_rounded
+                                      : Icons.shield_outlined,
+                                  hasSudo
+                                      ? (isIndo
+                                            ? 'Eskalasi Sudo Siap'
+                                            : 'Sudo Escalation Ready')
+                                      : (isIndo
+                                            ? 'Perlu Password Sudo'
+                                            : 'Sudo Password Needed'),
+                                  isDark,
+                                  textColor: hasSudo
+                                      ? (isDark
+                                            ? AppColors.success
+                                            : AppColors.successLight)
+                                      : (isDark
+                                            ? AppColors.warning
+                                            : AppColors.warningLight),
+                                  iconColor: hasSudo
+                                      ? (isDark
+                                            ? AppColors.success
+                                            : AppColors.successLight)
+                                      : (isDark
+                                            ? AppColors.warning
+                                            : AppColors.warningLight),
+                                  onTap: () => _showServerDialog(context, server),
+                                ),
                               _buildInfoTag(
                                 context,
                                 Icons.sync_rounded,
@@ -811,6 +842,8 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
     final serverProvider = context.read<ServerProvider>();
     final hasStored =
         isEdit && serverProvider.hasStoredCredential(existingServer.id);
+    final hasStoredSudo =
+        isEdit && serverProvider.hasStoredSudoPassword(existingServer.id);
 
     final nameCtrl = TextEditingController(text: existingServer?.name ?? '');
     final hostCtrl = TextEditingController(text: existingServer?.host ?? '');
@@ -821,9 +854,11 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
       text: existingServer?.username ?? 'root',
     );
     final credCtrl = TextEditingController();
+    final sudoCtrl = TextEditingController();
 
     AuthType authType = existingServer?.authType ?? AuthType.privateKey;
     bool isSaving = false;
+    bool obscureSudo = true;
 
     showDialog(
       context: context,
@@ -1252,6 +1287,150 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                         },
                       ),
 
+                      const SizedBox(height: 18),
+
+                      // Root Escalation (Sudo Password) Section
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: (isDark
+                                  ? AppColors.darkSurfaceElevated
+                                  : AppColors.lightSurfaceElevated)
+                              .withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.lightBorder,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.shield_outlined,
+                                  size: 16,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    isIndo
+                                        ? 'ESKALASI ROOT (SUDO PASSWORD)'
+                                        : 'ROOT ESCALATION (SUDO PASSWORD)',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColors.textPrimary
+                                          : AppColors.lightTextPrimary,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                if (hasStoredSudo)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 7,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: (isDark
+                                              ? AppColors.success
+                                              : AppColors.successLight)
+                                          .withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: (isDark
+                                                ? AppColors.success
+                                                : AppColors.successLight)
+                                            .withValues(alpha: 0.4),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle_rounded,
+                                          size: 11,
+                                          color: isDark
+                                              ? AppColors.success
+                                              : AppColors.successLight,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          isIndo ? 'Tersimpan' : 'Stored',
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? AppColors.success
+                                                : AppColors.successLight,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              isIndo
+                                  ? 'Dibutuhkan jika login SSH menggunakan user non-root (seperti wito_general) agar fitur Block IP (iptables) dan restart service dapat dieksekusi secara otomatis.'
+                                  : 'Required if SSH user is non-root (e.g. wito_general) so Block IP (iptables) and service operations can escalate automatically.',
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textMuted
+                                    : AppColors.lightTextMuted,
+                                fontSize: 11,
+                                height: 1.3,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: sudoCtrl,
+                              obscureText: obscureSudo,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                              ),
+                              decoration: InputDecoration(
+                                labelText: hasStoredSudo
+                                    ? (isIndo
+                                          ? 'Password Sudo Baru (Opsional - kosongkan jika tidak diubah)'
+                                          : 'New Sudo Password (Optional - leave empty to keep)')
+                                    : (isIndo
+                                          ? 'Password Sudo Pengguna'
+                                          : 'User Sudo Password'),
+                                hintText: '••••••••',
+                                prefixIcon: const Icon(
+                                  Icons.lock_person_outlined,
+                                  size: 18,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    obscureSudo
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    size: 18,
+                                    color: isDark
+                                        ? AppColors.textMuted
+                                        : AppColors.lightTextMuted,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureSudo = !obscureSudo;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       const SizedBox(height: 24),
 
                       // Encrypt & Save Button
@@ -1279,6 +1458,9 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                                             ? credCtrl.text.trim()
                                             : null,
                                         null,
+                                        sudoCtrl.text.trim().isNotEmpty
+                                            ? sudoCtrl.text.trim()
+                                            : null,
                                       );
                                     } else {
                                       await serverProvider.addServer(
@@ -1290,6 +1472,10 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                                         credential: credCtrl.text.trim(),
                                         has2FA: false,
                                         twoFactorSecret: null,
+                                        sudoPassword:
+                                            sudoCtrl.text.trim().isNotEmpty
+                                                ? sudoCtrl.text.trim()
+                                                : null,
                                       );
                                     }
 

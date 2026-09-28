@@ -161,3 +161,4 @@ audit_export*.json
 export*.csv
 downloads/
 sftp_cache/
+DEPLOYMENT_SETUP_ANDROID.md

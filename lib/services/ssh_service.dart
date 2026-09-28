@@ -579,8 +579,12 @@ ACTION="$sanitizedAction"
 OUT=""
 
 IPT="iptables"
-if ! command -v iptables >/dev/null 2>&1 && [ -x /sbin/iptables ]; then
+if command -v iptables >/dev/null 2>&1; then
+  IPT="iptables"
+elif [ -x /sbin/iptables ]; then
   IPT="/sbin/iptables"
+elif [ -x /usr/sbin/iptables ]; then
+  IPT="/usr/sbin/iptables"
 fi
 
 if [ "\$ACTION" = "ban" ]; then
@@ -638,6 +642,21 @@ echo -e "\$OUT"
 
       final execBytes = await client.run(execCommand);
       final rawOutput = utf8.decode(execBytes).trim();
+      final lowerOut = rawOutput.toLowerCase();
+      final isPermissionDenied = lowerOut.contains('permission denied') ||
+          lowerOut.contains('a password is required') ||
+          lowerOut.contains('incorrect password') ||
+          lowerOut.contains('must be root');
+
+      if (isPermissionDenied) {
+        return FirewallActionResult(
+          success: false,
+          action: sanitizedAction,
+          ip: sanitizedIp,
+          output: rawOutput,
+          errorMessage: 'Eskalasi sudo ditolak: Pastikan kata sandi sudo untuk pengguna ${profile.username} sudah benar di Secure Vault.',
+        );
+      }
 
       return FirewallActionResult(
         success: true,

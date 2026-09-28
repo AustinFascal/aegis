@@ -66,7 +66,8 @@ Aegis monitors mission-critical services (**SSH**, **MySQL / MariaDB**, **Nginx 
 - **Threat Timeline Visualizations**: Interactive vector timeline charts powered by `fl_chart` tracking attack volume and severity trends over time.
 
 ### 🔐 4. Zero-Trust Hardened Client Security
-- **Hardware-Backed Secure Vault**: Stores server private keys and connection credentials encrypted via platform keychains (Linux Secret Service, Windows Credential Manager, Android Keystore, iOS Keychain).
+- **Hardware-Backed Secure Vault**: Stores server private keys, credentials, and privilege escalation (sudo) passwords encrypted via platform keychains (Linux Secret Service, Windows Credential Manager, Android Keystore, iOS Keychain).
+- **Non-Root Sudo Escalation Engine**: Allows standard non-root SSH accounts (e.g. `wito_general`, `ubuntu`, `sysadmin`) to execute kernel-level mitigations (`iptables DROP`, fail2ban bans, systemd service operations) non-interactively and securely without modifying `/etc/sudoers`.
 - **Biometric & PIN Authentication**: Gated by Biometric Authentication (Fingerprint / Face ID) with an automatic 6-digit PIN fallback and lockout timer.
 - **Integrated TOTP 2FA**: Built-in time-based one-time password (TOTP) verification for sensitive configuration changes and policy updates.
 
@@ -75,8 +76,9 @@ Aegis monitors mission-critical services (**SSH**, **MySQL / MariaDB**, **Nginx 
 - **Penetration Test Engine**: Runs non-destructive penetration assessments to detect open vulnerabilities and report remediation steps.
 - **Policy Tuning**: Configurable threshold rules for failed login tolerances, anomaly time windows, and automated IP ban triggers.
 
-### 🔔 6. Instant Alert Dispatcher
-- **Firebase Cloud Messaging (FCM)**: Native mobile and desktop notifications for critical security events.
+### 🔔 6. Instant Alert Dispatcher & Live Auto-Ingestion
+- **Firebase Cloud Messaging (FCM HTTP v1)**: Modern Google service-account-backed push alerts for critical security incidents and unauthorized SSH accesses.
+- **Real-Time App Auto-Ingestion**: FCM notifications automatically feed directly into the live Dashboard telemetry, Audit Explorer logs, and service status monitors without requiring manual app reloads or polling.
 - **Local Push Notifications**: Immediate high-priority alerts with sound and vibration channels.
 - **Fail2ban Integration**: Direct hook for fail2ban ban/unban notifications to trigger real-time push alerts.
 
@@ -243,7 +245,7 @@ sudo cp config.example.json config.json
 sudo chmod 600 config.json
 ```
 
-Edit `config.json` with your server parameters and FCM configuration:
+Edit `config.json` with your server parameters and notification configuration:
 ```json
 {
   "server_id": "srv_prod_01",
@@ -254,10 +256,35 @@ Edit `config.json` with your server parameters and FCM configuration:
   "trusted_ips": ["127.0.0.1", "::1", "103.142.21.195"],
   "max_failed_attempts": 3,
   "time_window_seconds": 120,
-  "fcm_server_key": "YOUR_FCM_SERVER_KEY",
-  "fcm_topic": "aegis_alerts"
+  "service_account_file": "service_account.json",
+  "fcm_topic": "aegis_alerts",
+  "alert_webhook": "",
+  "telegram_bot_token": "",
+  "telegram_chat_id": ""
 }
 ```
+
+#### How to Setup FCM Push Notifications (Firebase HTTP v1 API)
+Aegis Server Agent uses Google's modern **FCM HTTP v1 API** (Google officially deprecated and shut down the legacy `https://fcm.googleapis.com/fcm/send` static Server Key endpoint).
+
+1. **Generate Service Account Key in Firebase**:
+   - Open [Firebase Console](https://console.firebase.google.com/) and select your project (`aegis-project-initiative`).
+   - Click the gear icon ⚙️ (**Project settings**) next to *Project Overview*.
+   - Open the **Service accounts** tab.
+   - Click **Generate new private key** and click **Generate key** in the confirmation modal. A `.json` file will be downloaded to your computer.
+2. **Upload Key to Your Server**:
+   - Upload the downloaded `.json` file to `/opt/aegis-agent/service_account.json` on your VPS.
+   - Restrict file permissions for root only:
+     ```bash
+     sudo chmod 600 /opt/aegis-agent/service_account.json
+     ```
+3. **Verify Configuration**:
+   - Ensure `"service_account_file": "service_account.json"` is set in `/opt/aegis-agent/config.json`.
+   - The daemon automatically mints short-lived Google OAuth2 tokens using OpenSSL and securely pushes notifications to topic `/topics/aegis_alerts`.
+
+#### Alternative Instant Alert Channels (No Firebase Required):
+- **Discord Webhook**: Add your webhook URL to `"alert_webhook": "https://discord.com/api/webhooks/..."` in `config.json`. Rich embeds are formatted automatically.
+- **Telegram Bot**: Fill `"telegram_bot_token": "BOT_TOKEN"` and `"telegram_chat_id": "CHAT_ID"` for immediate smartphone alerts.
 
 ### 2. Install as a Systemd Service (Auto-Start on Reboot)
 
@@ -287,6 +314,23 @@ sudo systemctl is-enabled aegis-agent.service
 
 # Tail live telemetry logs
 sudo journalctl -u aegis-agent -f
+```
+
+#### Uninstall / Delete the Agent Service:
+If you need to stop and cleanly delete the daemon service from your server:
+
+```bash
+# 1. Stop the active service and disable auto-start
+sudo systemctl stop aegis-agent.service
+sudo systemctl disable aegis-agent.service
+
+# 2. Remove the systemd service unit file and reload daemon
+sudo rm -f /etc/systemd/system/aegis-agent.service
+sudo systemctl daemon-reload
+sudo systemctl reset-failed
+
+# 3. (Optional) Delete the agent installation directory
+sudo rm -rf /opt/aegis-agent
 ```
 
 ---
@@ -340,14 +384,49 @@ A common question is whether running a Penetration Test in Aegis automatically t
 
 #### How It Operates:
 1. **Isolated Simulation Sandbox**: The Pen-Test Lab is designed to verify siren alerts, push notifications, and forensic investigations **without risking server downtime or flooding ports**. No hostile TCP packets hit the live daemon, so Fail2ban does not ban the IP during the test run.
-2. **1-Tap Mitigation to Fail2ban**: When an alert fires, click **"FORENSIK" $\rightarrow$ "🛡️ BLOKIR IP"**. Aegis immediately dispatches SSH commands to enforce an active kernel ban on your server:
+2. **1-Tap Mitigation to Kernel Firewall**: When an alert fires, click **"FORENSIK" $\rightarrow$ "🛡️ BLOKIR IP"**. Aegis immediately dispatches SSH commands to enforce an active kernel ban on your server:
    ```bash
    sudo fail2ban-client set sshd banip <attacker_ip>
    sudo fail2ban-client set mysqld-auth banip <attacker_ip>
-   sudo iptables -I INPUT -s <attacker_ip> -j DROP
+   sudo iptables -I INPUT 1 -s <attacker_ip> -j DROP
    ```
+   > [!NOTE]
+   > **Why `iptables -I INPUT 1 ... -j DROP` is critical**: Inserting the rule at index `1` ensures that incoming packets from the attacker are discarded immediately at the Linux Netfilter kernel layer before reaching the TCP 3-way handshake or application sockets (`sshd`, `httpd`, `mysqld`).
 3. **Zero Risk of Self-Lockout**: Your workstation/phone IP is completely isolated; only the chosen threat actor IP is targeted.
 4. **Real-World Attacks**: Actual unauthorized brute-force attempts from external IPs over the Internet are automatically banned by Fail2ban and relayed to Aegis via FCM alerts.
+
+---
+
+### 6. Non-Root SSH Users & Root Escalation (Sudo)
+
+By default, security best practices dictate connecting to Linux servers using a non-root user (e.g. `wito_general`, `ubuntu`, `deploy`) rather than direct `root` login. However, firewall operations (`iptables`, `fail2ban-client`) and service restarts require root privileges.
+
+Aegis supports two flexible methods to handle root privilege escalation:
+
+#### Method A: In-App SecureVault Escalation (Recommended)
+No server configuration files or `/etc/sudoers` modifications are necessary.
+1. Open **Server Fleet & Vault** in Aegis.
+2. Tap the **Edit / Configure** icon on your server profile.
+3. Scroll to **ESKALASI ROOT (SUDO PASSWORD)**.
+4. Enter your non-root user's sudo password (the one typed when running `sudo -i`).
+5. Tap **Simpan & Enkripsi di Vault**.
+6. The server card will display the green **`Eskalasi Sudo Siap`** badge.
+
+When you tap **🛡️ BLOKIR IP**, Aegis securely retrieves the password from your device's hardware-backed SecureVault and executes non-interactively over the encrypted SSH channel:
+```bash
+echo '<sudo_password>' | sudo -S -p '' bash -c 'iptables -I INPUT 1 -s <attacker_ip> -j DROP'
+```
+
+#### Method B: Sudoers Drop-In Rule (`NOPASSWD`)
+If you prefer not storing your sudo password in the client app vault, grant your user passwordless access strictly for firewall and service binaries:
+```bash
+# Create /etc/sudoers.d/aegis on your VPS
+cat << 'EOF' | sudo tee /etc/sudoers.d/aegis
+wito_general ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables, /usr/bin/fail2ban-client, /bin/systemctl
+EOF
+
+sudo chmod 440 /etc/sudoers.d/aegis
+```
 
 ---
 

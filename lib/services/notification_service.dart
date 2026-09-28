@@ -81,6 +81,10 @@ class NotificationService {
       StreamController<NotificationActionData>.broadcast();
   Stream<NotificationActionData> get onNotificationAction => _actionController.stream;
 
+  final StreamController<Map<String, dynamic>> _fcmEventController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get onFcmEvent => _fcmEventController.stream;
+
   Future<void> initialize() async {
     if (_isInitialized) return;
 
@@ -134,6 +138,11 @@ class NotificationService {
           final body = notification?.body ?? data['body'] ?? '';
           final ip = data['ip'] ?? '';
 
+          final eventMap = Map<String, dynamic>.from(data);
+          eventMap['title'] = title;
+          eventMap['body'] = body;
+          _fcmEventController.add(eventMap);
+
           showSecurityAlert(
             id: message.hashCode,
             title: title,
@@ -142,6 +151,35 @@ class NotificationService {
             isCritical: true,
           );
         });
+
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          final notification = message.notification;
+          final data = message.data;
+          final title = notification?.title ?? data['title'] ?? '🚨 AEGIS Security Alert';
+          final body = notification?.body ?? data['body'] ?? '';
+          final ip = data['ip'] ?? '';
+
+          final eventMap = Map<String, dynamic>.from(data);
+          eventMap['title'] = title;
+          eventMap['body'] = body;
+          _fcmEventController.add(eventMap);
+          _actionController.add(NotificationActionData(actionId: 'view', payload: ip));
+        });
+
+        final initialMsg = await messaging.getInitialMessage();
+        if (initialMsg != null) {
+          final notification = initialMsg.notification;
+          final data = initialMsg.data;
+          final title = notification?.title ?? data['title'] ?? '🚨 AEGIS Security Alert';
+          final body = notification?.body ?? data['body'] ?? '';
+          final ip = data['ip'] ?? '';
+
+          final eventMap = Map<String, dynamic>.from(data);
+          eventMap['title'] = title;
+          eventMap['body'] = body;
+          _fcmEventController.add(eventMap);
+          _actionController.add(NotificationActionData(actionId: 'view', payload: ip));
+        }
       }
     } catch (e) {
       debugPrint('FCM initialization skipped or waiting for config: $e');

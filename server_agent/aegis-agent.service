@@ -6,11 +6,13 @@ After=network.target mysqld.service sshd.service
 Type=simple
 User=root
 WorkingDirectory=/opt/aegis-agent
-ExecStart=/usr/bin/python3 /opt/aegis-agent/aegis_agent.py
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -u /opt/aegis-agent/aegis_agent.py
 Restart=always
 RestartSec=5
+TimeoutStopSec=5
+KillSignal=SIGTERM
 Nice=19
-CPUSchedulingPolicy=idle
 StandardOutput=journal
 StandardError=journal
 

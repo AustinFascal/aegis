@@ -180,10 +180,12 @@ class _FaqScreenState extends State<FaqScreen> {
           '2. Pendaftaran Kebijakan Lokal:\n'
           '   IP tersebut didaftarkan ke Daftar IP Diblokir (Banned IP List) di SecureVault AEGIS.\n\n'
           '3. Eksekusi Firewall Server Instan (SSH):\n'
-          '   AEGIS mengirimkan instruksi SSH terenkripsi ke host server untuk memblokir IP secara langsung di firewall:\n'
-          '   • fail2ban-client set [jail] banip [IP]\n'
-          '   • iptables -I INPUT -s [IP] -j DROP\n\n'
-          'Koneksi penyerang langsung terputus seketika dan paket jaringan selanjutnya akan diabaikan (DROP).',
+          '   AEGIS mengirimkan instruksi SSH terenkripsi ke host server untuk memblokir IP secara langsung di kernel firewall:\n'
+          '   • iptables -I INPUT 1 -s [IP] -j DROP\n'
+          '   • fail2ban-client set [jail] banip [IP]\n\n'
+          '4. Eskalasi Hak Akses Root (Sudo) Otomatis:\n'
+          '   Jika login SSH menggunakan user non-root (seperti wito_general), AEGIS mengambil password sudo yang tersimpan aman di SecureVault perangkat dan mengeksekusinya via pipa "echo \'<pass>\' | sudo -S -p \'\'".\n\n'
+          'Aturan DROP disisipkan di baris nomor 1 rantai INPUT Linux Netfilter sehingga paket penyerang langsung dibuang seketika oleh kernel sebelum mencapai soket aplikasi.',
       answerEn:
           'When an operator clicks "BLOCK IP" on the Incident Forensics dialog:\n\n'
           '1. Biometric Gating (Optional):\n'
@@ -192,17 +194,100 @@ class _FaqScreenState extends State<FaqScreen> {
           '   The IP is cataloged into the encrypted Banned IP Registry in SecureVault.\n\n'
           '3. Instant Remote Server Firewall Execution (SSH):\n'
           '   AEGIS securely transmits remote firewall commands to the host server:\n'
-          '   • fail2ban-client set [jail] banip [IP]\n'
-          '   • iptables -I INPUT -s [IP] -j DROP\n\n'
-          'The hostile TCP connection is severed immediately, and all subsequent packets from that IP are dropped at the kernel layer.',
+          '   • iptables -I INPUT 1 -s [IP] -j DROP\n'
+          '   • fail2ban-client set [jail] banip [IP]\n\n'
+          '4. Automated Non-Root Sudo Escalation:\n'
+          '   If connected via a non-root account (e.g. wito_general), AEGIS fetches your vaulted sudo password and pipes it non-interactively via "echo \'<pass>\' | sudo -S -p \'\'".\n\n'
+          'The DROP rule is inserted at index 1 of the Linux Netfilter INPUT chain, severing the connection instantly before packets ever reach userland sockets.',
       codeSnippetTitleId: 'Perintah Firewall yang Dijalankan di Server',
       codeSnippetTitleEn: 'Firewall Commands Dispatched to Server',
       codeSnippets: [
-        '# Blokir IP langsung di kernel firewall via fail2ban:\n'
-            'fail2ban-client set mysqld-auth banip <IP_PENYERANG>\n'
-            'fail2ban-client set sshd banip <IP_PENYERANG>\n\n'
-            '# Cadangan aturan filter iptables:\n'
-            'iptables -I INPUT -s <IP_PENYERANG> -j DROP',
+        '# 1. Sisipkan aturan DROP langsung di urutan nomor 1 iptables kernel:\n'
+            'echo \'<password_sudo>\' | sudo -S iptables -I INPUT 1 -s <IP_PENYERANG> -j DROP\n\n'
+            '# 2. Blokir IP pada jail Fail2ban (SSH & MySQL):\n'
+            'echo \'<password_sudo>\' | sudo -S fail2ban-client set sshd banip <IP_PENYERANG>\n'
+            'echo \'<password_sudo>\' | sudo -S fail2ban-client set mysqld-auth banip <IP_PENYERANG>',
+      ],
+    ),
+
+    // 5b. Mengapa IP yang sudah diblokir masih bisa mencoba login?
+    const FaqItem(
+      id: 'faq_blocked_ip_still_attempting',
+      category: FaqCategory.server,
+      questionId: 'Mengapa IP yang sudah diblokir sebelumnya masih tampak mencoba login di log server?',
+      questionEn: 'Why was an IP previously blocked still appearing in server login attempt logs?',
+      answerId:
+          'Jika Anda mendapati IP penyerang masih tercatat di log auth setelah tombol "Blokir IP" ditekan, hal ini biasanya disebabkan oleh:\n\n'
+          '1. Pemblokiran Hanya Berada di Level Aplikasi (Belum Tembus ke Kernel Server):\n'
+          '   Sebelum fitur Eskalasi Sudo dikonfigurasi, IP hanya tersimpan di daftar blokir lokal aplikasi Anda. Port fisik VPS di internet masih tetap terbuka dan merespons paket TCP SYN penyerang.\n\n'
+          '2. User SSH Non-Root Membutuhkan Password Sudo:\n'
+          '   Jika user SSH Anda bukan root (misalnya wito_general), Linux menolak eksekusi "iptables" atau "fail2ban-client" tanpa eskalasi sudo. Perintah SSH remote gagal tanpa prompt interaktif.\n\n'
+          '3. Solusi Tuntas (Eskalasi Root Sudo di Aplikasi):\n'
+          '   Cukup masukkan password akun user Anda di menu: Armada Server & Vault -> Edit Profil Server -> ESKALASI ROOT (SUDO PASSWORD).\n\n'
+          'Setelah tersimpan di SecureVault, setiap penekanan tombol "BLOKIR IP" akan langsung menyisipkan aturan "DROP" di baris nomor 1 pada iptables Linux VPS. Paket penyerang akan dibuang seketika oleh kernel sistem operasi sebelum sempat ditanggapi oleh layanan SSH atau web server.',
+      answerEn:
+          'If an attacker IP was still showing up in auth logs after tapping "Block IP", the root causes are:\n\n'
+          '1. Client-Side Only Ban vs Server Kernel Firewall Ban:\n'
+          '   Prior to configuring Sudo Escalation, the ban existed only in local app policy. The remote VPS physical network port remained open and responsive to incoming TCP SYN handshake packets.\n\n'
+          '2. Non-Root SSH User Requiring Sudo Elevation:\n'
+          '   Non-root users (such as wito_general) cannot modify iptables or fail2ban jails without sudo rights. Remote SSH sessions without a piped password fail silently due to terminal prompt requirements.\n\n'
+          '3. Complete Resolution (Root Sudo Escalation in App):\n'
+          '   Enter your user sudo password in: Server Fleet & Vault -> Edit Server -> ROOT ESCALATION (SUDO PASSWORD).\n\n'
+          'Once saved in SecureVault, tapping "BLOCK IP" inserts an immediate DROP rule at index 1 of the Linux Netfilter kernel table. Hostile packets are discarded on the wire before ever touching SSH or database daemons.',
+      codeSnippetTitleId: 'Pemeriksaan Aturan DROP di Server',
+      codeSnippetTitleEn: 'Inspecting Active Kernel DROP Rules on Server',
+      codeSnippets: [
+        '# Cek apakah IP penyerang sudah aktif di baris teratas iptables:\n'
+            'sudo iptables -L INPUT -n -v --line-numbers | head -n 15\n\n'
+            '# Cek status jail fail2ban untuk IP yang diblokir:\n'
+            'sudo fail2ban-client status sshd',
+      ],
+    ),
+
+    // 5c. Konfigurasi Sudo untuk User Non-Root
+    const FaqItem(
+      id: 'faq_sudo_root_escalation',
+      category: FaqCategory.server,
+      questionId: 'Bagaimana cara mengatur hak akses Sudo untuk user SSH non-root (seperti wito_general)?',
+      questionEn: 'How do I configure Sudo root escalation for non-root SSH users (such as wito_general)?',
+      answerId:
+          'Demi standar keamanan Zero-Trust, server produksi tidak disarankan mengizinkan login SSH langsung sebagai root. Namun, tindakan mitigasi firewall memerlukan hak istimewa root. AEGIS menyediakan dua metode:\n\n'
+          'METODE 1: Simpan Kata Sandi Sudo di SecureVault AEGIS (Direkomendasikan):\n'
+          '• Buka menu "Armada Server & Vault" di aplikasi AEGIS.\n'
+          '• Klik tombol Edit (ikon pensil) pada server Anda.\n'
+          '• Gulir ke bagian "ESKALASI ROOT (SUDO PASSWORD)".\n'
+          '• Masukkan password akun user non-root Anda (password yang biasa dimasukkan saat menjalankan "sudo -i").\n'
+          '• Klik "Simpan & Enkripsi di Vault".\n'
+          '• Selesai! Kartu server akan menampilkan lencana hijau "Eskalasi Sudo Siap". Tidak perlu mengubah konfigurasi apa pun di sisi VPS.\n\n'
+          'METODE 2: Aturan Sudoers NOPASSWD di Sisi Server (Alternatif):\n'
+          'Jika Anda lebih memilih tidak menyimpan password sudo di aplikasi, berikan izin tanpa password khusus untuk biner firewall di server:\n'
+          '• Buat file /etc/sudoers.d/aegis di VPS Anda:\n'
+          '  wito_general ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables, /usr/bin/fail2ban-client, /bin/systemctl\n'
+          '• Setel hak akses: sudo chmod 440 /etc/sudoers.d/aegis',
+      answerEn:
+          'Under Zero-Trust best practices, direct root SSH login is discouraged. However, firewall operations require superuser rights. AEGIS supports two robust methods:\n\n'
+          'METHOD 1: Store Sudo Password in AEGIS SecureVault (Recommended):\n'
+          '• Navigate to "Server Fleet & Vault" in the AEGIS app.\n'
+          '• Tap the Edit button (pencil icon) on your server profile.\n'
+          '• Scroll down to "ROOT ESCALATION (SUDO PASSWORD)".\n'
+          '• Enter your non-root user password (the one you enter when executing "sudo -i").\n'
+          '• Tap "Save & Encrypt in Vault".\n'
+          '• Done! The server card displays "Sudo Escalation Ready". Zero server-side file modifications needed.\n\n'
+          'METHOD 2: Server-Side NOPASSWD Sudoers Rule (Alternative):\n'
+          'If you prefer not storing your sudo password in the mobile/desktop app vault, grant restricted passwordless rights on your VPS:\n'
+          '• Create /etc/sudoers.d/aegis on your VPS:\n'
+          '  wito_general ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables, /usr/bin/fail2ban-client, /bin/systemctl\n'
+          '• Set permissions: sudo chmod 440 /etc/sudoers.d/aegis',
+      codeSnippetTitleId: 'Panduan Sudoers di VPS Linux',
+      codeSnippetTitleEn: 'Sudoers Configuration Guide on Linux VPS',
+      codeSnippets: [
+        '# Pasang aturan sudoers khusus untuk AEGIS di VPS (Opsional jika memakai Metode 2):\n'
+            'cat << \'EOF\' | sudo tee /etc/sudoers.d/aegis\n'
+            'wito_general ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables, /usr/bin/fail2ban-client, /bin/systemctl\n'
+            'EOF\n'
+            'sudo chmod 440 /etc/sudoers.d/aegis\n\n'
+            '# Validasi sintaks file sudoers agar tidak rusak:\n'
+            'sudo visudo -c -f /etc/sudoers.d/aegis',
       ],
     ),
 
@@ -339,10 +424,12 @@ class _FaqScreenState extends State<FaqScreen> {
             'sudo mkdir -p /opt/aegis-agent\n'
             'cd /opt/aegis-agent\n'
             '# (Salin aegis_agent.py, config.example.json, dan aegis-agent.service)\n\n'
-            '# 2. Buat konfigurasi server aktif:\n'
+            '# 2. Buat konfigurasi server aktif & unduh Google Service Account key:\n'
             'sudo cp config.example.json config.json\n'
             'sudo chmod 600 config.json\n'
-            'sudo nano config.json  # Masukkan server_id, FCM server key / topic\n\n'
+            '# Unggah service_account.json dari Firebase Console ke /opt/aegis-agent/service_account.json\n'
+            'sudo chmod 600 service_account.json\n'
+            'sudo nano config.json  # Pastikan server_id, service_account_file, dan fcm_topic sesuai\n\n'
             '# 3. Pasang Systemd Unit File:\n'
             'sudo cp aegis-agent.service /etc/systemd/system/\n'
             'sudo chmod 644 /etc/systemd/system/aegis-agent.service\n\n'
@@ -353,7 +440,14 @@ class _FaqScreenState extends State<FaqScreen> {
             'sudo systemctl status aegis-agent\n'
             'sudo systemctl is-enabled aegis-agent   # Output harus: "enabled"\n\n'
             '# 6. Pantau log telemetri secara live:\n'
-            'sudo journalctl -u aegis-agent -f',
+            'sudo journalctl -u aegis-agent -f\n\n'
+            '# 7. Cara Menghapus/Uninstall Service (Reset Bersih):\n'
+            'sudo systemctl stop aegis-agent.service\n'
+            'sudo systemctl disable aegis-agent.service\n'
+            'sudo rm -f /etc/systemd/system/aegis-agent.service\n'
+            'sudo systemctl daemon-reload\n'
+            'sudo systemctl reset-failed\n'
+            'sudo rm -rf /opt/aegis-agent',
       ],
     ),
 

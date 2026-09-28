@@ -14,6 +14,9 @@ import 'audit_explorer_screen.dart';
 import 'policy_settings_screen.dart';
 import 'server_management_screen.dart';
 import '../widgets/aegis_logo.dart';
+import 'package:uuid/uuid.dart';
+import '../../models/auth_event.dart';
+import '../../providers/telemetry_provider.dart';
 import 'pin_auth_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -26,6 +29,7 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> with WidgetsBindingObserver {
   int _currentIndex = 0;
   StreamSubscription<NotificationActionData>? _actionSub;
+  StreamSubscription<Map<String, dynamic>>? _fcmSub;
   bool _isBackgrounded = false;
   bool _isLocked = false;
   bool _isPromptingBiometric = false;
@@ -45,6 +49,42 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
         }
       });
     }
+
+    // Ingest incoming live FCM alerts directly into TelemetryProvider
+    _fcmSub = NotificationService().onFcmEvent.listen((data) {
+      if (!mounted) return;
+      final telemetry = context.read<TelemetryProvider>();
+      final policy = context.read<PolicyProvider>();
+      final serverProvider = context.read<ServerProvider>();
+
+      final serverId = data['server_id']?.toString().isNotEmpty == true
+          ? data['server_id'].toString()
+          : (serverProvider.activeServer?.id ?? 'srv_rumahweb_01');
+      final ip = data['ip']?.toString() ?? '';
+      final service = data['service']?.toString() ?? 'sshd';
+      final title = data['title']?.toString() ?? 'Security Incursion Alert';
+      final body = data['body']?.toString() ?? '';
+      final user = data['user']?.toString() ?? 'unknown';
+
+      final event = AuthEvent(
+        id: const Uuid().v4(),
+        serverId: serverId,
+        service: service,
+        timestamp: DateTime.now(),
+        clientIp: ip.isNotEmpty ? ip : 'Unknown IP',
+        user: user,
+        status: EventStatus.failed,
+        severity: EventSeverity.critical,
+        riskScore: 92,
+        isUnknownPerson: title.toUpperCase().contains('UNKNOWN'),
+        failureReason: body,
+        rawLog: body,
+        evidenceLogs: [body],
+      );
+
+      telemetry.ingestEvent(event, policy.getPolicy(serverId));
+    });
+
     _actionSub = NotificationService().onNotificationAction.listen((data) {
       if (!mounted) return;
       final serverProvider = context.read<ServerProvider>();
@@ -105,6 +145,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _actionSub?.cancel();
+    _fcmSub?.cancel();
     super.dispose();
   }
 

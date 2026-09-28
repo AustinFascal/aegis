@@ -1,8 +1,9 @@
 {
   "server_id": "srv_rumahweb_01",
-  "server_name": "VPS RumahWeb (CethoKaryo)",
+  "server_name": "VPS RumahWeb (Mitramedicare)",
   "mysql_log": "/var/log/mysqld.log",
   "ssh_log": "/var/log/secure",
+  "access_logs_dir": "/home/mitramedicare/access-logs",
   "trusted_ips": [
     "127.0.0.1",
     "::1",
@@ -11,7 +12,10 @@
   ],
   "max_failed_attempts": 3,
   "time_window_seconds": 120,
-  "fcm_server_key": "YOUR_FIREBASE_SERVER_KEY_OR_BEARER",
+  "service_account_file": "service_account.json",
   "fcm_topic": "aegis_alerts",
-  "alert_webhook": ""
+  "alert_webhook": "",
+  "telegram_bot_token": "",
+  "telegram_chat_id": ""
 }
+
