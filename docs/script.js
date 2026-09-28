@@ -23,35 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
    1. Navigation & Mobile Menu
    ========================================================================== */
 function initNavigation() {
-  const mobileToggle = document.getElementById('mobileToggle');
-  const navMenu = document.getElementById('navMenu');
-
-  if (mobileToggle && navMenu) {
-    mobileToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('open');
-      const isOpen = navMenu.classList.contains('open');
-      mobileToggle.setAttribute('aria-expanded', isOpen);
-    });
-
-    // Close menu when a link is clicked
-    navMenu.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('open');
-      });
-    });
-  }
-
-  // Header blur / elevation on scroll
-  const header = document.querySelector('.site-header');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      header.style.borderBottomColor = 'rgba(0, 229, 255, 0.2)';
-      header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
-    } else {
-      header.style.borderBottomColor = 'rgba(34, 49, 78, 0.7)';
-      header.style.boxShadow = 'none';
-    }
-  });
+  // Mobile drawer, hamburger animation, and scroll elevation are natively
+  // managed by the <aegis-header> custom element in components.js.
 }
 
 /* ==========================================================================

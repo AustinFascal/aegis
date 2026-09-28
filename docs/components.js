@@ -29,6 +29,14 @@ class AegisHeader extends HTMLElement {
             <li><a href="${homeUrl}#architecture" class="nav-link ${activePage === 'architecture' ? 'active' : ''}">Architecture</a></li>
             <li><a href="${homeUrl}#deployment" class="nav-link ${activePage === 'deployment' ? 'active' : ''}">Agent Setup</a></li>
             <li><a href="${homeUrl}#faq" class="nav-link ${activePage === 'faq' ? 'active' : ''}">FAQ</a></li>
+            <li class="nav-menu-mobile-extra">
+              <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center; gap: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                <span>GitHub Repository</span>
+              </a>
+            </li>
           </ul>
 
           <div class="nav-actions">
@@ -36,18 +44,18 @@ class AegisHeader extends HTMLElement {
               <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
               </svg>
-              Download
+              <span>Download</span>
             </a>
-            <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer" class="btn btn-outline-cyan btn-sm" id="githubRepoBtn">
+            <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm nav-github-btn" id="githubRepoBtn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
-              GitHub
+              <span>GitHub</span>
             </a>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
-              <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
-              </svg>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu" aria-expanded="false">
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
             </button>
           </div>
         </nav>
@@ -61,24 +69,54 @@ class AegisHeader extends HTMLElement {
   initInteractions() {
     const mobileToggle = this.querySelector('#mobileToggle');
     const navMenu = this.querySelector('#navMenu');
+    const header = this.querySelector('.site-header');
+
     if (mobileToggle && navMenu) {
-      mobileToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('open');
+      const toggleMenu = (forceState) => {
+        const isOpen = typeof forceState === 'boolean' ? forceState : !navMenu.classList.contains('open');
+        navMenu.classList.toggle('open', isOpen);
+        mobileToggle.classList.toggle('active', isOpen);
+        mobileToggle.setAttribute('aria-expanded', isOpen);
+      };
+
+      mobileToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
       });
-      navMenu.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => navMenu.classList.remove('open'));
+
+      // Close menu when a link is clicked
+      navMenu.querySelectorAll('.nav-link, a').forEach(link => {
+        link.addEventListener('click', () => toggleMenu(false));
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('open') && !this.contains(e.target)) {
+          toggleMenu(false);
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+          toggleMenu(false);
+        }
+      });
+
+      // Close on window resize above mobile breakpoint
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && navMenu.classList.contains('open')) {
+          toggleMenu(false);
+        }
       });
     }
 
-    const header = this.querySelector('.site-header');
     if (header) {
       window.addEventListener('scroll', () => {
         if (window.scrollY > 40) {
-          header.style.borderBottomColor = 'rgba(30, 107, 255, 0.25)';
-          header.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+          header.classList.add('scrolled');
         } else {
-          header.style.borderBottomColor = 'rgba(34, 49, 78, 0.7)';
-          header.style.boxShadow = 'none';
+          header.classList.remove('scrolled');
         }
       });
     }
