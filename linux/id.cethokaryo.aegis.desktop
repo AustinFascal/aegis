@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AEGIS
+Comment=Automated Enterprise Guardian for Infrastructure Systems
+Exec=aegis %u
+Icon=id.cethokaryo.aegis
+Terminal=false
+Categories=Utility;Security;Network;
+StartupWMClass=id.cethokaryo.aegis

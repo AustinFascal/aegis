@@ -1,0 +1,28 @@
+PROPRIETARY SOURCE-AVAILABLE LICENSE
+
+Copyright (c) 2026 CethoKaryo (id.cethokaryo). All rights reserved.
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1. SOURCE-AVAILABLE / EVALUATION GRANT
+This software and associated documentation files (the "Software") are proprietary to CethoKaryo. The source code is made publicly available for viewing, educational study, internal security audits, and technical evaluation purposes only.
+
+2. RESTRICTIONS
+Except as expressly permitted by an authorized officer of CethoKaryo in writing, you may NOT:
+a. Copy, reproduce, redistribute, republish, or sublicense the Software, in whole or in part, in source code or binary form.
+b. Use the Software or any portion thereof for commercial purposes, including but not limited to selling, leasing, offering as a hosted service (Software-as-a-Service / PaaS), or embedding into commercial products.
+c. Create derivative works, white-label, rebrand, or modify the Software for public release or commercial deployment.
+d. Remove, alter, or obscure any proprietary notices, copyright legends, trademarks, or terms of use contained within the Software.
+
+3. TRADEMARKS & BRANDING
+This license does not grant permission to use the trade names, trademarks, service marks, logos, or product names of "AEGIS" or "CethoKaryo", except as required for reasonable and customary use in describing the origin of the Software.
+
+4. CONTRIBUTIONS
+Any bug fixes, improvements, or modifications submitted to this repository (via pull requests, issues, or otherwise) are granted to CethoKaryo with a perpetual, irrevocable, worldwide, royalty-free, transferable license to use, modify, and incorporate into future versions of the Software under these or other terms.
+
+5. DISCLAIMER OF WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+6. COMMERCIAL LICENSING & INQUIRIES
+For enterprise licensing, commercial usage rights, customized deployments, or partnership inquiries, please contact CethoKaryo:
+Website: https://cethokaryo.id

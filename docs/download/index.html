@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- Primary Meta Tags -->
+  <title>Download Aegis — Next-Gen Zero-Trust Telemetry Client</title>
+  <meta name="title" content="Download Aegis — Next-Gen Zero-Trust Telemetry Client">
+  <meta name="description" content="Download the Aegis client for Linux, Windows, Android, and macOS. Experience hardware-accelerated SSH terminal, SFTP explorer, and real-time server telemetry.">
+  <meta name="keywords" content="Download Aegis, Flutter Desktop, Linux SSH Client, Windows SSH, Android Terminal, macOS SFTP, SecOps, Zero-Trust">
+  <meta name="author" content="Austin Fascal">
+  <meta name="theme-color" content="#090C12">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://austinfascal.github.io/aegis-project/download/">
+  <meta property="og:title" content="Download Aegis — Zero-Trust Telemetry & Server Hardening Client">
+  <meta property="og:description" content="Download installers and binaries for Linux, Windows, Android, and macOS. Full release notes and changelogs.">
+  <meta property="og:image" content="../assets/images/aegis_hero_preview.jpg">
+
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://austinfascal.github.io/aegis-project/download/">
+  <meta property="twitter:title" content="Download Aegis — Zero-Trust Telemetry & Server Hardening Client">
+  <meta property="twitter:description" content="Download installers and binaries for Linux, Windows, Android, and macOS. Full release notes and changelogs.">
+  <meta property="twitter:image" content="../assets/images/aegis_hero_preview.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="../styles.css">
+
+  <!-- Reusable Components Script -->
+  <script src="../components.js" defer></script>
+</head>
+<body>
+
+  <!-- Cyber Matrix Ambient Background Glow -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-grid"></div>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
+  </div>
+
+  <!-- Reusable Header Component -->
+  <aegis-header base-path="../" active-page="download"></aegis-header>
+
+  <main>
+    <!-- ==========================================================================
+         Download Hero Section
+         ========================================================================== -->
+    <section class="download-hero">
+      <div class="container">
+        <div class="hero-pill-badge">
+          <span>🚀</span>
+          <span>LATEST STABLE RELEASE • V1.0.0</span>
+        </div>
+
+        <h1 class="download-hero-title">
+          Download <span class="gradient-text-cyber">Aegis Client</span>
+        </h1>
+
+        <p class="download-hero-sub">
+          Cross-platform Zero-Trust telemetry and server hardening client built for systems administrators and DevOps teams.
+        </p>
+
+        <!-- Interactive Platform Switcher Tabs -->
+        <div class="platform-tabs-nav" id="osTabNav">
+          <button class="p-tab-btn active" data-os="android" id="tabAndroidBtn">
+            <span>📱</span>
+            <span>Android</span>
+            <span class="badge" style="background: rgba(0, 214, 104, 0.2); color: var(--emerald); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Available</span>
+          </button>
+          <button class="p-tab-btn" data-os="linux" id="tabLinuxBtn">
+            <span>🐧</span>
+            <span>Linux</span>
+            <span class="badge" style="background: rgba(0, 214, 104, 0.2); color: var(--emerald); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Available</span>
+          </button>
+          <button class="p-tab-btn" data-os="windows" id="tabWindowsBtn">
+            <span>🪟</span>
+            <span>Windows</span>
+            <span class="badge" style="background: rgba(255, 179, 0, 0.15); color: var(--amber); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Soon</span>
+          </button>
+          <button class="p-tab-btn" data-os="macos" id="tabMacosBtn">
+            <span>🍏</span>
+            <span>macOS</span>
+            <span class="badge" style="background: rgba(255, 179, 0, 0.15); color: var(--amber); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Soon</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Active Platform Spotlight Card
+         ========================================================================== -->
+    <section class="container" style="position: relative; z-index: 1;">
+      <div class="spotlight-card">
+
+        <!-- 1. Linux Spotlight -->
+        <div class="spotlight-panel" id="spotlight-linux">
+          <div class="spotlight-info">
+            <div class="spotlight-badge" style="border-color: rgba(0, 214, 104, 0.4); color: var(--emerald);">
+              <span class="pulse-dot" style="background: var(--emerald);"></span>
+              <span>OFFICIAL LINUX RELEASE • AVAILABLE NOW</span>
+            </div>
+            <h2 class="spotlight-title">
+              <span>🐧</span>
+              <span>Aegis for Linux</span>
+            </h2>
+            <p class="spotlight-desc">
+              Hardware-accelerated GTK3 desktop client with native Secret Service keychain integration, virtual cell VT100 xterm terminal, and direct SFTP file management.
+            </p>
+            <div class="spotlight-cta-box">
+              <a href="../releases/linux/aegis-v1.0.0-linux-x64.tar.gz" class="spotlight-main-btn" download>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download for Linux (.tar.gz)</span>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">13 MB</span>
+              </a>
+              <div class="spotlight-alt-links">
+                <span>Release package:</span>
+                <span style="color: var(--emerald); font-family: var(--font-mono); font-size: 0.82rem;">aegis-v1.0.0-linux-x64.tar.gz</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-meta-panel">
+            <div class="meta-row">
+              <span class="meta-label">Version</span>
+              <span class="meta-val">v1.0.0 Stable</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Architecture</span>
+              <span class="meta-val">Linux x86_64</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Requirements</span>
+              <span class="meta-val">GLIBC 2.31+, GTK 3.24+</span>
+            </div>
+            <div class="meta-hash-box">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="meta-label">SHA256 Checksum</span>
+                <button class="cmd-copy-btn" data-copy="d86c6e3b5f4d359b03c48385dc85ef8ed12118861d44aaad333691da10336478">Copy Hash</button>
+              </div>
+              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">d86c6e3b5f4d359b03c48385dc85ef8ed12118861d44aaad333691da10336478</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Windows Spotlight -->
+        <div class="spotlight-panel" id="spotlight-windows">
+          <div class="spotlight-info">
+            <div class="spotlight-badge" style="border-color: rgba(255, 179, 0, 0.4); color: var(--amber);">
+              <span class="pulse-dot" style="background: var(--amber);"></span>
+              <span>WINDOWS CLIENT • COMING SOON</span>
+            </div>
+            <h2 class="spotlight-title">
+              <span>🪟</span>
+              <span>Aegis for Windows</span>
+            </h2>
+            <p class="spotlight-desc">
+              Native Windows 64-bit application with Windows Credential Manager integration, crisp ClearType font rendering, and seamless SSH key management.
+            </p>
+            <div class="spotlight-cta-box">
+              <!-- Windows download packages will be available upon official release
+              <a href="../releases/windows/aegis-windows-x64-setup.exe" class="spotlight-main-btn" download>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download Windows Installer (.exe)</span>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">38 MB</span>
+              </a>
+              <div class="spotlight-alt-links">
+                <span>Also available as:</span>
+                <a href="../releases/windows/aegis-windows-x64.zip" download>Portable Archive (.zip)</a>
+              </div>
+              -->
+              <div class="spotlight-coming-soon-btn">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>Windows Installer</span>
+                </div>
+                <span class="badge-coming-soon">Coming Soon</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-meta-panel">
+            <div class="meta-row">
+              <span class="meta-label">Version</span>
+              <span class="meta-val">v1.0.0 Stable</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Architecture</span>
+              <span class="meta-val">64-bit (x64)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Requirements</span>
+              <span class="meta-val">Windows 10 / 11 64-bit</span>
+            </div>
+            <div class="meta-hash-box">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="meta-label">SHA256 Checksum</span>
+                <button class="cmd-copy-btn" data-copy="7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069">Copy Hash</button>
+              </div>
+              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Android Spotlight -->
+        <div class="spotlight-panel active" id="spotlight-android">
+          <div class="spotlight-info">
+            <div class="spotlight-badge" style="border-color: rgba(0, 214, 104, 0.4); color: var(--emerald);">
+              <span class="pulse-dot" style="background: var(--emerald);"></span>
+              <span>OFFICIAL ANDROID RELEASE • AVAILABLE NOW</span>
+            </div>
+            <h2 class="spotlight-title">
+              <span>📱</span>
+              <span>Aegis for Android</span>
+            </h2>
+            <p class="spotlight-desc">
+              High-performance mobile client with Fingerprint / Face ID Biometric Vault, ergonomic on-screen terminal ribbon, and instant Firebase push alerts.
+            </p>
+            <div class="spotlight-cta-box">
+              <a href="../releases/android/aegis-v1.0.0.apk" class="spotlight-main-btn" download>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download Android APK</span>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">64.7 MB</span>
+              </a>
+              <div class="spotlight-alt-links">
+                <span>Release package:</span>
+                <span style="color: var(--emerald); font-family: var(--font-mono); font-size: 0.82rem;">aegis-v1.0.0.apk</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-meta-panel">
+            <div class="meta-row">
+              <span class="meta-label">Version</span>
+              <span class="meta-val">v1.0.0 Stable</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Target Architecture</span>
+              <span class="meta-val">Universal (Multi-ABI)</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Requirements</span>
+              <span class="meta-val">Android 8.0 (API 26+) or higher</span>
+            </div>
+            <div class="meta-hash-box">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="meta-label">SHA256 Checksum</span>
+                <button class="cmd-copy-btn" data-copy="049abb6330b76d0e8e27efcad62b29cc1a3eafc8eeccf42edc6925e6ec5440e1">Copy Hash</button>
+              </div>
+              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">049abb6330b76d0e8e27efcad62b29cc1a3eafc8eeccf42edc6925e6ec5440e1</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. macOS Spotlight -->
+        <div class="spotlight-panel" id="spotlight-macos">
+          <div class="spotlight-info">
+            <div class="spotlight-badge" style="border-color: rgba(255, 179, 0, 0.4); color: var(--amber);">
+              <span class="pulse-dot" style="background: var(--amber);"></span>
+              <span>MACOS CLIENT • COMING SOON</span>
+            </div>
+            <h2 class="spotlight-title">
+              <span>🍏</span>
+              <span>Aegis for macOS</span>
+            </h2>
+            <p class="spotlight-desc">
+              Universal binary compiled for Apple Silicon (M1/M2/M3/M4) and Intel with Touch ID Keychain authorization and native macOS menu bar integration.
+            </p>
+            <div class="spotlight-cta-box">
+              <!-- macOS download packages will be available upon official release
+              <a href="../releases/macos/aegis-macos-universal.dmg" class="spotlight-main-btn" download>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Download DMG Installer</span>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">46 MB</span>
+              </a>
+              <div class="spotlight-alt-links">
+                <span>Also available as:</span>
+                <a href="../releases/macos/aegis-macos-universal.zip" download>Portable App Archive (.zip)</a>
+              </div>
+              -->
+              <div class="spotlight-coming-soon-btn">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span>macOS DMG Installer</span>
+                </div>
+                <span class="badge-coming-soon">Coming Soon</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-meta-panel">
+            <div class="meta-row">
+              <span class="meta-label">Version</span>
+              <span class="meta-val">v1.0.0 Stable</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Binary Type</span>
+              <span class="meta-val">Apple Silicon & Intel Universal</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Requirements</span>
+              <span class="meta-val">macOS 12 Monterey or newer</span>
+            </div>
+            <div class="meta-hash-box">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="meta-label">SHA256 Checksum</span>
+                <button class="cmd-copy-btn" data-copy="5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8">Copy Hash</button>
+              </div>
+              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8</code>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==========================================================================
+           All Platforms Card Grid (Clean Overview)
+           ========================================================================== -->
+      <div class="all-platforms-section">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h3 style="font-size: 1.4rem; color: #FFF;">All Supported Platforms</h3>
+          <p class="text-dim" style="font-size: 0.88rem;">Direct downloads for all desktop and mobile targets.</p>
+        </div>
+
+        <div class="platforms-card-grid">
+          <div class="platform-simple-card" onclick="switchSpotlight('android')" style="border-color: rgba(0, 214, 104, 0.4); background: rgba(0, 214, 104, 0.04);">
+            <div class="p-card-top">
+              <div class="p-card-icon" style="background: rgba(0, 214, 104, 0.12); color: var(--emerald);">📱</div>
+              <div>
+                <strong style="color: #FFF; font-size: 1.05rem;">Android Mobile</strong>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">aegis-v1.0.0.apk • 64.7 MB</div>
+              </div>
+            </div>
+            <div class="p-card-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
+              <span>Download APK</span>
+              <span>↓</span>
+            </div>
+          </div>
+
+          <div class="platform-simple-card" onclick="switchSpotlight('linux')" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
+            <div class="p-card-top">
+              <div class="p-card-icon" style="background: rgba(30, 107, 255, 0.12); color: var(--blue);">🐧</div>
+              <div>
+                <strong style="color: #FFF; font-size: 1.05rem;">Linux Desktop</strong>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">aegis-v1.0.0-linux-x64.tar.gz • 13 MB</div>
+              </div>
+            </div>
+            <div class="p-card-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
+              <span>Download (.tar.gz)</span>
+              <span>↓</span>
+            </div>
+          </div>
+
+          <div class="platform-simple-card" onclick="switchSpotlight('windows')">
+            <div class="p-card-top">
+              <div class="p-card-icon">🪟</div>
+              <div>
+                <strong style="color: #FFF; font-size: 1.05rem;">Windows 64-bit</strong>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">Setup.exe • zip</div>
+              </div>
+            </div>
+            <div class="p-card-btn" style="color: var(--amber);">
+              <span>Coming Soon</span>
+              <span>⏳</span>
+            </div>
+          </div>
+
+          <div class="platform-simple-card" onclick="switchSpotlight('macos')">
+            <div class="p-card-top">
+              <div class="p-card-icon">🍏</div>
+              <div>
+                <strong style="color: #FFF; font-size: 1.05rem;">macOS</strong>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">DMG • universal zip</div>
+              </div>
+            </div>
+            <div class="p-card-btn" style="color: var(--amber);">
+              <span>Coming Soon</span>
+              <span>⏳</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           Server Telemetry Daemon Banner
+           ========================================================================== -->
+      <div style="background: rgba(15, 21, 34, 0.85); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 70px;">
+        <div style="max-width: 600px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+            <span style="font-size: 1.4rem;">🐍</span>
+            <strong style="color: #FFF; font-size: 1.15rem;">Server-Side Telemetry Daemon (Linux VPS)</strong>
+          </div>
+          <p class="text-muted" style="font-size: 0.88rem; line-height: 1.5;">
+            Deploy <code>aegis-agent.py</code> onto your remote Linux hosts for background log watching and Fail2ban push notifications.
+          </p>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="../#deployment" class="btn btn-secondary btn-sm">Agent Setup Guide</a>
+          <a href="https://github.com/AustinFascal/aegis/tree/main/server_agent" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">View Agent Code</a>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           Clean Release Notes & Changelog
+           ========================================================================== -->
+      <div class="changelog-wrapper" id="changelog">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <span class="section-badge">Version History</span>
+          <h2 style="font-size: 2rem; color: #FFF; margin-top: 8px;">Release Notes & Changelog</h2>
+        </div>
+
+        <!-- v1.0.0 Block -->
+        <div class="cl-version-block" style="margin-bottom: 70px;">
+          <div class="cl-version-header">
+            <div class="cl-version-title">
+              <span>v1.0.0</span>
+              <span class="brand-badge" style="background: rgba(30, 107, 255, 0.15); border-color: rgba(30, 107, 255, 0.4); color: var(--blue);">CURRENT STABLE</span>
+            </div>
+            <div class="text-dim" style="font-size: 0.82rem; font-family: var(--font-mono);">September 28, 2026</div>
+          </div>
+          <ul class="cl-entry-list">
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-feat">NEW</span>
+              <div>
+                <strong>Interactive VT100 SSH Terminal:</strong> Hardware-accelerated true cell buffer with curses/TUI support (<code>htop</code>, <code>vim</code>, <code>tmux</code>), dynamic SIGWINCH viewport reflow, and 4 Hacker Themes.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-feat">NEW</span>
+              <div>
+                <strong>Native SFTP v3 Remote Explorer:</strong> Live breadcrumbs, in-app remote text/config editor, upload/download streams, and dotfile visibility toggle.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-sec">SECURITY</span>
+              <div>
+                <strong>17 CIS Linux Hardening Benchmarks:</strong> Automated compliance checks, dynamic Letter Grades (A+ to F), and 1-tap executable remediation playbook generator.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-sec">SECURITY</span>
+              <div>
+                <strong>AbuseIPDB Global Threat Intelligence:</strong> Automated Tor exit node and Botnet C2 detection with private subnet filtering.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-feat">NEW</span>
+              <div>
+                <strong>Zero-Knowledge Biometric Vault:</strong> Hardware-backed keystore integration (Fingerprint, Face Unlock, and Keychain) with encrypted local storage.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-feat">NEW</span>
+              <div>
+                <strong>Firebase Cloud Messaging:</strong> Instant mobile push alert dispatcher hooked directly into Fail2ban auth.log threat incidents.
+              </div>
+            </li>
+            <li class="cl-entry-item">
+              <span class="cl-tag cl-tag-fix">FIX</span>
+              <div>
+                <strong>Ergonomic Mobile Keypad:</strong> Triple-dot action menu eliminating text overflow on small screens.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Reusable Footer Component -->
+  <aegis-footer base-path="../"></aegis-footer>
+
+  <!-- Interactive Logic for Platform Tabs & Clipboard -->
+  <script>
+    function switchSpotlight(os) {
+      // Update tab buttons
+      document.querySelectorAll('.p-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-os') === os);
+      });
+
+      // Update spotlight panels
+      document.querySelectorAll('.spotlight-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `spotlight-${os}`);
+      });
+    }
+
+    // Smart OS detection: default to Linux or Android
+    document.addEventListener('DOMContentLoaded', () => {
+      let detectedOs = 'linux';
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (/android/.test(userAgent)) {
+        detectedOs = 'android';
+      }
+      switchSpotlight(detectedOs);
+
+      // Bind tab clicks
+      document.querySelectorAll('.p-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchSpotlight(btn.getAttribute('data-os'));
+        });
+      });
+
+      // Bind copy buttons
+      document.querySelectorAll('[data-copy]').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          const text = button.getAttribute('data-copy');
+          if (!text) return;
+          navigator.clipboard.writeText(text).then(() => {
+            const original = button.innerHTML;
+            button.innerHTML = '✓ Copied';
+            setTimeout(() => button.innerHTML = original, 2000);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

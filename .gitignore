@@ -1,0 +1,163 @@
+# ==========================================
+# Operating System & Editors
+# ==========================================
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+ehthumbs.db
+*~
+*.swp
+*.class
+*.log
+.history
+.atom/
+.build/
+.buildlog/
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+
+# ==========================================
+# Company Secrets, Keys & Environment
+# ==========================================
+.env
+.env.*
+*.env
+!.env.example
+*.token
+*.secret
+
+# SSH Keys & Host records
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+id_ecdsa
+id_dsa
+known_hosts
+
+# Cloud Credentials & Service Accounts
+**/google-services.json
+**/GoogleService-Info.plist
+*service-account*.json
+*firebase*.json
+*credentials*.json
+firebase_options.dart
+
+# Server Agent Live Configuration
+server_agent/config*.json
+!server_agent/config.example.json
+
+# Internal Documentation & Notes
+GITHUB_SETUP.md
+LANDING_SETUP.md
+DEPLOYMENT_SETUP.md
+INTERNAL*.md
+PRIVATE*.md
+COMPANY*.md
+NOTES.md
+*.private.*
+*.internal.*
+
+# ==========================================
+# Flutter / Dart / Pub
+# ==========================================
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+app.*.symbols
+app.*.map.json
+
+# ==========================================
+# Android
+# ==========================================
+**/local.properties
+**/key.properties
+*.keystore
+*.jks
+/android/app/debug
+/android/app/profile
+/android/app/release
+android/.gradle/
+android/.kotlin/
+.kotlin/
+*.ap_
+*.apk
+!docs/releases/**
+*.aab
+
+# ==========================================
+# iOS & macOS
+# ==========================================
+**/DerivedData/
+**/Pods/
+**/xcuserdata/
+ios/Flutter/Generated.xcconfig
+macos/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+macos/Flutter/flutter_export_environment.sh
+*.cer
+*.crt
+*.p8
+*.p12
+*.mobileprovision
+*.provisionprofile
+*.ipa
+*.dSYM/
+*.dSYM.zip
+
+# ==========================================
+# Linux & Windows Desktop
+# ==========================================
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+*.pfx
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ==========================================
+# Python Daemon (`server_agent/`)
+# ==========================================
+venv/
+.venv/
+env/
+server_agent/venv/
+server_agent/.venv/
+__pycache__/
+*.py[cod]
+*.pid
+.pytest_cache/
+
+# ==========================================
+# Telemetry Dumps, Caches & SFTP Downloads
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+server_profiles.json
+servers.json
+hosts.json
+audit_export*.json
+export*.csv
+downloads/
+sftp_cache/

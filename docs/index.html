@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- Primary Meta Tags -->
+  <title>Aegis — Automated Enterprise Guardian for Infrastructure Systems</title>
+  <meta name="title" content="Aegis — Automated Enterprise Guardian for Infrastructure Systems">
+  <meta name="description"
+    content="Next-Generation Zero-Trust Telemetry, Real-time Threat Intelligence & Server Hardening Client for Linux, Windows, Android, and macOS.">
+  <meta name="keywords"
+    content="Aegis, Flutter, SecOps, Zero-Trust, Server Telemetry, SSH Terminal, SFTP, AbuseIPDB, CIS Benchmarks, Linux Hardening, Fail2ban, Cybersecurity">
+  <meta name="author" content="Austin Fascal">
+  <meta name="theme-color" content="#090C12">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://austinfascal.github.io/aegis-project/">
+  <meta property="og:title" content="Aegis — Zero-Trust Telemetry & Server Hardening Suite">
+  <meta property="og:description"
+    content="Monitor servers in real time, inspect forensic logs, thwart brute-force attacks with AbuseIPDB, and enforce 17 CIS Linux hardening benchmarks.">
+  <meta property="og:image" content="./assets/images/aegis_hero_preview.jpg">
+
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://austinfascal.github.io/aegis-project/">
+  <meta property="twitter:title" content="Aegis — Zero-Trust Telemetry & Server Hardening Suite">
+  <meta property="twitter:description"
+    content="Monitor servers in real time, inspect forensic logs, thwart brute-force attacks with AbuseIPDB, and enforce 17 CIS Linux hardening benchmarks.">
+  <meta property="twitter:image" content="./assets/images/aegis_hero_preview.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- Reusable Components Script -->
+  <script src="./components.js" defer></script>
+</head>
+
+<body>
+
+  <!-- Cyber Matrix Ambient Background Glow -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-grid"></div>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
+  </div>
+
+  <!-- Reusable Header Component -->
+  <aegis-header active-page="home"></aegis-header>
+
+  <main>
+    <!-- ==========================================================================
+         Hero Section
+         ========================================================================== -->
+    <section class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-pill-badge">
+          <span>🛡️</span>
+          <span>ENTERPRISE SEC-OPS TELEMETRY SUITE</span>
+        </div>
+
+        <h1 class="hero-headline">
+          Autonomous <span class="gradient-text-cyber">Zero-Trust Guardian</span> for Distributed Server Fleets
+        </h1>
+
+        <p class="hero-subhead">
+          AEGIS (Automated Enterprise Guardian for Infrastructure Systems) bridges lightweight server-side telemetry
+          daemons with a high-performance Flutter desktop & mobile client. Monitor SSH, MySQL, and Nginx in real time,
+          thwart brute-force assaults with global threat intelligence, and harden Linux nodes with CIS benchmark
+          compliance.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#sandbox" class="btn btn-primary" id="heroDemoBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Explore Interactive Sandbox
+          </a>
+          <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer"
+            class="btn btn-secondary" id="heroGithubBtn">
+            View Source Code
+          </a>
+        </div>
+
+        <div class="hero-cmd-widget">
+          <span class="cmd-prefix">$</span>
+          <span>git clone https://github.com/AustinFascal/aegis.git</span>
+          <button class="cmd-copy-btn" data-copy="git clone https://github.com/AustinFascal/aegis.git"
+            aria-label="Copy Git Clone Command">
+            Copy
+          </button>
+        </div>
+
+        <!-- Telemetry Stats Counter Banner -->
+        <!-- <div class="stats-banner">
+          <div class="stat-item">
+            <div class="stat-value text-cyan">&lt; 12ms</div>
+            <div class="stat-label">Direct Telemetry Pulse</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value text-emerald">17</div>
+            <div class="stat-label">CIS Hardening Rules</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value text-emerald">1,000/d</div>
+            <div class="stat-label">AbuseIPDB Threat Scans</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value text-amber">4 OS</div>
+            <div class="stat-label">Linux • Win • Android • macOS</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value text-cyan">0%</div>
+            <div class="stat-label">Egress Leakage (Zero-Trust)</div>
+          </div>
+        </div> -->
+
+        <!-- High-Tech Mockup Showcase Frame -->
+        <!-- <div class="hero-showcase">
+          <div class="hero-showcase-inner">
+            <div class="showcase-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="showcase-title-tag">
+                <span>⚡ AEGIS TELEMETRY CONSOLE // NODE: SRV-PROD-01.INTERNAL</span>
+              </div>
+              <div class="text-cyan">SHA256:ENCRYPTED</div>
+            </div>
+
+            <div class="showcase-media-container">
+              <img src="./assets/images/aegis_hero_preview.jpg" alt="Aegis Real-Time Telemetry Dashboard Preview" class="showcase-img">
+              
+              <div class="hero-telemetry-overlay">
+                <div class="telemetry-floating-card">
+                  <div class="t-card-header">
+                    <span>CPU Telemetry</span>
+                    <span class="text-cyan">8 Cores</span>
+                  </div>
+                  <div class="t-card-val">
+                    <span id="dynCpuVal">28%</span>
+                    <span class="text-dim" style="font-size: 0.8rem;">Load: 0.45</span>
+                  </div>
+                  <div class="t-progress-bar">
+                    <div class="t-progress-fill" id="dynCpuFill" style="width: 28%; background: var(--cyan);"></div>
+                  </div>
+                </div>
+
+                <div class="telemetry-floating-card">
+                  <div class="t-card-header">
+                    <span>ECC Memory</span>
+                    <span class="text-emerald">DDR5</span>
+                  </div>
+                  <div class="t-card-val">
+                    <span id="dynRamVal">6.1 GB</span>
+                    <span class="text-dim" style="font-size: 0.8rem;">of 16.0 GB</span>
+                  </div>
+                  <div class="t-progress-bar">
+                    <div class="t-progress-fill" id="dynRamFill" style="width: 38%; background: var(--emerald);"></div>
+                  </div>
+                </div>
+
+                <div class="telemetry-floating-card">
+                  <div class="t-card-header">
+                    <span>Threat Sentinel</span>
+                    <span class="text-emerald">Active</span>
+                  </div>
+                  <div class="t-card-val text-emerald">
+                    <span>0 Breaches</span>
+                    <span class="text-dim" style="font-size: 0.8rem;">4 Banned</span>
+                  </div>
+                  <div class="t-progress-bar">
+                    <div class="t-progress-fill" style="width: 100%; background: var(--emerald);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Interactive Command Center & Sandbox Section
+         ========================================================================== -->
+    <section class="interactive-section" id="sandbox">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">Live Interactive Simulator</span>
+          <h2 class="section-title">Test-Drive the <span class="gradient-text-cyan">Aegis Experience</span></h2>
+          <p class="section-subtitle">
+            Experience Aegis's terminal emulation, remote SFTP editor, live anomaly threat forensics, and CIS benchmark
+            hardening directly in your browser.
+          </p>
+        </div>
+
+        <!-- Sandbox Tabs -->
+        <div class="sandbox-tabs">
+          <button class="tab-btn active" data-tab="tab-terminal" id="tabTerminalBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            VT100 SSH Terminal
+          </button>
+          <button class="tab-btn" data-tab="tab-sftp" id="tabSftpBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+            SFTP Remote Editor
+          </button>
+          <button class="tab-btn" data-tab="tab-forensics" id="tabForensicsBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Threat Radar & AbuseIPDB
+          </button>
+          <button class="tab-btn" data-tab="tab-cis" id="tabCisBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            CIS Benchmark Scanner
+          </button>
+        </div>
+
+        <!-- Sandbox Display Container -->
+        <div class="sandbox-display">
+
+          <!-- 1. Terminal Panel -->
+          <div class="sandbox-tab-content active" id="tab-terminal">
+            <div class="terminal-window">
+              <div class="terminal-header">
+                <div class="showcase-title-tag">
+                  <span>TERMINAL // <strong>srv-prod-01</strong> (xterm-256color)</span>
+                </div>
+                <div class="terminal-theme-picker" title="Switch Terminal Color Palette">
+                  <span class="text-dim" style="font-size: 0.75rem; margin-right: 4px;">Theme:</span>
+                  <div class="theme-pill theme-oled" data-theme="oled" title="Cyber OLED"></div>
+                  <div class="theme-pill theme-matrix" data-theme="matrix" title="Matrix Green"></div>
+                  <div class="theme-pill theme-monokai" data-theme="monokai" title="Monokai Pro"></div>
+                  <div class="theme-pill theme-nord" data-theme="nord" title="Nord Glacier"></div>
+                </div>
+              </div>
+
+              <div class="terminal-quickbar">
+                <span class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">SecOps
+                  Quickbar:</span>
+                <button class="quick-cmd-btn" data-cmd="htop">htop</button>
+                <button class="quick-cmd-btn" data-cmd="aegis status">aegis status</button>
+                <button class="quick-cmd-btn" data-cmd="fail2ban">fail2ban</button>
+                <button class="quick-cmd-btn" data-cmd="cis-audit">cis-audit</button>
+                <button class="quick-cmd-btn" data-cmd="auth-log">auth-log</button>
+                <button class="quick-cmd-btn" data-cmd="df -h">df -h</button>
+                <button class="quick-cmd-btn" data-cmd="docker ps">docker ps</button>
+                <button class="quick-cmd-btn" data-cmd="clear">clear</button>
+              </div>
+
+              <div class="terminal-body" id="terminalBody">
+                <div class="term-line"><span class="term-prompt">Welcome to Aegis VT100 Interactive SSH Client
+                    v1.0</span></div>
+                <div class="term-line"><span class="term-dim">Session encrypted with ChaCha20-Poly1305 / ED25519 Key
+                    Vault</span></div>
+                <div class="term-line"><span class="term-success">Type 'help' or click any SecOps Quickbar command
+                    above.</span></div>
+                <div class="term-line"> </div>
+                <div class="term-line"><span class="term-prompt">austin@srv-prod-01:~$</span> <span
+                    class="term-cmd">aegis status</span></div>
+                <div class="term-line"><span class="term-success">● aegis-agent.service - Aegis Zero-Trust Telemetry
+                    Daemon</span></div>
+                <div class="term-line"> Active: <span class="term-success">active (running)</span>; Zero-Trust Enclave
+                  status: HEALTHY (0 egress leaks)</div>
+                <div class="term-line"><span class="term-cyan">[AEGIS-CORE] Direct DartSSH2 tunnel validated over port
+                    22.</span></div>
+              </div>
+
+              <div class="terminal-input-bar">
+                <span class="term-prompt">austin@srv-prod-01:~$</span>
+                <input type="text" class="term-cli-input" id="terminalInput"
+                  placeholder="Type a command (e.g. htop, fail2ban, cis-audit, clear) and press Enter..."
+                  autocomplete="off">
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. SFTP Remote Explorer Panel -->
+          <div class="sandbox-tab-content" id="tab-sftp">
+            <div class="sftp-layout">
+              <div class="sftp-sidebar">
+                <div class="sftp-path-bar">
+                  <span>📂</span>
+                  <span>/etc/nginx</span>
+                </div>
+                <div class="sftp-file-list">
+                  <div class="sftp-file-item active" data-filename="nginx.conf">
+                    <div class="sftp-file-info">
+                      <span>📄</span>
+                      <span>nginx.conf</span>
+                    </div>
+                    <span class="sftp-file-meta">0644 • 1.4 KB</span>
+                  </div>
+                  <div class="sftp-file-item" data-filename="aegis_agent.py">
+                    <div class="sftp-file-info">
+                      <span>🐍</span>
+                      <span>aegis_agent.py</span>
+                    </div>
+                    <span class="sftp-file-meta">0755 • 6.2 KB</span>
+                  </div>
+                  <div class="sftp-file-item" data-filename="mysqld.cnf">
+                    <div class="sftp-file-info">
+                      <span>🐬</span>
+                      <span>mysqld.cnf</span>
+                    </div>
+                    <span class="sftp-file-meta">0640 • 890 B</span>
+                  </div>
+                  <div class="sftp-file-item" data-filename="remediate_cis.sh">
+                    <div class="sftp-file-info">
+                      <span>⚙️</span>
+                      <span>remediate_cis.sh</span>
+                    </div>
+                    <span class="sftp-file-meta">0700 • 2.1 KB</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sftp-editor-pane">
+                <div class="editor-header">
+                  <div>
+                    <span class="text-cyan" id="editorFilename">nginx.conf</span>
+                    <span class="text-dim" style="font-size: 0.72rem; margin-left: 8px;"
+                      id="editorFilepath">/etc/nginx/nginx.conf</span>
+                  </div>
+                  <button class="btn btn-primary btn-sm" id="saveEditorBtn">Save Remote</button>
+                </div>
+                <pre class="editor-code-area" id="editorCodeArea"># Aegis Hardened Nginx Reverse Proxy Configuration
+user nginx;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 2048;
+    use epoll;
+    multi_accept on;
+}
+
+http {
+    # Zero-Trust TLS 1.3 Profile
+    ssl_protocols TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256';
+
+    # Rate Limiting against DoS
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+    limit_conn_zone $binary_remote_addr zone=conn_limit:10m;
+
+    # Security Headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+
+    server {
+        listen 443 ssl http2;
+        server_name telemetry.aegis.internal;
+    }
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Threat Forensics & AbuseIPDB Panel -->
+          <div class="sandbox-tab-content" id="tab-forensics">
+            <div class="forensics-layout">
+              <div class="forensics-log-stream">
+                <div class="audit-card threat-high">
+                  <div class="audit-header">
+                    <span class="text-crimson font-bold">⚠️ CRITICAL: SSH BRUTE-FORCE ASSAULT</span>
+                    <span class="audit-score-badge badge-crimson">AbuseIPDB Score: 100% (TOR EXIT NODE)</span>
+                  </div>
+                  <div class="text-muted">Origin: <strong>185.220.101.4</strong> (Frankfurt, DE) | 14 Failed SSH
+                    attempts in 6s</div>
+                  <div class="text-dim" style="font-size: 0.72rem;">Action: Banned in fail2ban [sshd] • FCM Dispatch
+                    triggered to Aegis Client</div>
+                </div>
+
+                <div class="audit-card threat-high">
+                  <div class="audit-header">
+                    <span class="text-crimson font-bold">⚠️ UNAUTHORIZED ROOT ACCESS ATTEMPT</span>
+                    <span class="audit-score-badge badge-crimson">AbuseIPDB Score: 94% (BOTNET C2)</span>
+                  </div>
+                  <div class="text-muted">Origin: <strong>45.154.255.89</strong> (Moscow, RU) | Target: root / sshd port
+                    22</div>
+                  <div class="text-dim" style="font-size: 0.72rem;">Action: Blocked by Zero-Trust policy • Null routed
+                    via iptables</div>
+                </div>
+
+                <div class="audit-card threat-medium">
+                  <div class="audit-header">
+                    <span class="text-amber font-bold">⚠️ REVERSE PROXY SCAN DETECTED</span>
+                    <span class="audit-score-badge badge-amber">AbuseIPDB Score: 48% (SUSPICIOUS)</span>
+                  </div>
+                  <div class="text-muted">Origin: <strong>194.26.29.112</strong> | URI: /.env, /wp-admin, /phpmyadmin
+                    probe</div>
+                  <div class="text-dim" style="font-size: 0.72rem;">Action: Nginx rate limiter dropped 28 requests</div>
+                </div>
+
+                <div class="audit-card threat-low">
+                  <div class="audit-header">
+                    <span class="text-emerald font-bold">✓ AUTHORIZED CLIENT HANDSHAKE</span>
+                    <span class="audit-score-badge badge-emerald">SAFE // PRIVATE SUBNET</span>
+                  </div>
+                  <div class="text-muted">Origin: <strong>10.8.0.2</strong> (Aegis Mobile Client via WireGuard Tunnel)
+                  </div>
+                  <div class="text-dim" style="font-size: 0.72rem;">Biometric SHA256 Token Validated • Telemetry Stream
+                    OK</div>
+                </div>
+              </div>
+
+              <div class="forensics-side-radar">
+                <div class="radar-circle">
+                  <div class="radar-sweep"></div>
+                  <div class="radar-blip" style="top: 30%; left: 65%;"></div>
+                  <div class="radar-blip" style="top: 70%; left: 25%;"></div>
+                </div>
+                <div>
+                  <div class="font-bold text-cyan" style="font-family: var(--font-heading);">Real-Time Threat Radar
+                  </div>
+                  <div class="text-dim" style="font-size: 0.78rem;">Live AbuseIPDB Heuristics Active</div>
+                </div>
+                <div class="brand-badge"
+                  style="background: rgba(255, 23, 68, 0.1); border-color: rgba(255, 23, 68, 0.4); color: var(--crimson);">
+                  <span class="pulse-dot"
+                    style="background: var(--crimson); box-shadow: 0 0 8px var(--crimson);"></span>
+                  AUTOMATED DEFENSE ON
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. CIS Benchmark Scanner Panel -->
+          <div class="sandbox-tab-content" id="tab-cis">
+            <div class="cis-scanner-layout">
+              <div class="cis-controls-banner">
+                <div class="cis-score-display">
+                  <div class="cis-grade-circle" id="cisGradeCircle">A+</div>
+                  <div>
+                    <h3 class="text-emerald" id="cisScorePercent">96% Compliance Score</h3>
+                    <p class="text-muted" style="font-size: 0.85rem;">CIS Linux Benchmark & NIST SP 800-123 Standards
+                    </p>
+                  </div>
+                </div>
+                <button class="btn btn-primary" id="runCisAuditBtn">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Re-Run CIS Audit
+                </button>
+              </div>
+
+              <div class="cis-checks-grid">
+                <div class="cis-rule-card">
+                  <div>
+                    <strong style="color: #FFF;">OpenSSH: Disable Root Login</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">PermitRootLogin no</div>
+                  </div>
+                  <span class="audit-score-badge badge-emerald">PASS</span>
+                </div>
+
+                <div class="cis-rule-card">
+                  <div>
+                    <strong style="color: #FFF;">OpenSSH: Enforce Key Authentication</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">PasswordAuthentication no</div>
+                  </div>
+                  <span class="audit-score-badge badge-emerald">PASS</span>
+                </div>
+
+                <div class="cis-rule-card">
+                  <div>
+                    <strong style="color: #FFF;">Kernel: ASLR Memory Randomization</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">kernel.randomize_va_space = 2</div>
+                  </div>
+                  <span class="audit-score-badge badge-emerald">PASS</span>
+                </div>
+
+                <div class="cis-rule-card">
+                  <div>
+                    <strong style="color: #FFF;">Kernel: TCP SYN Flood Protection</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">net.ipv4.tcp_syncookies = 1</div>
+                  </div>
+                  <span class="audit-score-badge badge-emerald">PASS</span>
+                </div>
+
+                <div class="cis-rule-card">
+                  <div>
+                    <strong style="color: #FFF;">Database: MySQL Loopback Binding</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">bind-address = 127.0.0.1</div>
+                  </div>
+                  <span class="audit-score-badge badge-emerald">PASS</span>
+                </div>
+
+                <div class="cis-rule-card" data-fail="true">
+                  <div>
+                    <strong style="color: #FFF;">Filesystem: /etc/shadow Permissions</strong>
+                    <div class="text-dim" style="font-size: 0.72rem;">Enforce 0640 or 0000 mode</div>
+                  </div>
+                  <span class="audit-score-badge badge-amber">WARNING</span>
+                </div>
+              </div>
+
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: var(--radius-sm);">
+                <div style="font-size: 0.85rem; color: var(--text-main);">
+                  ⚡ <strong>1-Tap Automated Remediation Playbook:</strong> Generate unified bash script to patch all
+                  warnings.
+                </div>
+                <button class="btn btn-outline-cyan btn-sm"
+                  data-copy="curl -sSL https://raw.githubusercontent.com/AustinFascal/aegis/main/scripts/aegis_remediate.sh | bash">
+                  Copy Remediation Command
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Key Features Grid Section
+         ========================================================================== -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">Next-Gen Capabilities</span>
+          <h2 class="section-title">Built for Systems Engineers & SecOps Teams</h2>
+          <p class="section-subtitle">
+            A comprehensive suite uniting direct SSH tunneling, hardware-accelerated terminal emulation, file
+            exploration, and automated security hardening.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-cyan">⌨️</div>
+            <h3 class="feature-title">Hardware-Accelerated VT100 SSH Terminal</h3>
+            <p class="feature-desc">
+              Powered by <code>package:xterm</code> with virtual cell buffers and TrueColor ANSI rendering. Flawlessly
+              renders full-screen curses/TUI tools like <code>htop</code>, <code>top</code>, <code>nano</code>,
+              <code>vim</code>, and <code>tmux</code> without text glitches.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Dynamic SIGWINCH</span>
+              <span class="feature-pill">4 Cyber Themes</span>
+              <span class="feature-pill">Ergonomic Keypad</span>
+            </div>
+          </article>
+
+          <!-- Feature 2 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-emerald">📁</div>
+            <h3 class="feature-title">Native SFTP v3 File Manager & Editor</h3>
+            <p class="feature-desc">
+              Explore remote Linux directories, toggle hidden dotfiles, search and sort by attributes, and edit server
+              daemon configs (<code>nginx.conf</code>, <code>mysqld.cnf</code>) directly with in-app syntax
+              highlighting.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Dual-Way Transfers</span>
+              <span class="feature-pill">Breadcrumbs Navigation</span>
+              <span class="feature-pill">Live Search</span>
+            </div>
+          </article>
+
+          <!-- Feature 3 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-emerald">🛡️</div>
+            <h3 class="feature-title">17 CIS Linux Hardening Benchmarks</h3>
+            <p class="feature-desc">
+              Evaluates nodes against CIS Linux Benchmarks and NIST SP 800-123. Calculates dynamic letter grades (A+ to
+              F) and auto-synthesizes detected flaws into an executable bash remediation script.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">OpenSSH Audit</span>
+              <span class="feature-pill">Kernel Sysctl</span>
+              <span class="feature-pill">Markdown Exporter</span>
+            </div>
+          </article>
+
+          <!-- Feature 4 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-crimson">🌐</div>
+            <h3 class="feature-title">AbuseIPDB Global Threat Intelligence</h3>
+            <p class="feature-desc">
+              Queries AbuseIPDB v2 database with 1,000 free checks/day directly inside incident forensics. Detects Tor
+              exit nodes, botnet command nodes, and foreign brute-force attacks with zero data leakage.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Tor Node Detection</span>
+              <span class="feature-pill">Community Threat Scoring</span>
+              <span class="feature-pill">RFC 1918 Safe</span>
+            </div>
+          </article>
+
+          <!-- Feature 5 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-amber">🔍</div>
+            <h3 class="feature-title">Anomaly Detection & Forensic Audit</h3>
+            <p class="feature-desc">
+              Tails auth logs (<code>/var/log/auth.log</code>), database queries, and web logs in real time. Flags
+              repetitive brute-force attempts and privilege escalations with interactive vector timeline charts.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">fl_chart Timelines</span>
+              <span class="feature-pill">IP Geolocation</span>
+              <span class="feature-pill">Log Classification</span>
+            </div>
+          </article>
+
+          <!-- Feature 6 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-blue">🔐</div>
+            <h3 class="feature-title">Zero-Trust Vault & Biometrics</h3>
+            <p class="feature-desc">
+              Stores private keys encrypted in platform hardware keychains (Linux Secret Service, Windows Credential
+              Manager, Android Keystore, iOS Keychain). Protected with Biometric auth & TOTP 2FA.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Fingerprint / Face ID</span>
+              <span class="feature-pill">6-Digit PIN Fallback</span>
+              <span class="feature-pill">Encrypted Key Vault</span>
+            </div>
+          </article>
+
+          <!-- Feature 7 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-cyan">🔔</div>
+            <h3 class="feature-title">Instant FCM Push Dispatcher</h3>
+            <p class="feature-desc">
+              Direct integration with Firebase Cloud Messaging (FCM) and Fail2ban hooks. Dispatches high-priority push
+              notifications to your mobile and desktop devices the instant an attack or ban occurs.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Fail2ban Bridge</span>
+              <span class="feature-pill">High-Priority Alerts</span>
+              <span class="feature-pill">Zero Battery Drain</span>
+            </div>
+          </article>
+
+          <!-- Feature 8 -->
+          <article class="feature-card">
+            <div class="feature-icon-box icon-emerald">📊</div>
+            <h3 class="feature-title">Continuous Hardware Telemetry</h3>
+            <p class="feature-desc">
+              Continuous sampling of multi-core CPU utilization, RAM usage, partition health, uptime, and active network
+              sockets. Seamlessly switch between staging, production, and distributed fleets.
+            </p>
+            <div class="feature-tags">
+              <span class="feature-pill">Multi-Server Fleet</span>
+              <span class="feature-pill">Partition Gauges</span>
+              <span class="feature-pill">Service Health</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Architecture & Zero-Trust Deep-Dive Section
+         ========================================================================== -->
+    <section class="arch-section" id="architecture">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">Security Architecture</span>
+          <h2 class="section-title">Zero-Trust Egress & Direct Tunneling</h2>
+          <p class="section-subtitle">
+            Aegis eliminates third-party intermediary servers. Your SSH credentials and telemetry data stay strictly
+            between your trusted client and monitored nodes.
+          </p>
+        </div>
+
+        <div class="arch-visual-container">
+          <div class="arch-nodes-grid">
+            <!-- Node 1: Monitored Server -->
+            <div class="arch-node">
+              <div class="text-cyan font-bold" style="font-family: var(--font-heading); font-size: 1.1rem;">
+                Target Linux VPS Node
+              </div>
+              <div class="text-dim" style="font-size: 0.78rem;">Lightweight daemon layer</div>
+              <ul
+                style="list-style: none; font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px;">
+                <li>• <code>aegis-agent.py</code> (Python Daemon)</li>
+                <li>• <code>aegis_fcm_dispatcher.sh</code> (Fail2ban Hook)</li>
+                <li>• SSHD, MySQL & Nginx logs</li>
+              </ul>
+            </div>
+
+            <!-- Connector 1 -->
+            <div class="arch-connector">
+              <span>Push Event</span>
+              <div class="pulse-arrow"></div>
+              <span>JSON Payload</span>
+            </div>
+
+            <!-- Node 2: Alert Relay -->
+            <div class="arch-node">
+              <div class="text-emerald font-bold" style="font-family: var(--font-heading); font-size: 1.1rem;">
+                Alert Relay (FCM)
+              </div>
+              <div class="text-dim" style="font-size: 0.78rem;">Zero-knowledge messaging</div>
+              <ul
+                style="list-style: none; font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px;">
+                <li>• Firebase Cloud Messaging</li>
+                <li>• Instant push dispatcher</li>
+                <li>• No server keys or creds stored</li>
+              </ul>
+            </div>
+
+            <!-- Connector 2 -->
+            <div class="arch-connector">
+              <span>Encrypted Alert</span>
+              <div class="pulse-arrow"></div>
+              <span>Direct SSH Sync</span>
+            </div>
+
+            <!-- Node 3: Aegis Client -->
+            <div class="arch-node">
+              <div class="text-emerald font-bold" style="font-family: var(--font-heading); font-size: 1.1rem;">
+                Aegis Flutter Client
+              </div>
+              <div class="text-dim" style="font-size: 0.78rem;">Linux • Windows • Mobile</div>
+              <ul
+                style="list-style: none; font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px;">
+                <li>• Hardware Keychain Vault</li>
+                <li>• Biometric / 2FA Gate</li>
+                <li>• Direct <code>dartssh2</code> Tunnel</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Agent Deployment Guide
+         ========================================================================== -->
+    <section class="deployment-section" id="deployment">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">Fast Installation</span>
+          <h2 class="section-title">Deploy the Server Telemetry Agent in 60s</h2>
+          <p class="section-subtitle">
+            Zero heavy dependencies. The Aegis server agent runs seamlessly on any Linux distribution (Ubuntu, Debian,
+            CentOS, Rocky, Alpine).
+          </p>
+        </div>
+
+        <div class="deploy-steps-container">
+          <!-- Step 1 -->
+          <div class="deploy-step-card">
+            <div class="step-num">1</div>
+            <h3 class="font-bold text-main" style="font-size: 1.1rem;">Download Server Agent</h3>
+            <p class="text-muted" style="font-size: 0.88rem;">Clone the repository or copy the lightweight
+              <code>server_agent/</code> directory into <code>/opt/aegis-agent</code>.</p>
+            <div class="code-snippet-box">
+              <code>sudo mkdir -p /opt/aegis-agent
+sudo git clone https://github.com/AustinFascal/aegis.git /tmp/aegis
+sudo cp -r /tmp/aegis/server_agent/* /opt/aegis-agent/</code>
+              <button class="snippet-copy-btn"
+                data-copy="sudo mkdir -p /opt/aegis-agent && sudo git clone https://github.com/AustinFascal/aegis.git /tmp/aegis && sudo cp -r /tmp/aegis/server_agent/* /opt/aegis-agent/">Copy</button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="deploy-step-card">
+            <div class="step-num">2</div>
+            <h3 class="font-bold text-main" style="font-size: 1.1rem;">Configure Server Node</h3>
+            <p class="text-muted" style="font-size: 0.88rem;">Copy the example configuration file and set your server
+              identifier and optional FCM keys.</p>
+            <div class="code-snippet-box">
+              <code>cd /opt/aegis-agent
+sudo cp config.example.json config.json
+sudo chmod 600 config.json
+sudo nano config.json</code>
+              <button class="snippet-copy-btn"
+                data-copy="cd /opt/aegis-agent && sudo cp config.example.json config.json && sudo chmod 600 config.json">Copy</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="deploy-step-card">
+            <div class="step-num">3</div>
+            <h3 class="font-bold text-main" style="font-size: 1.1rem;">Enable Systemd Service</h3>
+            <p class="text-muted" style="font-size: 0.88rem;">Install and start the persistent background systemd
+              service for real-time telemetry surveillance.</p>
+            <div class="code-snippet-box">
+              <code>sudo cp aegis-agent.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now aegis-agent
+sudo systemctl status aegis-agent</code>
+              <button class="snippet-copy-btn"
+                data-copy="sudo cp aegis-agent.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now aegis-agent">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Cross-Platform Availability
+         ========================================================================== -->
+    <section class="platforms-section" id="platforms">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">One Client, Everywhere</span>
+          <h2 class="section-title">Multi-Platform Desktop & Mobile</h2>
+          <p class="section-subtitle">
+            Engineered with Flutter for native CPU performance, smooth 120 FPS rendering, and unified Zero-Trust
+            security across all devices.
+          </p>
+        </div>
+
+        <div class="platforms-grid">
+          <div class="platform-card" style="border-color: rgba(0, 214, 104, 0.4); background: rgba(0, 214, 104, 0.04);">
+            <div class="platform-icon">📱</div>
+            <h3 class="font-bold text-main">Android Mobile</h3>
+            <p class="text-dim" style="font-size: 0.85rem;">Android 8.0+ with Biometrics & FCM Push Alerts</p>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download APK (v1.0.0)</a>
+          </div>
+
+          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
+            <div class="platform-icon">🐧</div>
+            <h3 class="font-bold text-main">Linux Desktop</h3>
+            <p class="text-dim" style="font-size: 0.85rem;">Ubuntu, Debian, Fedora, Arch (Native GTK3 / Wayland / X11)</p>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.tar.gz)</a>
+          </div>
+
+          <div class="platform-card">
+            <div class="platform-icon">🪟</div>
+            <h3 class="font-bold text-main">Windows Desktop</h3>
+            <p class="text-dim" style="font-size: 0.85rem;">Windows 10 / 11 64-bit with Credential Vault integration</p>
+            <span class="badge-coming-soon">Coming Soon</span>
+          </div>
+
+          <div class="platform-card">
+            <div class="platform-icon">🍏</div>
+            <h3 class="font-bold text-main">macOS</h3>
+            <p class="text-dim" style="font-size: 0.85rem;">Apple Silicon & Intel with Touch ID Keychain</p>
+            <span class="badge-coming-soon">Coming Soon</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 36px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+          <a href="./download/" class="btn btn-primary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download for Linux (.tar.gz)
+          </a>
+          <a href="./download/" class="btn btn-secondary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download Android APK (v1.0.0)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FAQ Section
+         ========================================================================== -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-accordion">
+          <div class="faq-item active">
+            <button class="faq-question">
+              <span>Does Aegis require a centralized SaaS server to operate?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              No. Aegis operates on a strict Zero-Trust, peer-to-peer paradigm. The Flutter client connects directly to
+              your remote Linux servers via encrypted SSHv2 tunnels. Your private keys and credentials never touch any
+              third-party infrastructure.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>How does biometric and keychain authentication work across platforms?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Aegis utilizes hardware-backed native vaults on every OS: Android Keystore with Fingerprint/Face Unlock,
+              Linux Secret Service (libsecret), Windows Credential Manager, and macOS Keychain with Touch ID. A 6-digit
+              PIN and TOTP 2FA act as seamless fallbacks.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can I use Aegis without installing the server-side Python agent?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Yes. You can use the VT100 interactive SSH terminal, SFTP remote file manager, config editor, and standard
+              remote command execution without installing any agent. The agent is only needed for continuous background
+              log streaming and automatic FCM push alerts.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>How does the AbuseIPDB integration protect API rate limits?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Aegis caches IP threat intelligence reports locally with TTL and excludes RFC 1918 private subnets (10.x,
+              192.168.x, 172.16-31.x) automatically. In offline or keyless mode, Aegis employs realistic heuristic
+              profiling to avoid consuming quota.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>What CIS benchmarks does the Compliance Engine evaluate?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Aegis evaluates 17 baseline CIS controls spanning OpenSSH configuration (root login, password auth, max
+              attempts), Linux Kernel sysctl parameters (ASLR, SYN cookies, rp_filter), Network exposure (Telnet/FTP
+              closure, MySQL loopback), Identity (shadow file checks), and Filesystem permissions.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Call to Action Banner
+         ========================================================================== -->
+    <section class="cta-banner-section">
+      <div class="container">
+        <div class="cta-banner">
+          <h2 class="cta-title">Fortify Your Infrastructure Today</h2>
+          <p class="cta-desc">
+            Take complete control over your server fleet telemetry, forensic audits, and CIS security benchmarks with
+            Aegis.
+          </p>
+          <div class="hero-cta-group" style="justify-content: center; margin-bottom: 0;">
+            <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer"
+              class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              Star on GitHub
+            </a>
+            <a href="./download/" class="btn btn-secondary">
+              Download Linux / Android Clients
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Reusable Footer Component -->
+  <aegis-footer></aegis-footer>
+
+  <!-- Interactive JavaScript -->
+  <script src="./script.js" defer></script>
+</body>
+
+</html>

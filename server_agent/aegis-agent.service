@@ -1,0 +1,18 @@
+[Unit]
+Description=AEGIS Infrastructure Security Telemetry Agent
+After=network.target mysqld.service sshd.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/aegis-agent
+ExecStart=/usr/bin/python3 /opt/aegis-agent/aegis_agent.py
+Restart=always
+RestartSec=5
+Nice=19
+CPUSchedulingPolicy=idle
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+{
+  "server_id": "srv_rumahweb_01",
+  "server_name": "VPS RumahWeb (CethoKaryo)",
+  "mysql_log": "/var/log/mysqld.log",
+  "ssh_log": "/var/log/secure",
+  "trusted_ips": [
+    "127.0.0.1",
+    "::1",
+    "103.142.21.195",
+    "182.1.200.*"
+  ],
+  "max_failed_attempts": 3,
+  "time_window_seconds": 120,
+  "fcm_server_key": "YOUR_FIREBASE_SERVER_KEY_OR_BEARER",
+  "fcm_topic": "aegis_alerts",
+  "alert_webhook": ""
+}
