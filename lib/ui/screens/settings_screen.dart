@@ -16,8 +16,6 @@ import '../../providers/theme_provider.dart';
 import 'faq_screen.dart';
 import 'pin_auth_screen.dart';
 import '../widgets/aegis_logo.dart';
-import '../widgets/penetration_test_card.dart';
-import '../widgets/compliance_scanner_card.dart';
 import '../../services/threat_intel_service.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -112,37 +110,13 @@ class SettingsScreen extends StatelessWidget {
                   _buildThreatIntelSection(context, settings, isDark),
                   const SizedBox(height: 24),
 
-                  // 7. Penetration Testing & Alert Simulation Lab
-                  _buildSectionHeader(
-                    context,
-                    settings.isIndonesian
-                        ? 'SIMULASI SIBER & UJI PENETRASI ALARM'
-                        : 'CYBER SIMULATION & PENETRATION TESTING',
-                    isDark,
-                  ),
-                  const SizedBox(height: 10),
-                  const PenetrationTestCard(),
-                  const SizedBox(height: 24),
-
-                  // 8. System Hardening & Compliance Scanners
-                  _buildSectionHeader(
-                    context,
-                    settings.isIndonesian
-                        ? 'HARDENING SISTEM & KEPATUHAN (CIS)'
-                        : 'SYSTEM HARDENING & COMPLIANCE (CIS)',
-                    isDark,
-                  ),
-                  const SizedBox(height: 10),
-                  const ComplianceScannerCard(),
-                  const SizedBox(height: 24),
-
-                  // 9. Legal, Privacy & Compliance Links
+                  // 7. Legal, Privacy & Compliance Links
                   _buildSectionHeader(context, settings.t('legal_heading'), isDark),
                   const SizedBox(height: 10),
                   _buildLegalSection(context, settings, isDark),
                   const SizedBox(height: 24),
 
-                  // 10. Zona Bahaya & Reset Sistem
+                  // 8. Zona Bahaya & Reset Sistem
                   _buildSectionHeader(
                     context,
                     settings.isIndonesian ? 'ZONA BAHAYA & RESET SISTEM' : 'DANGER ZONE & SYSTEM RESET',
@@ -152,7 +126,7 @@ class SettingsScreen extends StatelessWidget {
                   _buildDangerZoneSection(context, settings, isDark),
                   const SizedBox(height: 24),
 
-                  // 11. Security Architecture & Version Footer
+                  // 9. Security Architecture & Version Footer
                   _buildSystemFooter(context, settings, isDark),
                   const SizedBox(height: 32),
                 ],

@@ -5,7 +5,7 @@ import 'package:aegis/main.dart';
 import 'package:aegis/providers/theme_provider.dart';
 import 'package:aegis/providers/settings_provider.dart';
 import 'package:aegis/ui/screens/service_detail_screen.dart';
-import 'package:aegis/ui/screens/audit_explorer_screen.dart';
+import 'package:aegis/ui/screens/features_screen.dart';
 import 'package:aegis/ui/screens/policy_settings_screen.dart';
 import 'package:aegis/ui/screens/server_management_screen.dart';
 import 'package:aegis/ui/screens/settings_screen.dart';
@@ -98,11 +98,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byType(ServiceDetailScreen), findsOneWidget);
 
-    // Tab 2: Audit Explorer
-    await tester.tap(find.byIcon(Icons.format_list_bulleted_rounded));
+    // Tab 2: Features (Terminal, SFTP, Hardening, Pentest, SIEM)
+    await tester.tap(find.byIcon(Icons.grid_view_rounded));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.byType(AuditExplorerScreen), findsOneWidget);
+    expect(find.byType(FeaturesScreen), findsOneWidget);
 
     // Tab 3: Policies (Zero theme toggle, clean policy parameters)
     await tester.tap(find.byIcon(Icons.shield_outlined));

@@ -283,6 +283,7 @@ class SettingsProvider extends ChangeNotifier {
     final Map<String, Map<String, String>> dict = {
       'nav_dashboard': {'id': 'Dashboard', 'en': 'Dashboard'},
       'nav_services': {'id': 'Layanan', 'en': 'Services'},
+      'nav_features': {'id': 'Fitur', 'en': 'Features'},
       'nav_audit': {'id': 'Log Audit', 'en': 'Audit Log'},
       'nav_policies': {'id': 'Kebijakan', 'en': 'Policies'},
       'nav_servers': {'id': 'Server', 'en': 'Servers'},

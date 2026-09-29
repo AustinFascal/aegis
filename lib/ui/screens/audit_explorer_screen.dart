@@ -12,8 +12,27 @@ import '../widgets/two_factor_auth_dialog.dart';
 import '../widgets/event_tile.dart';
 import 'faq_screen.dart';
 
-class AuditExplorerScreen extends StatelessWidget {
-  const AuditExplorerScreen({super.key});
+class AuditExplorerScreen extends StatefulWidget {
+  final String? initialServiceFilter;
+
+  const AuditExplorerScreen({super.key, this.initialServiceFilter});
+
+  @override
+  State<AuditExplorerScreen> createState() => _AuditExplorerScreenState();
+}
+
+class _AuditExplorerScreenState extends State<AuditExplorerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialServiceFilter != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && widget.initialServiceFilter != null) {
+          context.read<TelemetryProvider>().setServiceFilter(widget.initialServiceFilter!);
+        }
+      });
+    }
+  }
 
   Future<void> _handleRefresh(BuildContext context) async {
     final serverProvider = context.read<ServerProvider>();

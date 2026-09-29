@@ -10,7 +10,7 @@ import '../../providers/policy_provider.dart';
 import '../../services/notification_service.dart';
 import 'dashboard_screen.dart';
 import 'service_detail_screen.dart';
-import 'audit_explorer_screen.dart';
+import 'features_screen.dart';
 import 'policy_settings_screen.dart';
 import 'server_management_screen.dart';
 import '../widgets/aegis_logo.dart';
@@ -266,7 +266,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
     final screens = [
       DashboardScreen(onNavigateToTab: _navigateToTab),
       const ServiceDetailScreen(),
-      const AuditExplorerScreen(),
+      const FeaturesScreen(),
       const PolicySettingsScreen(),
       const ServerManagementScreen(),
     ];
@@ -338,9 +338,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
                       label: Text(settings.t('nav_services')),
                     ),
                     NavigationRailDestination(
-                      icon: const Icon(Icons.format_list_bulleted_rounded),
-                      selectedIcon: const Icon(Icons.format_list_bulleted_rounded),
-                      label: Text(settings.t('nav_audit')),
+                      icon: const Icon(Icons.grid_view_rounded),
+                      selectedIcon: const Icon(Icons.grid_view_rounded),
+                      label: Text(settings.t('nav_features')),
                     ),
                     NavigationRailDestination(
                       icon: const Icon(Icons.shield_outlined),
@@ -405,9 +405,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
                     label: settings.t('nav_services'),
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.format_list_bulleted_rounded),
-                    activeIcon: const Icon(Icons.format_list_bulleted_rounded),
-                    label: settings.t('nav_audit'),
+                    icon: const Icon(Icons.grid_view_rounded),
+                    activeIcon: const Icon(Icons.grid_view_rounded),
+                    label: settings.t('nav_features'),
                   ),
                   BottomNavigationBarItem(
                     icon: const Icon(Icons.shield_outlined),

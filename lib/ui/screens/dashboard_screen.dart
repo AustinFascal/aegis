@@ -1,4 +1,5 @@
 import '../../models/auth_event.dart';
+import 'audit_explorer_screen.dart';
 import 'settings_screen.dart';
 import 'faq_screen.dart';
 import 'server_management_screen.dart';
@@ -362,21 +363,7 @@ class DashboardScreen extends StatelessWidget {
           final width = constraints.maxWidth;
           final isWideDesktop = width >= 1050;
 
-          final int metricCols;
-          final double metricAspect;
-          if (width >= 1100) {
-            metricCols = 4;
-            metricAspect = 1.35;
-          } else if (width >= 680) {
-            metricCols = 4;
-            metricAspect = 1.12;
-          } else if (width >= 420) {
-            metricCols = 2;
-            metricAspect = 1.35;
-          } else {
-            metricCols = 2;
-            metricAspect = 1.12;
-          }
+          final int metricCols = width >= 900 ? 4 : (width >= 420 ? 2 : 1);
 
           return RefreshIndicator(
             onRefresh: () => _handleDashboardRefresh(
@@ -710,13 +697,15 @@ class DashboardScreen extends StatelessWidget {
                       const SizedBox(height: 18),
 
                       // Responsive KPI Metrics Grid
-                      GridView.count(
-                        crossAxisCount: metricCols,
+                      GridView(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: metricAspect,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: metricCols,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          mainAxisExtent: 116,
+                        ),
                         children: [
                           MetricCard(
                             title: settings.t('failed_logins'),
@@ -1036,7 +1025,12 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () => onNavigateToTab(2),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AuditExplorerScreen()),
+                );
+              },
               child: Text(
                 settings.t('all_logs'),
                 style: const TextStyle(fontSize: 12),

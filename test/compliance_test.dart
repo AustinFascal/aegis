@@ -14,6 +14,7 @@ import 'package:aegis/ui/screens/faq_screen.dart';
 import 'package:aegis/ui/screens/policy_settings_screen.dart';
 import 'package:aegis/ui/screens/server_management_screen.dart';
 import 'package:aegis/ui/widgets/compliance_scanner_card.dart';
+import 'package:aegis/ui/screens/features_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -176,11 +177,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ComplianceScannerCard), findsOneWidget);
-      expect(find.text('BUKA PEMINDAI KEPATUHAN'), findsOneWidget);
+      // PolicySettingsScreen has clean policy whitelist without ComplianceScannerCard
+      expect(find.byType(ComplianceScannerCard), findsNothing);
+      expect(find.text('DAFTAR PUTIH IP TERPERCAYA'), findsOneWidget);
     });
 
-    testWidgets('Server card displays HARDENING button beside SFTP and opens ComplianceScreen', (tester) async {
+    testWidgets('Server card displays responsive action buttons and FeaturesScreen opens ComplianceScreen', (tester) async {
       tester.view.physicalSize = const Size(1200, 1000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -210,13 +212,28 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify TERMINAL, SFTP, and HARDENING buttons are present
-      expect(find.text('TERMINAL'), findsWidgets);
-      expect(find.text('SFTP'), findsWidgets);
-      expect(find.text('HARDENING'), findsWidgets);
+      // Verify KONFIGURASI exists and shortcut buttons were removed
+      expect(find.text('KONFIGURASI'), findsWidgets);
+      expect(find.text('UJI SSH'), findsWidgets);
+      expect(find.text('HARDENING'), findsNothing);
 
-      // Tap HARDENING button
-      final hardeningBtn = find.text('HARDENING').first;
+      // Verify FeaturesScreen opens ComplianceScreen
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: settings),
+            ChangeNotifierProvider.value(value: serverProvider),
+            ChangeNotifierProvider.value(value: themeProvider),
+            ChangeNotifierProvider.value(value: telemetry),
+          ],
+          child: const MaterialApp(
+            home: FeaturesScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final hardeningBtn = find.text('AUDIT & HARDENING').last;
       await tester.ensureVisible(hardeningBtn);
       await tester.tap(hardeningBtn);
       await tester.pumpAndSettle();

@@ -14,9 +14,14 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// Forward declaration
+static void setup_linux_application_icon(GtkWindow* window);
+
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
-  gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+  setup_linux_application_icon(window);
+  gtk_widget_show(GTK_WIDGET(window));
 }
 
 // Set application window and desktop launcher icons for Linux desktop environments
@@ -35,6 +40,7 @@ static void setup_linux_application_icon(GtkWindow* window) {
     exe_asset_icon,
     exe_data_icon,
     "data/flutter_assets/assets/images/aegis_logo.png",
+    "data/aegis_logo.png",
     "assets/images/aegis_logo.png",
     "linux/runner/aegis_logo.png",
     nullptr
@@ -50,33 +56,78 @@ static void setup_linux_application_icon(GtkWindow* window) {
 
   if (resolved_icon != nullptr) {
     GError* err = nullptr;
-    gtk_window_set_icon_from_file(window, resolved_icon, &err);
-    if (err) {
+    g_autoptr(GdkPixbuf) main_pixbuf = gdk_pixbuf_new_from_file(resolved_icon, &err);
+    if (main_pixbuf != nullptr) {
+      const int target_sizes[] = {16, 24, 32, 48, 64, 128, 256, 512};
+      GList* icon_list = nullptr;
+      for (size_t s = 0; s < G_N_ELEMENTS(target_sizes); s++) {
+        GdkPixbuf* scaled = gdk_pixbuf_scale_simple(
+            main_pixbuf, target_sizes[s], target_sizes[s], GDK_INTERP_BILINEAR);
+        if (scaled != nullptr) {
+          icon_list = g_list_append(icon_list, scaled);
+        }
+      }
+      if (icon_list != nullptr) {
+        gtk_window_set_icon_list(window, icon_list);
+        gtk_window_set_default_icon_list(icon_list);
+        g_list_free_full(icon_list, g_object_unref);
+      } else {
+        gtk_window_set_icon(window, main_pixbuf);
+        gtk_window_set_default_icon(main_pixbuf);
+      }
+    } else if (err) {
       g_clear_error(&err);
-    }
-    gtk_window_set_default_icon_from_file(resolved_icon, nullptr);
-
-    // Register containing directory in GtkIconTheme
-    g_autofree gchar* icon_dir = g_path_get_dirname(resolved_icon);
-    if (icon_dir != nullptr) {
-      gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), icon_dir);
     }
 
     // Auto-register to user's local icon theme and desktop file if not already present
     const gchar* home_dir = g_get_home_dir();
     if (home_dir != nullptr) {
-      g_autofree gchar* user_icons_dir = g_build_filename(home_dir, ".local", "share", "icons", "hicolor", "256x256", "apps", nullptr);
-      g_autofree gchar* user_icon_path = g_build_filename(user_icons_dir, "id.cethokaryo.aegis.png", nullptr);
-      g_autofree gchar* user_apps_dir = g_build_filename(home_dir, ".local", "share", "applications", nullptr);
-      g_autofree gchar* user_desktop_path = g_build_filename(user_apps_dir, "id.cethokaryo.aegis.desktop", nullptr);
+      g_autofree gchar* hicolor_dir = g_build_filename(home_dir, ".local", "share", "icons", "hicolor", nullptr);
+      g_mkdir_with_parents(hicolor_dir, 0755);
 
-      if (!g_file_test(user_icon_path, G_FILE_TEST_EXISTS)) {
-        g_mkdir_with_parents(user_icons_dir, 0755);
+      // Ensure index.theme exists in hicolor so gtk-update-icon-cache recognizes the theme
+      g_autofree gchar* user_theme_index = g_build_filename(hicolor_dir, "index.theme", nullptr);
+      if (!g_file_test(user_theme_index, G_FILE_TEST_EXISTS)) {
+        if (g_file_test("/usr/share/icons/hicolor/index.theme", G_FILE_TEST_EXISTS)) {
+          g_autoptr(GFile) src = g_file_new_for_path("/usr/share/icons/hicolor/index.theme");
+          g_autoptr(GFile) dst = g_file_new_for_path(user_theme_index);
+          g_file_copy(src, dst, G_FILE_COPY_NONE, nullptr, nullptr, nullptr, nullptr);
+        }
+      }
+
+      // Populate multiple resolutions in hicolor theme
+      const int icon_resolutions[] = {16, 24, 32, 48, 64, 128, 256, 512};
+      for (size_t r = 0; r < G_N_ELEMENTS(icon_resolutions); r++) {
+        g_autofree gchar* res_str = g_strdup_printf("%dx%d", icon_resolutions[r], icon_resolutions[r]);
+        g_autofree gchar* res_dir = g_build_filename(hicolor_dir, res_str, "apps", nullptr);
+        g_mkdir_with_parents(res_dir, 0755);
+
+        g_autofree gchar* target_icon_path = g_build_filename(res_dir, "id.cethokaryo.aegis.png", nullptr);
+        g_autofree gchar* target_short_icon = g_build_filename(res_dir, "aegis.png", nullptr);
+
+        if (!g_file_test(target_icon_path, G_FILE_TEST_EXISTS) && main_pixbuf != nullptr) {
+          g_autoptr(GdkPixbuf) scaled = gdk_pixbuf_scale_simple(
+              main_pixbuf, icon_resolutions[r], icon_resolutions[r], GDK_INTERP_BILINEAR);
+          if (scaled != nullptr) {
+            gdk_pixbuf_save(scaled, target_icon_path, "png", nullptr, nullptr);
+            gdk_pixbuf_save(scaled, target_short_icon, "png", nullptr, nullptr);
+          }
+        }
+      }
+
+      // Also ensure ~/.local/share/pixmaps has the icon for desktop environments that look there
+      g_autofree gchar* pixmaps_dir = g_build_filename(home_dir, ".local", "share", "pixmaps", nullptr);
+      g_mkdir_with_parents(pixmaps_dir, 0755);
+      g_autofree gchar* pixmap_path = g_build_filename(pixmaps_dir, "id.cethokaryo.aegis.png", nullptr);
+      if (!g_file_test(pixmap_path, G_FILE_TEST_EXISTS) && resolved_icon != nullptr) {
         g_autoptr(GFile) src = g_file_new_for_path(resolved_icon);
-        g_autoptr(GFile) dst = g_file_new_for_path(user_icon_path);
+        g_autoptr(GFile) dst = g_file_new_for_path(pixmap_path);
         g_file_copy(src, dst, G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, nullptr);
       }
 
+      // Register or update .desktop file in ~/.local/share/applications
+      g_autofree gchar* user_apps_dir = g_build_filename(home_dir, ".local", "share", "applications", nullptr);
+      g_autofree gchar* user_desktop_path = g_build_filename(user_apps_dir, "id.cethokaryo.aegis.desktop", nullptr);
       if (!g_file_test(user_desktop_path, G_FILE_TEST_EXISTS) && exe_path != nullptr) {
         g_mkdir_with_parents(user_apps_dir, 0755);
         gchar* desktop_content = g_strdup_printf(
@@ -94,11 +145,19 @@ static void setup_linux_application_icon(GtkWindow* window) {
         g_file_set_contents(user_desktop_path, desktop_content, -1, nullptr);
         g_free(desktop_content);
       }
+
+      // Append user icon directories to default icon theme
+      gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), hicolor_dir);
+      gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), pixmaps_dir);
+      gtk_icon_theme_rescan_if_needed(gtk_icon_theme_get_default());
     }
   }
 
-  gtk_window_set_icon_name(window, APPLICATION_ID);
-  gtk_window_set_default_icon_name(APPLICATION_ID);
+  // Only bind themed icon name if the icon is present in the icon theme to avoid unsetting pixbuf
+  if (gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), APPLICATION_ID)) {
+    gtk_window_set_icon_name(window, APPLICATION_ID);
+    gtk_window_set_default_icon_name(APPLICATION_ID);
+  }
 }
 
 // Implements GApplication::activate.

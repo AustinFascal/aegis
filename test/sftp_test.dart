@@ -11,6 +11,7 @@ import 'package:aegis/ui/screens/faq_screen.dart';
 import 'package:aegis/ui/screens/server_management_screen.dart';
 import 'package:aegis/ui/screens/sftp_screen.dart';
 import 'package:aegis/ui/screens/terminal_screen.dart';
+import 'package:aegis/ui/screens/features_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -86,16 +87,30 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify TERMINAL and SFTP buttons are present
-      expect(find.text('TERMINAL'), findsWidgets);
-      expect(find.text('SFTP'), findsWidgets);
+      // Verify KONFIGURASI exists and shortcut buttons TERMINAL & SFTP were removed
+      expect(find.text('KONFIGURASI'), findsWidgets);
+      expect(find.text('UJI SSH'), findsWidgets);
+      expect(find.text('TERMINAL'), findsNothing);
+      expect(find.text('SFTP'), findsNothing);
 
-      // Verify SFTP button has folder_shared icon
-      expect(find.byIcon(Icons.folder_shared_rounded), findsWidgets);
+      // Verify FeaturesScreen opens SftpScreen
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: settings),
+            ChangeNotifierProvider.value(value: serverProvider),
+            ChangeNotifierProvider.value(value: themeProvider),
+            ChangeNotifierProvider.value(value: telemetry),
+          ],
+          child: const MaterialApp(
+            home: FeaturesScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-      // Tap SFTP button
-      final sftpBtn = find.text('SFTP').first;
-      await tester.ensureVisible(sftpBtn);
+      final sftpBtn = find.text('BUKA SFTP');
+      expect(sftpBtn, findsOneWidget);
       await tester.tap(sftpBtn);
       await tester.pumpAndSettle();
 

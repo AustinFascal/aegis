@@ -10,10 +10,7 @@ import '../../models/server_profile.dart';
 import '../../providers/server_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
-import 'compliance_screen.dart';
 import 'faq_screen.dart';
-import 'sftp_screen.dart';
-import 'terminal_screen.dart';
 
 class ServerManagementScreen extends StatefulWidget {
   const ServerManagementScreen({super.key});
@@ -458,109 +455,18 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                               OutlinedButton.icon(
                                 style: OutlinedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
+                                    horizontal: 10,
+                                    vertical: 6,
                                   ),
+                                  visualDensity: VisualDensity.compact,
                                 ),
                                 onPressed: () =>
                                     _showServerDialog(context, server),
-                                icon: const Icon(Icons.tune_rounded, size: 16),
+                                icon: const Icon(Icons.tune_rounded, size: 15),
                                 label: Text(
                                   isIndo ? 'KONFIGURASI' : 'CONFIGURE',
+                                  style: const TextStyle(fontSize: 11),
                                 ),
-                              ),
-
-                              // Interactive SSH Terminal Button
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark
-                                      ? AppColors.primary.withValues(alpha: 0.18)
-                                      : AppColors.primaryLight.withValues(alpha: 0.15),
-                                  foregroundColor: isDark
-                                      ? AppColors.primary
-                                      : AppColors.primaryLight,
-                                  side: BorderSide(
-                                    color: (isDark ? AppColors.primary : AppColors.primaryLight)
-                                        .withValues(alpha: 0.5),
-                                    width: 1.1,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => TerminalScreen(server: server),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.terminal_rounded, size: 16),
-                                label: Text(isIndo ? 'TERMINAL' : 'TERMINAL'),
-                              ),
-
-                              // SFTP Remote File Manager Button
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark
-                                      ? AppColors.purple.withValues(alpha: 0.18)
-                                      : AppColors.purpleLight.withValues(alpha: 0.15),
-                                  foregroundColor: isDark
-                                      ? AppColors.purple
-                                      : AppColors.purpleLight,
-                                  side: BorderSide(
-                                    color: (isDark ? AppColors.purple : AppColors.purpleLight)
-                                        .withValues(alpha: 0.5),
-                                    width: 1.1,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => SftpScreen(server: server),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.folder_shared_rounded, size: 16),
-                                label: const Text('SFTP'),
-                              ),
-
-                              // System Hardening & Compliance Scanner Button
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDark
-                                      ? AppColors.success.withValues(alpha: 0.18)
-                                      : AppColors.successLight.withValues(alpha: 0.15),
-                                  foregroundColor: isDark
-                                      ? AppColors.success
-                                      : AppColors.successLight,
-                                  side: BorderSide(
-                                    color: (isDark ? AppColors.success : AppColors.successLight)
-                                        .withValues(alpha: 0.5),
-                                    width: 1.1,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ComplianceScreen(server: server),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.verified_user_rounded, size: 16),
-                                label: const Text('HARDENING'),
                               ),
 
                               // Reboot Server Button
@@ -574,18 +480,20 @@ class _ServerManagementScreenState extends State<ServerManagementScreen> {
                                     width: 1.1,
                                   ),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
+                                    horizontal: 10,
+                                    vertical: 6,
                                   ),
+                                  visualDensity: VisualDensity.compact,
                                 ),
                                 onPressed: () =>
                                     _confirmRebootServer(context, server),
                                 icon: const Icon(
                                   Icons.restart_alt_rounded,
-                                  size: 16,
+                                  size: 15,
                                 ),
                                 label: Text(
-                                  isIndo ? 'RESTART SERVER' : 'REBOOT SERVER',
+                                  isIndo ? 'RESTART' : 'REBOOT',
+                                  style: const TextStyle(fontSize: 11),
                                 ),
                               ),
 

@@ -121,13 +121,15 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               final width = constraints.maxWidth;
               final cols = width >= 900 ? 4 : (width >= 480 ? 2 : 1);
 
-              return GridView.count(
-                crossAxisCount: cols,
+              return GridView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: width >= 900 ? 1.45 : (width >= 480 ? 1.6 : 2.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: cols,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  mainAxisExtent: 112,
+                ),
                 children: [
                   _buildCpuMetricTile(telemetry.cpu, isDark, settings),
                   _buildRamMetricTile(telemetry.ram, isDark, settings),
@@ -179,116 +181,109 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     final theme = Theme.of(context);
     final isIndo = settings.isIndonesian;
 
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 12,
-      runSpacing: 8,
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(
-                  Icons.memory_rounded,
-                  color: theme.colorScheme.primary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        Text(
-                          settings.t('hardware_telemetry_heading'),
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                        // Live pulsating badge
-                        FadeTransition(
-                          opacity: isSampling ? _pulseController : const AlwaysStoppedAnimation(1.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: (isSampling ? AppColors.success : AppColors.warning)
-                                  .withValues(alpha: isDark ? 0.18 : 0.12),
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: (isSampling ? AppColors.success : AppColors.warning)
-                                    .withValues(alpha: 0.4),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isSampling
-                                        ? (isDark ? AppColors.success : AppColors.successLight)
-                                        : (isDark ? AppColors.warning : AppColors.warningLight),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  isSampling ? '${intervalSec}s LIVE' : settings.t('sampling_paused'),
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w800,
-                                    color: isSampling
-                                        ? (isDark ? AppColors.success : AppColors.successLight)
-                                        : (isDark ? AppColors.warning : AppColors.warningLight),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      settings.t('hardware_telemetry_sub'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+    return LayoutBuilder(
+      builder: (context, headerConstraints) {
+        final isCompact = headerConstraints.maxWidth < 520;
 
-        // Action Toolbar
-        Row(
+        final titleWidget = Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                Icons.memory_rounded,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      Text(
+                        settings.t('hardware_telemetry_heading'),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      // Live pulsating badge
+                      FadeTransition(
+                        opacity: isSampling ? _pulseController : const AlwaysStoppedAnimation(1.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: (isSampling ? AppColors.success : AppColors.warning)
+                                .withValues(alpha: isDark ? 0.18 : 0.12),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: (isSampling ? AppColors.success : AppColors.warning)
+                                  .withValues(alpha: 0.4),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isSampling
+                                      ? (isDark ? AppColors.success : AppColors.successLight)
+                                      : (isDark ? AppColors.warning : AppColors.warningLight),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                isSampling ? '${intervalSec}s LIVE' : settings.t('sampling_paused'),
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSampling
+                                      ? (isDark ? AppColors.success : AppColors.successLight)
+                                      : (isDark ? AppColors.warning : AppColors.warningLight),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    settings.t('hardware_telemetry_sub'),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+
+        final toolbarWidget = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Pause / Resume Toggle
@@ -357,8 +352,31 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               onPressed: () => hwProvider?.toggleDetailedView(),
             ),
           ],
-        ),
-      ],
+        );
+
+        if (isCompact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleWidget,
+              const SizedBox(height: 6),
+              Align(
+                alignment: Alignment.centerRight,
+                child: toolbarWidget,
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: titleWidget),
+            const SizedBox(width: 8),
+            toolbarWidget,
+          ],
+        );
+      },
     );
   }
 
@@ -384,7 +402,7 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     final color = _getUsageColor(cpu.overall, isDark);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(12),
@@ -395,7 +413,6 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -433,39 +450,46 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '${cpu.overall.toStringAsFixed(1)}%',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 90,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: (cpu.overall / 100.0).clamp(0.0, 1.0),
-                      backgroundColor: color.withValues(alpha: 0.15),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
-                      minHeight: 6,
+          const SizedBox(height: 4),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '${cpu.overall.toStringAsFixed(1)}%',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 90,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: (cpu.overall / 100.0).clamp(0.0, 1.0),
+                          backgroundColor: color.withValues(alpha: 0.15),
+                          valueColor: AlwaysStoppedAnimation<Color>(color),
+                          minHeight: 6,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             'Load: ${cpu.loadAvgFormatted}',
             maxLines: 1,
@@ -488,7 +512,7 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     final color = _getUsageColor(ram.usagePercent, isDark);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(12),
@@ -499,7 +523,6 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -537,34 +560,41 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  ram.usedFormatted,
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                  ),
+          const SizedBox(height: 4),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      ram.usedFormatted,
+                      style: TextStyle(
+                        color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    Text(
+                      ' / ${ram.totalFormatted}',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  ' / ${ram.totalFormatted}',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 2),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -599,7 +629,7 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     final color = _getPartitionStatusColor(rootPart.status, isDark);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(12),
@@ -610,7 +640,6 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -655,33 +684,40 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '${rootPart.mount} ${effectivePct.toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                  ),
+          const SizedBox(height: 4),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '${rootPart.mount} ${effectivePct.toStringAsFixed(0)}%',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '(${rootPart.usedFormatted}/${rootPart.totalFormatted})',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  '(${rootPart.usedFormatted}/${rootPart.totalFormatted})',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 2),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -705,7 +741,7 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     const color = AppColors.info;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(12),
@@ -716,7 +752,6 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -765,40 +800,47 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               ),
             ],
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '${sockets.activeSockets}',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                  ),
+          const SizedBox(height: 4),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '${sockets.activeSockets}',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'active (${sockets.total} total)',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 6),
-                Text(
-                  'active (${sockets.total} total)',
-                  style: TextStyle(
-                    color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             'TCP: ${sockets.tcpInUse} • UDP: ${sockets.udpInUse} • TW: ${sockets.tcpTimeWait}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-              fontSize: 10,
+              fontSize: 9,
             ),
           ),
         ],
@@ -840,8 +882,11 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 6,
             children: [
               Text(
                 isIndo ? 'TREN SAMPLING REALTIME (15 SAMPEL)' : 'REAL-TIME SAMPLING TREND (15 SAMPLES)',
@@ -963,8 +1008,11 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 4,
           children: [
             Text(
               isIndo ? 'PENGGUNAAN MULTI-CORE CPU' : 'MULTI-CORE CPU UTILIZATION',
@@ -976,15 +1024,13 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
               ),
             ),
             if (cpu.modelName != null)
-              Flexible(
-                child: Text(
-                  cpu.modelName!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
-                    fontSize: 9,
-                  ),
+              Text(
+                cpu.modelName!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                  fontSize: 9,
                 ),
               ),
           ],
@@ -1090,50 +1136,95 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
             final part = partitions[index];
             final color = _getPartitionStatusColor(part.status, isDark);
 
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 520;
+
+                if (isCompact) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: themeColor(context).colorScheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      part.mount,
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11,
-                        color: themeColor(context).colorScheme.primary,
+                      color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: themeColor(context).colorScheme.primary.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      part.mount,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'monospace',
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 11,
+                                        color: themeColor(context).colorScheme.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      part.filesystem,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: color.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                part.status.name.toUpperCase(),
+                                style: TextStyle(
+                                  color: color,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Text(
-                              part.filesystem,
+                              '${part.usagePercent.toStringAsFixed(1)}% Used',
                               style: TextStyle(
-                                color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                                color: color,
                                 fontSize: 10,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                             Text(
-                              '${part.usedFormatted} / ${part.totalFormatted} (${part.usagePercent.toStringAsFixed(0)}%)',
+                              '${part.usedFormatted} / ${part.totalFormatted}',
                               style: TextStyle(
                                 color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
                                 fontSize: 10,
@@ -1154,25 +1245,104 @@ class _HardwareTelemetryCardState extends State<HardwareTelemetryCard>
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(4),
+                  );
+                }
+
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                     ),
-                    child: Text(
-                      part.status.name.toUpperCase(),
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
+                  ),
+                  child: Row(
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 120),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: themeColor(context).colorScheme.primary.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            part.mount,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11,
+                              color: themeColor(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    part.filesystem,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${part.usedFormatted} / ${part.totalFormatted} (${part.usagePercent.toStringAsFixed(0)}%)',
+                                  style: TextStyle(
+                                    color: isDark ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(3),
+                              child: LinearProgressIndicator(
+                                value: (part.usagePercent / 100.0).clamp(0.0, 1.0),
+                                backgroundColor: color.withValues(alpha: 0.15),
+                                valueColor: AlwaysStoppedAnimation<Color>(color),
+                                minHeight: 5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          part.status.name.toUpperCase(),
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         ),

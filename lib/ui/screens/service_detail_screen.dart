@@ -1,4 +1,5 @@
 import 'server_management_screen.dart';
+import 'audit_explorer_screen.dart';
 import '../../core/security/biometric_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,6 +94,22 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               : 'SERVICE FORENSICS & CONTROL',
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.format_list_bulleted_rounded),
+            tooltip: settings.isIndonesian
+                ? 'Buka Log Audit Forensik'
+                : 'Open Forensic Audit Log',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AuditExplorerScreen(
+                    initialServiceFilter: _selectedServiceId,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.help_outline_rounded),
             tooltip: settings.isIndonesian
@@ -1560,21 +1577,71 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     bool isDark,
     SettingsProvider settings,
   ) {
+    const int previewLimit = 5;
+    final displayEvents = events.take(previewLimit).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          settings.isIndonesian
-              ? 'JEJAK AUDIT & KEJADIAN KEAMANAN ${def.name.toUpperCase()}'
-              : '${def.name.toUpperCase()} SECURITY AUDIT TRAIL',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.8,
-            color: isDark
-                ? AppColors.textSecondary
-                : AppColors.lightTextSecondary,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    settings.isIndonesian
+                        ? 'JEJAK AUDIT & KEJADIAN KEAMANAN ${def.name.toUpperCase()}'
+                        : '${def.name.toUpperCase()} SECURITY AUDIT TRAIL',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                      color: isDark
+                          ? AppColors.textSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                  ),
+                  if (events.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      settings.isIndonesian
+                          ? 'Pratinjau diagnostik ${displayEvents.length} kejadian terkini dari total ${events.length}'
+                          : 'Diagnostic preview of ${displayEvents.length} latest events of ${events.length} total',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (events.length > previewLimit)
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: def.color,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AuditExplorerScreen(
+                        initialServiceFilter: def.id,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                label: Text(
+                  settings.isIndonesian ? 'Buka Semua' : 'View All',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 10),
         if (events.isEmpty)
@@ -1611,8 +1678,60 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               ],
             ),
           )
-        else
-          ...events.map((e) => EventTile(event: e)),
+        else ...[
+          ...displayEvents.map((e) => EventTile(event: e)),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: def.color.withValues(alpha: isDark ? 0.35 : 0.25),
+              ),
+              color: def.color.withValues(alpha: isDark ? 0.08 : 0.04),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AuditExplorerScreen(
+                        initialServiceFilter: def.id,
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.travel_explore_rounded, size: 18, color: def.color),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          settings.isIndonesian
+                              ? 'Eksplorasi Riwayat Forensik Lengkap (${events.length} Kejadian) →'
+                              : 'Explore Full Forensic Audit Trail (${events.length} Events) →',
+                          style: TextStyle(
+                            color: def.color,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.3,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

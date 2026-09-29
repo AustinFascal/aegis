@@ -8,7 +8,6 @@ import '../../providers/policy_provider.dart';
 import '../../providers/server_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
-import '../widgets/compliance_scanner_card.dart';
 
 class PolicySettingsScreen extends StatelessWidget {
   const PolicySettingsScreen({super.key});
@@ -125,10 +124,6 @@ class PolicySettingsScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 18),
-
-                    // System Hardening & Compliance Scanner Card
-                    ComplianceScannerCard(server: activeServer),
 
                     const SizedBox(height: 24),
 

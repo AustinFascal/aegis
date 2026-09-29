@@ -8,6 +8,7 @@ import 'package:aegis/providers/telemetry_provider.dart';
 import 'package:aegis/providers/theme_provider.dart';
 import 'package:aegis/ui/screens/server_management_screen.dart';
 import 'package:aegis/ui/screens/terminal_screen.dart';
+import 'package:aegis/ui/screens/features_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -275,7 +276,7 @@ void main() {
   });
 
   group('ServerManagementScreen Terminal Button Tests', () {
-    testWidgets('Server card displays TERMINAL button beside KONFIGURASI and opens TerminalScreen', (tester) async {
+    testWidgets('Server card displays responsive action buttons and FeaturesScreen opens TerminalScreen', (tester) async {
       tester.view.physicalSize = const Size(1200, 1000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -305,13 +306,29 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify KONFIGURASI and TERMINAL buttons exist
+      // Verify KONFIGURASI and TEST SSH exist and shortcut button TERMINAL was removed
       expect(find.text('KONFIGURASI'), findsWidgets);
-      expect(find.text('TERMINAL'), findsWidgets);
+      expect(find.text('UJI SSH'), findsWidgets);
+      expect(find.text('TERMINAL'), findsNothing);
 
-      // Tap TERMINAL button
-      final terminalBtn = find.text('TERMINAL').first;
-      await tester.ensureVisible(terminalBtn);
+      // Verify FeaturesScreen opens TerminalScreen
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: settings),
+            ChangeNotifierProvider.value(value: serverProvider),
+            ChangeNotifierProvider.value(value: themeProvider),
+            ChangeNotifierProvider.value(value: telemetry),
+          ],
+          child: const MaterialApp(
+            home: FeaturesScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final terminalBtn = find.text('BUKA TERMINAL');
+      expect(terminalBtn, findsOneWidget);
       await tester.tap(terminalBtn);
       await tester.pumpAndSettle();
 
