@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/telemetry_provider.dart';
+import '../../providers/policy_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/server_provider.dart';
@@ -17,16 +18,36 @@ class AuditExplorerScreen extends StatelessWidget {
   Future<void> _handleRefresh(BuildContext context) async {
     final serverProvider = context.read<ServerProvider>();
     final telemetryProvider = context.read<TelemetryProvider>();
+    final policyProvider = context.read<PolicyProvider>();
     final activeServer = serverProvider.activeServer;
+
     if (activeServer != null) {
-      await serverProvider.testActiveServer(
-        onPrompt2FA: (prompt) => TwoFactorAuthDialog.show(
-          context,
-          username: activeServer.username,
-          serverName: activeServer.name,
-          promptText: prompt,
-        ),
+      Future<String?> prompt2FA(String prompt) => TwoFactorAuthDialog.show(
+        context,
+        username: activeServer.username,
+        serverName: activeServer.name,
+        promptText: prompt,
       );
+
+      final result = await serverProvider.testActiveServer(onPrompt2FA: prompt2FA);
+      if (result.success) {
+        final policy = policyProvider.getPolicy(activeServer.id);
+        final liveEvents = await serverProvider.fetchRealTimeLogs(
+          server: activeServer,
+          onPrompt2FA: prompt2FA,
+        );
+        if (liveEvents.isNotEmpty) {
+          telemetryProvider.ingestBatchEvents(liveEvents, policy);
+        }
+
+        final serverBans = await serverProvider.fetchServerBannedIps(
+          serverId: activeServer.id,
+          onPrompt2FA: prompt2FA,
+        );
+        if (serverBans.isNotEmpty) {
+          policyProvider.syncServerBannedIps(activeServer.id, serverBans);
+        }
+      }
     }
     await telemetryProvider.refreshTelemetry();
   }

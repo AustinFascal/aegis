@@ -90,6 +90,7 @@ class TelemetryProvider extends ChangeNotifier {
   String _searchQuery = '';
   bool _isLiveMonitoring = true;
   Timer? _liveSimulationTimer;
+  Future<void> Function()? onLivePollRequested;
 
   List<AuthEvent> get allEvents {
     final list = List<AuthEvent>.from(_events);
@@ -277,60 +278,93 @@ class TelemetryProvider extends ChangeNotifier {
   }
 
   void ingestEvent(AuthEvent rawEvent, SecurityPolicy policy) {
-    final result = _anomalyEngine.evaluate(
-      event: rawEvent,
-      policy: policy,
-    );
+    ingestBatchEvents([rawEvent], policy, notifyAlerts: true);
+  }
 
-    final clientIp = rawEvent.clientIp;
-    final existingLogs = _ipEvidenceLogs[clientIp] ?? [];
-    final updatedEvidence = List<String>.from(existingLogs);
-    if (rawEvent.rawLog != null && rawEvent.rawLog!.isNotEmpty && !updatedEvidence.contains(rawEvent.rawLog)) {
-      updatedEvidence.insert(0, rawEvent.rawLog!);
-    }
-    for (final l in rawEvent.evidenceLogs) {
-      if (!updatedEvidence.contains(l)) {
-        updatedEvidence.add(l);
+  /// Ingests a batch of parsed real-time logs with deduplication, anomaly scoring, and evidence linking
+  void ingestBatchEvents(List<AuthEvent> rawEvents, SecurityPolicy policy, {bool notifyAlerts = false}) {
+    if (rawEvents.isEmpty) return;
+
+    bool hasNew = false;
+    for (final rawEvent in rawEvents) {
+      final isDuplicate = _events.any((existing) {
+        if (existing.serverId != rawEvent.serverId) return false;
+        if (existing.rawLog != null && rawEvent.rawLog != null) {
+          return existing.rawLog == rawEvent.rawLog;
+        }
+        return existing.service == rawEvent.service &&
+            existing.clientIp == rawEvent.clientIp &&
+            existing.user == rawEvent.user &&
+            existing.timestamp.difference(rawEvent.timestamp).inSeconds.abs() <= 2;
+      });
+
+      final clientIp = rawEvent.clientIp;
+      final existingLogs = _ipEvidenceLogs[clientIp] ?? [];
+      final updatedEvidence = List<String>.from(existingLogs);
+
+      if (rawEvent.rawLog != null && rawEvent.rawLog!.isNotEmpty && !updatedEvidence.contains(rawEvent.rawLog)) {
+        updatedEvidence.insert(0, rawEvent.rawLog!);
       }
-    }
-    _ipEvidenceLogs[clientIp] = updatedEvidence;
+      for (final l in rawEvent.evidenceLogs) {
+        if (!updatedEvidence.contains(l)) {
+          updatedEvidence.add(l);
+        }
+      }
+      _ipEvidenceLogs[clientIp] = updatedEvidence;
 
-    final currentCount = updatedEvidence.isNotEmpty
-        ? updatedEvidence.length
-        : ((_ipAttemptCounts[clientIp] ?? (rawEvent.attemptCount > 1 ? rawEvent.attemptCount : 0)) + 1);
-    _ipAttemptCounts[clientIp] = currentCount;
+      final currentCount = updatedEvidence.isNotEmpty
+          ? updatedEvidence.length
+          : ((_ipAttemptCounts[clientIp] ?? (rawEvent.attemptCount > 1 ? rawEvent.attemptCount : 0)) + 1);
+      _ipAttemptCounts[clientIp] = currentCount;
 
-    final eventWithCount = result.event.copyWith(
-      attemptCount: currentCount,
-      evidenceLogs: updatedEvidence,
-    );
+      if (isDuplicate) {
+        continue;
+      }
 
-    _events.insert(0, eventWithCount);
-    _events.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      hasNew = true;
+      final result = _anomalyEngine.evaluate(
+        event: rawEvent,
+        policy: policy,
+      );
 
-    // Synchronize all instances of clientIp in memory with new attempt count and evidence
-    for (int i = 0; i < _events.length; i++) {
-      if (_events[i].clientIp == clientIp) {
-        _events[i] = _events[i].copyWith(
-          attemptCount: currentCount,
-          evidenceLogs: updatedEvidence,
+      final eventWithCount = result.event.copyWith(
+        attemptCount: currentCount,
+        evidenceLogs: updatedEvidence,
+      );
+
+      _events.add(eventWithCount);
+
+      if (notifyAlerts && result.shouldAlert) {
+        _notificationService.showSecurityAlert(
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          title: result.alertTitle,
+          body: result.alertMessage,
+          payload: result.event.clientIp,
+          isCritical: result.event.severity == EventSeverity.critical,
         );
       }
     }
 
-    // Keep memory footprint bounded (max 500 events)
-    if (_events.length > 500) {
-      _events.removeLast();
-    }
+    if (hasNew) {
+      _events.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
-    if (result.shouldAlert) {
-      _notificationService.showSecurityAlert(
-        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        title: result.alertTitle,
-        body: result.alertMessage,
-        payload: result.event.clientIp,
-        isCritical: result.event.severity == EventSeverity.critical,
-      );
+      // Synchronize all instances of clientIp in memory with new attempt count and evidence
+      for (int i = 0; i < _events.length; i++) {
+        final ip = _events[i].clientIp;
+        final count = _ipAttemptCounts[ip];
+        final evidence = _ipEvidenceLogs[ip];
+        if (count != null && count != _events[i].attemptCount) {
+          _events[i] = _events[i].copyWith(
+            attemptCount: count,
+            evidenceLogs: evidence ?? _events[i].evidenceLogs,
+          );
+        }
+      }
+
+      // Keep memory footprint bounded (max 500 events)
+      if (_events.length > 500) {
+        _events = _events.sublist(0, 500);
+      }
     }
 
     notifyListeners();
@@ -603,9 +637,14 @@ class TelemetryProvider extends ChangeNotifier {
 
   void _startLiveMonitoringLoop() {
     _liveSimulationTimer?.cancel();
-    // Refresh rolling 24-hour window and simulate telemetry tail every 30 seconds
-    _liveSimulationTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    // Refresh rolling 24-hour window and simulate telemetry tail every 25 seconds
+    _liveSimulationTimer = Timer.periodic(const Duration(seconds: 25), (timer) async {
       if (!_isLiveMonitoring) return;
+      if (onLivePollRequested != null) {
+        try {
+          await onLivePollRequested!();
+        } catch (_) {}
+      }
       notifyListeners();
     });
   }

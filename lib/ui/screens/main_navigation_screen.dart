@@ -50,6 +50,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
       });
     }
 
+    // Configure live telemetry polling when an active server connection is already established
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final telemetry = context.read<TelemetryProvider>();
+      final serverProvider = context.read<ServerProvider>();
+      final policyProvider = context.read<PolicyProvider>();
+
+      telemetry.onLivePollRequested = () async {
+        if (!mounted) return;
+        final active = serverProvider.activeServer;
+        if (active != null && serverProvider.isServerConnected(active.id)) {
+          final policy = policyProvider.getPolicy(active.id);
+          final liveEvents = await serverProvider.fetchRealTimeLogs(server: active);
+          if (liveEvents.isNotEmpty) {
+            telemetry.ingestBatchEvents(liveEvents, policy, notifyAlerts: true);
+          }
+          final serverBans = await serverProvider.fetchServerBannedIps(serverId: active.id);
+          if (serverBans.isNotEmpty) {
+            policyProvider.syncServerBannedIps(active.id, serverBans);
+          }
+        }
+      };
+    });
+
     // Ingest incoming live FCM alerts directly into TelemetryProvider
     _fcmSub = NotificationService().onFcmEvent.listen((data) {
       if (!mounted) return;
@@ -146,6 +170,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
     WidgetsBinding.instance.removeObserver(this);
     _actionSub?.cancel();
     _fcmSub?.cancel();
+    try {
+      context.read<TelemetryProvider>().onLivePollRequested = null;
+    } catch (_) {}
     super.dispose();
   }
 

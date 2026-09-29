@@ -1,4 +1,6 @@
 import '../models/security_policy.dart';
+import '../models/auth_event.dart';
+import '../services/log_parser_service.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -44,6 +46,15 @@ class ServerProvider extends ChangeNotifier {
 
   bool hasStoredSudoPassword(String serverId) {
     return _sudoStatus[serverId] ?? false;
+  }
+
+  bool isServerConnected(String serverId) {
+    return _sshService.isConnected(serverId);
+  }
+
+  Future<void> disconnectServer(String serverId) async {
+    await _sshService.disconnect(serverId);
+    notifyListeners();
   }
 
   Future<String?> getCredentialForServer(ServerProfile server) async {
@@ -322,6 +333,7 @@ class ServerProvider extends ChangeNotifier {
 
       if (newCredential != null && newCredential.trim().isNotEmpty) {
         await saveCredential(updated.id, updated.authType, newCredential.trim());
+        await _sshService.disconnect(updated.id);
       }
 
       if (newTwoFactorSecret != null && newTwoFactorSecret.trim().isNotEmpty) {
@@ -340,6 +352,7 @@ class ServerProvider extends ChangeNotifier {
   }
 
   Future<void> deleteServer(String serverId) async {
+    await _sshService.disconnect(serverId);
     _servers.removeWhere((s) => s.id == serverId);
     _vaultStatus.remove(serverId);
     _sudoStatus.remove(serverId);
@@ -356,6 +369,7 @@ class ServerProvider extends ChangeNotifier {
   }
 
   Future<void> clearAllServers() async {
+    await _sshService.closeAll();
     for (final s in _servers) {
       await _vault.deletePrivateKey(s.id);
       await _vault.deletePassword(s.id);
@@ -639,6 +653,7 @@ class ServerProvider extends ChangeNotifier {
     required String action, // 'ban' or 'unban'
     String service = 'sshd',
     String? serverId,
+    Future<String?> Function(String promptText)? onPrompt2FA,
   }) async {
     final targetServer = serverId != null
         ? _servers.firstWhere((s) => s.id == serverId, orElse: () => activeServer ?? defaultVps)
@@ -662,6 +677,22 @@ class ServerProvider extends ChangeNotifier {
         (targetServer.authType == AuthType.password ? await _vault.getPassword(targetServer.id) : null);
     final totpSecret = await _vault.get2FASecret(targetServer.id);
 
+    Future<String?> Function(String promptText)? effectivePrompt2FA = onPrompt2FA;
+    if (effectivePrompt2FA == null && (totpSecret == null || totpSecret.isEmpty)) {
+      effectivePrompt2FA = (promptText) async {
+        final navCtx = rootNavigatorKey.currentContext;
+        if (navCtx != null && navCtx.mounted) {
+          return await TwoFactorAuthDialog.show(
+            navCtx,
+            username: targetServer.username,
+            serverName: targetServer.name,
+            promptText: promptText,
+          );
+        }
+        return null;
+      };
+    }
+
     return await _sshService.executeFirewallAction(
       profile: targetServer,
       credential: cred,
@@ -670,10 +701,15 @@ class ServerProvider extends ChangeNotifier {
       service: service,
       sudoPassword: sudoPass,
       totpSecret: totpSecret,
+      onPrompt2FA: effectivePrompt2FA,
     );
   }
+
   /// Queries fail2ban & iptables on the remote server via SSH
-  Future<List<BannedIpRecord>> fetchServerBannedIps({String? serverId}) async {
+  Future<List<BannedIpRecord>> fetchServerBannedIps({
+    String? serverId,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+  }) async {
     final targetServer = serverId != null
         ? _servers.firstWhere((s) => s.id == serverId, orElse: () => activeServer ?? defaultVps)
         : (activeServer ?? defaultVps);
@@ -690,12 +726,70 @@ class ServerProvider extends ChangeNotifier {
         (targetServer.authType == AuthType.password ? await _vault.getPassword(targetServer.id) : null);
     final totpSecret = await _vault.get2FASecret(targetServer.id);
 
+    Future<String?> Function(String promptText)? effectivePrompt2FA = onPrompt2FA;
+    if (effectivePrompt2FA == null && (totpSecret == null || totpSecret.isEmpty)) {
+      effectivePrompt2FA = (promptText) async {
+        final navCtx = rootNavigatorKey.currentContext;
+        if (navCtx != null && navCtx.mounted) {
+          return await TwoFactorAuthDialog.show(
+            navCtx,
+            username: targetServer.username,
+            serverName: targetServer.name,
+            promptText: promptText,
+          );
+        }
+        return null;
+      };
+    }
+
     return await _sshService.fetchServerBannedIps(
       profile: targetServer,
       credential: cred,
       sudoPassword: sudoPass,
       totpSecret: totpSecret,
+      onPrompt2FA: effectivePrompt2FA,
     );
+  }
+
+  /// Fetches real-time authentication & service logs directly from the active or specified server
+  Future<List<AuthEvent>> fetchRealTimeLogs({
+    ServerProfile? server,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+  }) async {
+    final targetServer = server ?? activeServer;
+    if (targetServer == null) return [];
+
+    final cred = await getCredentialForServer(targetServer);
+    if (cred == null || cred.trim().isEmpty) return [];
+
+    final sudoPass = await getSavedSudoPassword(targetServer.id);
+    final totpSecret = await get2FASecretForServer(targetServer);
+
+    Future<String?> Function(String promptText)? effectivePrompt2FA = onPrompt2FA;
+    if (effectivePrompt2FA == null && (totpSecret == null || totpSecret.isEmpty)) {
+      effectivePrompt2FA = (promptText) async {
+        final navCtx = rootNavigatorKey.currentContext;
+        if (navCtx != null && navCtx.mounted) {
+          return await TwoFactorAuthDialog.show(
+            navCtx,
+            username: targetServer.username,
+            serverName: targetServer.name,
+            promptText: promptText,
+          );
+        }
+        return null;
+      };
+    }
+
+    final rawLines = await _sshService.fetchUnifiedServerLogs(
+      profile: targetServer,
+      credential: cred.trim(),
+      sudoPassword: sudoPass,
+      totpSecret: totpSecret,
+      onPrompt2FA: effectivePrompt2FA,
+    );
+
+    return LogParserService().parseLines(rawLines, targetServer.id);
   }
 
   /// Queries raw server logs on the remote host for all occurrences matching the specified IP

@@ -69,6 +69,31 @@ class SshService {
   // Strict regex pattern for safe filesystem log paths
   static final RegExp _safeLogPathRegex = RegExp(r'^/[a-zA-Z0-9_\-\./]+$');
 
+  // Connection pool for keeping authenticated sessions alive during app run
+  final Map<String, SSHClient> _clientPool = {};
+  final Map<String, Completer<SSHClient>> _connectingLocks = {};
+
+  bool isConnected(String serverId) {
+    final client = _clientPool[serverId];
+    return client != null && !client.isClosed;
+  }
+
+  Future<void> disconnect(String serverId) async {
+    final client = _clientPool.remove(serverId);
+    if (client != null) {
+      try {
+        client.close();
+      } catch (_) {}
+    }
+  }
+
+  Future<void> closeAll() async {
+    final keys = List<String>.from(_clientPool.keys);
+    for (final k in keys) {
+      await disconnect(k);
+    }
+  }
+
   Future<SSHClient> _createClient({
     required String host,
     required int port,
@@ -153,6 +178,7 @@ class SshService {
         username: username,
         identities: keyPairs,
         onUserInfoRequest: handleUserInfoRequest,
+        keepAliveInterval: const Duration(seconds: 15),
       );
     } else {
       return SSHClient(
@@ -160,7 +186,75 @@ class SshService {
         username: username,
         onPasswordRequest: () => credential,
         onUserInfoRequest: handleUserInfoRequest,
+        keepAliveInterval: const Duration(seconds: 15),
       );
+    }
+  }
+
+  /// Retrieves an existing active SSH connection from the pool, or connects once and caches it.
+  Future<SSHClient> getOrConnectClient({
+    required ServerProfile profile,
+    required String credential,
+    String? totpSecret,
+    String? oneTimeCode,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+    bool forceReconnect = false,
+  }) async {
+    final serverId = profile.id;
+
+    if (!forceReconnect) {
+      final existing = _clientPool[serverId];
+      if (existing != null && !existing.isClosed) {
+        return existing;
+      }
+    } else {
+      await disconnect(serverId);
+    }
+
+    if (_connectingLocks.containsKey(serverId)) {
+      try {
+        return await _connectingLocks[serverId]!.future;
+      } catch (_) {}
+    }
+
+    final completer = Completer<SSHClient>();
+    _connectingLocks[serverId] = completer;
+
+    try {
+      final client = await _createClient(
+        host: profile.host,
+        port: profile.port,
+        username: profile.username,
+        authType: profile.authType,
+        credential: credential,
+        totpSecret: totpSecret,
+        oneTimeCode: oneTimeCode,
+        onPrompt2FA: onPrompt2FA,
+      );
+
+      _clientPool[serverId] = client;
+
+      // Handle socket or connection closure automatically
+      unawaited(client.done.then((_) {
+        debugPrint('[SshService] SSH session closed for ${profile.name} (${profile.host}).');
+        if (_clientPool[serverId] == client) {
+          _clientPool.remove(serverId);
+        }
+      }).catchError((err) {
+        debugPrint('[SshService] SSH session terminated with error for ${profile.name}: $err');
+        if (_clientPool[serverId] == client) {
+          _clientPool.remove(serverId);
+        }
+      }));
+
+      completer.complete(client);
+      return client;
+    } catch (e) {
+      completer.completeError(e);
+      _clientPool.remove(serverId);
+      rethrow;
+    } finally {
+      _connectingLocks.remove(serverId);
     }
   }
 
@@ -171,11 +265,8 @@ class SshService {
     String? oneTimeCode,
     Future<String?> Function(String promptText)? onPrompt2FA,
   }) async {
-    return _createClient(
-      host: profile.host,
-      port: profile.port,
-      username: profile.username,
-      authType: profile.authType,
+    return getOrConnectClient(
+      profile: profile,
       credential: credential,
       totpSecret: totpSecret,
       oneTimeCode: oneTimeCode,
@@ -189,18 +280,17 @@ class SshService {
     String? totpSecret,
     String? oneTimeCode,
     Future<String?> Function(String promptText)? onPrompt2FA,
+    bool forceReconnect = false,
   }) async {
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
         onPrompt2FA: onPrompt2FA,
+        forceReconnect: forceReconnect,
       );
 
       // Fetch OS Info & Uptime safely (read-only fixed commands)
@@ -244,12 +334,13 @@ class SshService {
         serviceStatuses: serviceMap,
       );
     } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       return SshTestResult(
         success: false,
         errorMessage: _sanitizeErrorMessage(e.toString()),
       );
-    } finally {
-      client?.close();
     }
   }
 
@@ -283,11 +374,8 @@ class SshService {
 
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -506,6 +594,9 @@ fi
         errorMessage: errorMsg,
       );
     } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       return ServiceActionResult(
         success: false,
         action: sanitizedAction,
@@ -513,8 +604,6 @@ fi
         output: '',
         errorMessage: _sanitizeErrorMessage(e.toString()),
       );
-    } finally {
-      client?.close();
     }
   }
 
@@ -561,11 +650,8 @@ fi
 
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -665,6 +751,9 @@ echo -e "\$OUT"
         output: rawOutput,
       );
     } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       return FirewallActionResult(
         success: false,
         action: sanitizedAction,
@@ -672,8 +761,6 @@ echo -e "\$OUT"
         output: '',
         errorMessage: _sanitizeErrorMessage(e.toString()),
       );
-    } finally {
-      client?.close();
     }
   }
 
@@ -688,11 +775,8 @@ echo -e "\$OUT"
   }) async {
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -864,10 +948,11 @@ fi
         );
       }).toList();
     } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       debugPrint('[SshService] Error fetching fail2ban banned IPs: $e');
       return [];
-    } finally {
-      client?.close();
     }
   }
 
@@ -882,11 +967,8 @@ fi
   }) async {
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -928,7 +1010,7 @@ fi
         errorMessage: _sanitizeErrorMessage(e.toString()),
       );
     } finally {
-      client?.close();
+      await disconnect(profile.id);
     }
   }
 
@@ -952,11 +1034,8 @@ fi
 
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -970,9 +1049,10 @@ fi
       if (output.trim().isEmpty) return [];
       return const LineSplitter().convert(output);
     } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       return [];
-    } finally {
-      client?.close();
     }
   }
 
@@ -994,11 +1074,8 @@ fi
     final safeLines = maxLines.clamp(1, 200);
     SSHClient? client;
     try {
-      client = await _createClient(
-        host: profile.host,
-        port: profile.port,
-        username: profile.username,
-        authType: profile.authType,
+      client = await getOrConnectClient(
+        profile: profile,
         credential: credential,
         totpSecret: totpSecret,
         oneTimeCode: oneTimeCode,
@@ -1010,11 +1087,98 @@ fi
       final output = utf8.decode(bytes);
       if (output.trim().isEmpty) return [];
       return const LineSplitter().convert(output);
-    } catch (_) {
+    } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
       return [];
-    } finally {
-      client?.close();
     }
+  }
+
+  /// Unified log reader: retrieves recent logs across SSH, MySQL, Fail2ban, and systemd journal
+  Future<List<String>> fetchUnifiedServerLogs({
+    required ServerProfile profile,
+    required String credential,
+    String? sudoPassword,
+    String? totpSecret,
+    String? oneTimeCode,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+  }) async {
+    SSHClient? client;
+    try {
+      client = await getOrConnectClient(
+        profile: profile,
+        credential: credential,
+        totpSecret: totpSecret,
+        oneTimeCode: oneTimeCode,
+        onPrompt2FA: onPrompt2FA,
+      );
+
+      const script = r'''
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+
+read_file() {
+  local f="$1"
+  local n="$2"
+  if [ -f "$f" ]; then
+    tail -n "$n" "$f" 2>/dev/null || true
+  fi
+}
+
+# 1. SSH Authentication Logs (RHEL/CentOS/CloudLinux and Debian/Ubuntu)
+read_file /var/log/secure 120
+read_file /var/log/auth.log 120
+
+# 2. Database Logs (MySQL / MariaDB)
+read_file /var/log/mysqld.log 80
+read_file /var/log/mysql/error.log 80
+read_file /var/log/mariadb/mariadb.log 80
+
+# 3. Fail2ban Logs
+read_file /var/log/fail2ban.log 80
+
+# 4. Systemd Journal fallback
+if command -v journalctl >/dev/null 2>&1; then
+  journalctl -u ssh -u sshd -u mysqld -u mariadb -u fail2ban -n 80 --no-pager 2>/dev/null || true
+fi
+''';
+
+      final escapedScript = script.replaceAll("'", r"'\''");
+      final trimmedPass = sudoPassword?.trim();
+      String execCommand;
+      if (trimmedPass != null && trimmedPass.isNotEmpty) {
+        final safePass = trimmedPass.replaceAll("'", r"'\''");
+        execCommand = "echo '$safePass' | sudo -S -p '' bash -c '$escapedScript'";
+      } else {
+        if (profile.username == 'root') {
+          execCommand = "bash -c '$escapedScript'";
+        } else {
+          execCommand = "sudo -n bash -c '$escapedScript' 2>/dev/null || bash -c '$escapedScript'";
+        }
+      }
+
+      final Uint8List bytes = await client.run(execCommand);
+      final output = utf8.decode(bytes);
+      if (output.trim().isEmpty) return [];
+      return const LineSplitter().convert(output);
+    } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
+      debugPrint('[SshService] Error fetching unified server logs: $e');
+      return [];
+    }
+  }
+
+  bool _isConnectionBroken(Object e) {
+    final str = e.toString().toLowerCase();
+    return str.contains('socketexception') ||
+        str.contains('broken pipe') ||
+        str.contains('connection closed') ||
+        str.contains('connection reset') ||
+        str.contains('closed by remote') ||
+        str.contains('timeoutexception') ||
+        str.contains('sshstateerror');
   }
 
   String _sanitizeErrorMessage(String msg) {

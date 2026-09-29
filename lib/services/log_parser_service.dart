@@ -29,21 +29,50 @@ class LogParserService {
 
   // SSH Regex Patterns
   static final RegExp _sshAcceptedRegex = RegExp(
-    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd\[\d+\]:\s+Accepted\s+(?<method>publickey|password)\s+for\s+(?<user>\S+)\s+from\s+(?<ip>\S+)\s+port\s+(?<port>\d+)",
+    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd(?:\[\d+\])?:\s+Accepted\s+(?<method>publickey|password|keyboard-interactive(?:/pam)?|none)\s+for\s+(?<user>\S+)\s+from\s+(?<ip>\S+)\s+port\s+(?<port>\d+)",
+    caseSensitive: false,
   );
 
   static final RegExp _sshFailedRegex = RegExp(
-    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd\[\d+\]:\s+Failed\s+password\s+(?:for\s+invalid\s+user\s+|for\s+)(?<user>\S+)\s+from\s+(?<ip>\S+)\s+port\s+(?<port>\d+)",
+    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd(?:\[\d+\])?:\s+Failed\s+(?:password|publickey|none)\s+(?:for\s+invalid\s+user\s+|for\s+)(?<user>\S+)\s+from\s+(?<ip>\S+)\s+port\s+(?<port>\d+)",
+    caseSensitive: false,
   );
 
   static final RegExp _sshInvalidUserRegex = RegExp(
-    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd\[\d+\]:\s+Invalid\s+user\s+(?<user>\S+)\s+from\s+(?<ip>\S+)",
+    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*sshd(?:\[\d+\])?:\s+Invalid\s+user\s+(?<user>\S+)\s+from\s+(?<ip>\S+)",
+    caseSensitive: false,
+  );
+
+  static final RegExp _pamFailedRegex = RegExp(
+    r"(?:(?<month>\w{3})\s+(?<day>\d+)\s+(?<time>\d{2}:\d{2}:\d{2}))?.*pam_unix\(sshd(?::auth)?\):\s+authentication failure;.*rhost=(?<ip>[0-9a-fA-F:\.]+)(?:\s+user=(?<user>\S+))?",
+    caseSensitive: false,
+  );
+
+  static final RegExp _fail2banActionRegex = RegExp(
+    r"fail2ban\.actions.*:\s+NOTICE\s+\[(?<jail>[^\]]+)\]\s+(?<action>Ban|Unban)\s+(?<ip>[0-9a-fA-F:\.]+)",
+    caseSensitive: false,
   );
 
   // Safe IP matching pattern (IPv4 or IPv6)
   static final RegExp _safeIpRegex = RegExp(r'^[0-9a-fA-F:\.]+$');
 
-  /// Parse a single line from either MySQL or SSH log with boundary protections
+  /// Parse multiple lines from server logs into a deduplicated list of AuthEvent objects
+  List<AuthEvent> parseLines(List<String> lines, String serverId) {
+    final events = <AuthEvent>[];
+    final seen = <String>{};
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty || seen.contains(trimmed)) continue;
+      seen.add(trimmed);
+      final ev = parseLine(trimmed, serverId);
+      if (ev != null) {
+        events.add(ev);
+      }
+    }
+    return events;
+  }
+
+  /// Parse a single line from either MySQL, SSH, or Fail2ban log with boundary protections
   AuthEvent? parseLine(String line, String serverId) {
     var trimmed = line.trim();
     if (trimmed.isEmpty) return null;
@@ -183,11 +212,55 @@ class LogParserService {
       );
     }
 
+    // 7. Check PAM Authentication Failure
+    final pamMatch = _pamFailedRegex.firstMatch(trimmed);
+    if (pamMatch != null) {
+      final user = _sanitizeString(pamMatch.namedGroup('user') ?? 'root');
+      final ip = _cleanIp(pamMatch.namedGroup('ip') ?? '0.0.0.0');
+
+      return AuthEvent(
+        id: _uuid.v4(),
+        serverId: serverId,
+        service: 'sshd',
+        timestamp: _parseTimestamp(pamMatch, trimmed),
+        clientIp: ip,
+        user: user,
+        status: EventStatus.failed,
+        severity: (user == 'root' || user == 'admin') ? EventSeverity.critical : EventSeverity.warning,
+        riskScore: 88,
+        failureReason: 'PAM authentication failure for $user',
+        rawLog: trimmed,
+      );
+    }
+
+    // 8. Check Fail2ban Ban / Unban
+    final f2bMatch = _fail2banActionRegex.firstMatch(trimmed);
+    if (f2bMatch != null) {
+      final jail = _sanitizeString(f2bMatch.namedGroup('jail') ?? 'sshd');
+      final action = _sanitizeString(f2bMatch.namedGroup('action') ?? 'Ban');
+      final ip = _cleanIp(f2bMatch.namedGroup('ip') ?? '0.0.0.0');
+      final isBan = action.toLowerCase() == 'ban';
+
+      return AuthEvent(
+        id: _uuid.v4(),
+        serverId: serverId,
+        service: jail.contains('mysql') ? 'mysqld' : 'sshd',
+        timestamp: _parseTimestamp(f2bMatch, trimmed),
+        clientIp: ip,
+        user: 'system',
+        status: isBan ? EventStatus.blocked : EventStatus.success,
+        severity: isBan ? EventSeverity.critical : EventSeverity.info,
+        riskScore: isBan ? 95 : 10,
+        failureReason: isBan ? 'Blocked by Fail2ban jail [$jail]' : 'Unbanned by Fail2ban jail [$jail]',
+        rawLog: trimmed,
+      );
+    }
+
     return null;
   }
 
   DateTime _parseTimestamp(RegExpMatch? match, String rawLine) {
-    if (match != null) {
+    if (match != null && match.groupNames.contains("time")) {
       final timeStr = match.namedGroup("time");
       if (timeStr != null) {
         final isoCandidate = timeStr.contains("T") ? timeStr : timeStr.replaceAll(" ", "T");
@@ -195,8 +268,8 @@ class LogParserService {
         if (parsedIso != null) return parsedIso;
 
         try {
-          final monthStr = match.namedGroup("month");
-          final dayStr = match.namedGroup("day");
+          final monthStr = match.groupNames.contains("month") ? match.namedGroup("month") : null;
+          final dayStr = match.groupNames.contains("day") ? match.namedGroup("day") : null;
           if (monthStr != null && dayStr != null) {
             final now = DateTime.now();
             final months = {

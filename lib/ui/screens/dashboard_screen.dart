@@ -8,8 +8,10 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/service_registry.dart';
 import '../../providers/server_provider.dart';
 import '../../providers/telemetry_provider.dart';
+import '../../providers/policy_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../models/server_profile.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/connection_pulse.dart';
 import '../widgets/threat_timeline_chart.dart';
@@ -22,6 +24,77 @@ class DashboardScreen extends StatelessWidget {
 
   const DashboardScreen({super.key, required this.onNavigateToTab});
 
+  Future<void> _handleDashboardRefresh(
+    BuildContext context,
+    ServerProvider serverProvider,
+    TelemetryProvider telemetryProvider,
+    PolicyProvider policyProvider,
+    ServerProfile? activeServer, {
+    bool showSnackBar = false,
+  }) async {
+    if (activeServer == null) return;
+
+    final themeProvider = context.read<ThemeProvider>();
+    final isDark = themeProvider.isDarkMode;
+    final isIndo = context.read<SettingsProvider>().isIndonesian;
+
+    Future<String?> prompt2FA(String prompt) => TwoFactorAuthDialog.show(
+      context,
+      username: activeServer.username,
+      serverName: activeServer.name,
+      promptText: prompt,
+    );
+
+    // 1. Test / poll server status (reuses pooled connection; 2FA only if not yet connected)
+    final result = await serverProvider.testActiveServer(onPrompt2FA: prompt2FA);
+
+    int logCount = 0;
+    if (result.success) {
+      // 2. Fetch real-time logs from server and ingest into TelemetryProvider
+      final policy = policyProvider.getPolicy(activeServer.id);
+      final liveEvents = await serverProvider.fetchRealTimeLogs(
+        server: activeServer,
+        onPrompt2FA: prompt2FA,
+      );
+      if (liveEvents.isNotEmpty) {
+        telemetryProvider.ingestBatchEvents(liveEvents, policy);
+        logCount = liveEvents.length;
+      }
+
+      // 3. Sync fail2ban & iptables server banned IPs
+      final serverBans = await serverProvider.fetchServerBannedIps(
+        serverId: activeServer.id,
+        onPrompt2FA: prompt2FA,
+      );
+      if (serverBans.isNotEmpty) {
+        policyProvider.syncServerBannedIps(activeServer.id, serverBans);
+      }
+    }
+
+    await telemetryProvider.refreshTelemetry();
+
+    if (showSnackBar && context.mounted) {
+      final upCount = result.serviceStatuses.values.where((v) => v).length;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result.success
+                ? (isIndo
+                    ? '✅ Server ${activeServer.name} terhubung!\nUptime: ${result.uptime} • $upCount layanan aktif • $logCount log terkini tersinkronisasi'
+                    : '✅ Connected to ${activeServer.name}!\nUptime: ${result.uptime} • $upCount online services • $logCount live logs synchronized')
+                : (isIndo
+                    ? '⚠️ Gagal terhubung: ${result.errorMessage}'
+                    : '⚠️ Connection failed: ${result.errorMessage}'),
+          ),
+          backgroundColor: result.success
+              ? (isDark ? AppColors.darkCard : AppColors.lightTextPrimary)
+              : (isDark ? AppColors.danger : AppColors.dangerLight),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -31,6 +104,7 @@ class DashboardScreen extends StatelessWidget {
 
     final serverProvider = context.watch<ServerProvider>();
     final telemetryProvider = context.watch<TelemetryProvider>();
+    final policyProvider = context.watch<PolicyProvider>();
     final activeServer = serverProvider.activeServer;
     final metrics = activeServer != null
         ? telemetryProvider.getMetricsForServer(activeServer.id)
@@ -133,38 +207,14 @@ class DashboardScreen extends StatelessWidget {
             tooltip: settings.t('test_poll'),
             onPressed: serverProvider.isLoading
                 ? null
-                : () async {
-                    final result = await serverProvider.testActiveServer(
-                      onPrompt2FA: (prompt) => TwoFactorAuthDialog.show(
-                        context,
-                        username: activeServer?.username ?? "root",
-                        serverName: activeServer?.name ?? "Server",
-                        promptText: prompt,
-                      ),
-                    );
-                    if (context.mounted) {
-                      final upCount = result.serviceStatuses.values
-                          .where((v) => v)
-                          .length;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            result.success
-                                ? '✅ Polled ${activeServer?.name ?? "Host"}!\nUptime: ${result.uptime} • $upCount services detected online'
-                                : '⚠️ Connection failed: ${result.errorMessage}',
-                          ),
-                          backgroundColor: result.success
-                              ? (isDark
-                                    ? AppColors.darkCard
-                                    : AppColors.lightTextPrimary)
-                              : (isDark
-                                    ? AppColors.danger
-                                    : AppColors.dangerLight),
-                          duration: const Duration(seconds: 4),
-                        ),
-                      );
-                    }
-                  },
+                : () => _handleDashboardRefresh(
+                      context,
+                      serverProvider,
+                      telemetryProvider,
+                      policyProvider,
+                      activeServer,
+                      showSnackBar: true,
+                    ),
           ),
           // Switch Server Button
           // IconButton(
@@ -316,16 +366,14 @@ class DashboardScreen extends StatelessWidget {
           }
 
           return RefreshIndicator(
-            onRefresh: () async {
-              await serverProvider.testActiveServer(
-                onPrompt2FA: (prompt) => TwoFactorAuthDialog.show(
-                  context,
-                  username: activeServer.username,
-                  serverName: activeServer.name,
-                  promptText: prompt,
-                ),
-              );
-            },
+            onRefresh: () => _handleDashboardRefresh(
+              context,
+              serverProvider,
+              telemetryProvider,
+              policyProvider,
+              activeServer,
+              showSnackBar: false,
+            ),
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: isWideDesktop ? 28 : 16,
