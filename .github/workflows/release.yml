@@ -33,8 +33,50 @@ jobs:
         run: flutter pub get
 
       # ----------------------------------------------------
-      # 1. Build Android Universal APK
+      # 1. Setup Android Google Services Configuration
       # ----------------------------------------------------
+      - name: Setup Android Google Services
+        env:
+          GOOGLE_SERVICES_SECRET: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          mkdir -p android/app
+          if [ -n "$GOOGLE_SERVICES_SECRET" ]; then
+            echo "$GOOGLE_SERVICES_SECRET" > android/app/google-services.json
+          elif [ ! -f "android/app/google-services.json" ]; then
+            echo "Injecting production google-services.json for build..."
+            cat << 'EOF' > android/app/google-services.json
+          {
+            "project_info": {
+              "project_number": "615801271453",
+              "project_id": "aegis-project-initiative",
+              "storage_bucket": "aegis-project-initiative.firebasestorage.app"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:615801271453:android:dc002f9f3871b4b403d074",
+                  "android_client_info": {
+                    "package_name": "id.cethokaryo.aegis"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "AIzaSyB7SAHIPmTLK7mgf7JngPCxj-OUNMq27fU"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+          fi
+
       - name: Build Android Release APK
         run: flutter build apk --release
 
