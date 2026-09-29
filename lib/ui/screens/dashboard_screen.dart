@@ -13,11 +13,14 @@ import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../models/server_profile.dart';
 import '../widgets/metric_card.dart';
+import '../widgets/metric_info_dialog.dart';
 import '../widgets/connection_pulse.dart';
 import '../widgets/threat_timeline_chart.dart';
 import '../widgets/event_tile.dart';
 import '../widgets/two_factor_auth_dialog.dart';
 import '../widgets/aegis_logo.dart';
+import '../../providers/hardware_telemetry_provider.dart';
+import '../widgets/hardware_telemetry_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   final Function(int) onNavigateToTab;
@@ -68,6 +71,16 @@ class DashboardScreen extends StatelessWidget {
       );
       if (serverBans.isNotEmpty) {
         policyProvider.syncServerBannedIps(activeServer.id, serverBans);
+      }
+
+      // 4. Sample Continuous Hardware Telemetry
+      if (context.mounted) {
+        final hwProvider = context.read<HardwareTelemetryProvider>();
+        await hwProvider.sampleServer(
+          serverProvider: serverProvider,
+          server: activeServer,
+          notify: false,
+        );
       }
     }
 
@@ -719,6 +732,24 @@ class DashboardScreen extends StatelessWidget {
                                 : (isDark
                                       ? AppColors.warning
                                       : AppColors.warningLight),
+                            infoTooltip: settings.isIndonesian
+                                ? 'Pelajari metrik login gagal'
+                                : 'Explain failed logins metric',
+                            onInfoTap: () => MetricInfoDialog.show(
+                              context,
+                              type: MetricType.failedLogins,
+                              currentValue: metrics.failedAttempts24h.toString(),
+                              accentColor: metrics.failedAttempts24h > 5
+                                  ? (isDark
+                                        ? AppColors.danger
+                                        : AppColors.dangerLight)
+                                  : (isDark
+                                        ? AppColors.warning
+                                        : AppColors.warningLight),
+                              isIndo: settings.isIndonesian,
+                              isDark: isDark,
+                              onExploreAudit: () => onNavigateToTab(1),
+                            ),
                           ),
                           MetricCard(
                             title: settings.t('unknown_logins'),
@@ -734,6 +765,24 @@ class DashboardScreen extends StatelessWidget {
                                 : (isDark
                                       ? AppColors.success
                                       : AppColors.successLight),
+                            infoTooltip: settings.isIndonesian
+                                ? 'Pelajari metrik login IP tak dikenal'
+                                : 'Explain untrusted IP logins metric',
+                            onInfoTap: () => MetricInfoDialog.show(
+                              context,
+                              type: MetricType.unknownLogins,
+                              currentValue: metrics.unknownPersonAttempts24h.toString(),
+                              accentColor: metrics.unknownPersonAttempts24h > 0
+                                  ? (isDark
+                                        ? AppColors.danger
+                                        : AppColors.dangerLight)
+                                  : (isDark
+                                        ? AppColors.success
+                                        : AppColors.successLight),
+                              isIndo: settings.isIndonesian,
+                              isDark: isDark,
+                              onExploreAudit: () => onNavigateToTab(1),
+                            ),
                           ),
                           MetricCard(
                             title: settings.t('blocked_attempts'),
@@ -745,6 +794,20 @@ class DashboardScreen extends StatelessWidget {
                             accentColor: isDark
                                 ? AppColors.success
                                 : AppColors.successLight,
+                            infoTooltip: settings.isIndonesian
+                                ? 'Pelajari metrik ancaman diblokir'
+                                : 'Explain blocked attempts metric',
+                            onInfoTap: () => MetricInfoDialog.show(
+                              context,
+                              type: MetricType.blockedAttempts,
+                              currentValue: metrics.blockedCount.toString(),
+                              accentColor: isDark
+                                  ? AppColors.success
+                                  : AppColors.successLight,
+                              isIndo: settings.isIndonesian,
+                              isDark: isDark,
+                              onExploreAudit: () => onNavigateToTab(1),
+                            ),
                           ),
                           MetricCard(
                             title: settings.t('security_index'),
@@ -764,9 +827,32 @@ class DashboardScreen extends StatelessWidget {
                                 : (isDark
                                       ? AppColors.danger
                                       : AppColors.dangerLight),
+                            infoTooltip: settings.isIndonesian
+                                ? 'Pelajari indeks integritas keamanan'
+                                : 'Explain security index metric',
+                            onInfoTap: () => MetricInfoDialog.show(
+                              context,
+                              type: MetricType.securityIndex,
+                              currentValue: '${metrics.integrityScore}%',
+                              accentColor: metrics.integrityScore >= 80
+                                  ? (isDark
+                                        ? AppColors.success
+                                        : AppColors.successLight)
+                                  : (isDark
+                                        ? AppColors.danger
+                                        : AppColors.dangerLight),
+                              isIndo: settings.isIndonesian,
+                              isDark: isDark,
+                              onExploreAudit: () => onNavigateToTab(1),
+                            ),
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Continuous Hardware Telemetry
+                      HardwareTelemetryCard(activeServer: activeServer),
 
                       const SizedBox(height: 22),
 

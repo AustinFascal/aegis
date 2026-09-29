@@ -41,6 +41,10 @@ def load_config():
         "trusted_ips": ["127.0.0.1", "::1", "103.142.21.195", "182.1.200.*"],
         "max_failed_attempts": 3,
         "time_window_seconds": 120,
+        "alert_cooldown_seconds": 300,
+        "web_probe_threshold": 3,
+        "auto_block_web_probes": False,
+        "auto_block_bruteforce": False,
         "fcm_server_key": "",
         "fcm_topic": "aegis_alerts",
         "alert_webhook": ""
@@ -76,6 +80,35 @@ RE_WEB_ACCESS = re.compile(
 )
 
 failed_tracker = defaultdict(list)
+web_probe_tracker = defaultdict(list)
+web_probe_uris = defaultdict(list)
+_alert_cooldown = {}
+_suppressed_alerts = defaultdict(int)
+
+def block_ip_firewall(ip, config):
+    """Optionally blocks malicious IP directly in kernel iptables without external dependencies."""
+    if not ip or is_ip_trusted(ip, config.get("trusted_ips", [])):
+        return False
+    try:
+        check = subprocess.run(
+            ["iptables", "-C", "INPUT", "-s", ip, "-j", "DROP"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        if check.returncode != 0:
+            res = subprocess.run(
+                ["iptables", "-I", "INPUT", "-s", ip, "-j", "DROP"],
+                capture_output=True,
+                text=True
+            )
+            if res.returncode == 0:
+                print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 🛡️ AUTO-DEFENSE: IP {ip} dropped in kernel iptables.", flush=True)
+                return True
+            else:
+                print(f"[-] Failed to auto-block IP {ip}: {res.stderr.strip()}", file=sys.stderr, flush=True)
+    except Exception as e:
+        print(f"[-] Firewall auto-block execution error: {e}", file=sys.stderr, flush=True)
+    return False
 
 def is_ip_trusted(ip, trusted_list):
     if ip in trusted_list:
@@ -163,19 +196,25 @@ def get_fcm_v1_token(service_account_path):
         print(f"[-] Failed to obtain FCM v1 token: {e}", file=sys.stderr, flush=True)
         return None, None
 
-_alert_cooldown = {}
-
 def dispatch_alert(title, body, payload, config):
-    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 🚨 ALERT: {title} - {body}", flush=True)
-    
-    # Cooldown: avoid flooding network HTTP dispatches if a bot attacks 30 times in 1 second
     ip = payload.get("ip", "")
     service = payload.get("service", "")
-    cooldown_key = f"{service}:{ip}"
+    cooldown_key = f"{service}:{ip}" if ip else service
+    cooldown_period = config.get("alert_cooldown_seconds", 300)
     now = time.time()
-    if cooldown_key in _alert_cooldown and (now - _alert_cooldown[cooldown_key] < 10):
-        return
+
+    # Intelligent Cooldown & Deduplication:
+    # Avoid flooding user push notifications & journalctl if a bot attacks repeatedly in bursts
+    if cooldown_key in _alert_cooldown and (now - _alert_cooldown[cooldown_key] < cooldown_period):
+        _suppressed_alerts[cooldown_key] += 1
+        return False
+
+    suppressed_count = _suppressed_alerts.pop(cooldown_key, 0)
+    if suppressed_count > 0:
+        body += f" (Note: {suppressed_count} repeated attempts were suppressed during cooldown)"
+
     _alert_cooldown[cooldown_key] = now
+    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 🚨 ALERT: {title} - {body}", flush=True)
 
     # 1. FCM v1 Modern HTTP API Dispatch
     sa_file = config.get("service_account_file") or ("service_account.json" if os.path.exists("service_account.json") else None)
@@ -189,12 +228,21 @@ def dispatch_alert(title, body, payload, config):
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json; UTF-8"
                 }
+                sanitized_tag = re.sub(r'[^a-zA-Z0-9_-]', '_', f"aegis_{service}_{ip}")
                 msg_body = {
                     "message": {
                         "topic": topic,
                         "notification": {
                             "title": title,
                             "body": body
+                        },
+                        "android": {
+                            "collapse_key": sanitized_tag,
+                            "priority": "high",
+                            "notification": {
+                                "tag": sanitized_tag,
+                                "channel_id": "aegis_security_channel"
+                            }
                         },
                         "data": {
                             "title": str(title),
@@ -258,6 +306,8 @@ def dispatch_alert(title, body, payload, config):
         except Exception as e:
             print(f"[-] Telegram dispatch error: {e}", file=sys.stderr, flush=True)
 
+    return True
+
 def process_line(service, line, config):
     now = time.time()
     trusted = config.get("trusted_ips", [])
@@ -310,12 +360,14 @@ def process_line(service, line, config):
             count = len(failed_tracker[ip])
 
             if count >= threshold:
-                dispatch_alert(
+                dispatched = dispatch_alert(
                     "⚠️ BRUTE FORCE SSH ATTACK",
                     f"IP {ip} failed {count} SSH logins targeting '{user}'!",
                     {"service": "sshd", "ip": ip, "user": user, "severity": "critical"},
                     config
                 )
+                if dispatched and config.get("auto_block_bruteforce", False):
+                    block_ip_firewall(ip, config)
 
         m_ok = RE_SSH_ACCEPTED.search(line)
         if m_ok:
@@ -336,14 +388,58 @@ def process_line(service, line, config):
             status = int(m_web.group("status"))
             uri = m_web.group("uri").lower()
 
-            # Detect malicious probes (e.g. phpmyadmin, env files, wp-login brute force)
-            if any(p in uri for p in [".env", "wp-login.php", "phpmyadmin", "shell.php"]):
-                dispatch_alert(
-                    "🚨 MALICIOUS WEB PROBE",
-                    f"IP {ip} scanned sensitive URI: {uri} (HTTP {status})",
-                    {"service": "web", "ip": ip, "uri": uri, "severity": "warning"},
-                    config
-                )
+            if is_ip_trusted(ip, trusted):
+                return
+
+            # Detect malicious probes (e.g. env files, wp-login, phpmyadmin, web shells, git leaks)
+            sensitive_patterns = [
+                ".env", "wp-login.php", "phpmyadmin", "shell.php", "alfa.php",
+                ".git/", "eval-stdin.php", "xmlrpc.php", "/setup.php", "/config.",
+                "/admin/config", "/api/.env"
+            ]
+
+            if any(p in uri for p in sensitive_patterns):
+                web_probe_tracker[ip].append(now)
+                web_probe_tracker[ip] = [t for t in web_probe_tracker[ip] if now - t <= window]
+
+                if uri not in web_probe_uris[ip]:
+                    web_probe_uris[ip].append(uri)
+                    if len(web_probe_uris[ip]) > 10:
+                        web_probe_uris[ip].pop(0)
+
+                probe_count = len(web_probe_tracker[ip])
+                web_threshold = config.get("web_probe_threshold", 3)
+
+                # High-risk webshells or direct remote execution attempts alert immediately
+                is_high_risk = any(shell in uri for shell in ["shell.php", "alfa.php", "eval-stdin.php"])
+
+                if probe_count >= web_threshold or is_high_risk:
+                    recent_uris = ", ".join(web_probe_uris[ip][-3:])
+                    if len(web_probe_uris[ip]) > 3:
+                        recent_uris += f" (+{len(web_probe_uris[ip]) - 3} more)"
+
+                    if probe_count > 1:
+                        title = "🚨 MALICIOUS WEB SCANNER DETECTED"
+                        body = f"IP {ip} scanned {probe_count} sensitive endpoints [{recent_uris}] (HTTP {status})"
+                    else:
+                        title = "🚨 MALICIOUS WEB PROBE"
+                        body = f"IP {ip} scanned sensitive URI: {uri} (HTTP {status})"
+
+                    dispatched = dispatch_alert(
+                        title,
+                        body,
+                        {
+                            "service": "web",
+                            "ip": ip,
+                            "uri": uri,
+                            "probe_count": probe_count,
+                            "severity": "critical" if probe_count >= web_threshold or is_high_risk else "warning"
+                        },
+                        config
+                    )
+
+                    if dispatched and config.get("auto_block_web_probes", False):
+                        block_ip_firewall(ip, config)
 
 running = True
 

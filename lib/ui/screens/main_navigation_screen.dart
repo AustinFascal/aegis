@@ -17,6 +17,7 @@ import '../widgets/aegis_logo.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/auth_event.dart';
 import '../../providers/telemetry_provider.dart';
+import '../../providers/hardware_telemetry_provider.dart';
 import 'pin_auth_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -69,6 +70,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Widget
           final serverBans = await serverProvider.fetchServerBannedIps(serverId: active.id);
           if (serverBans.isNotEmpty) {
             policyProvider.syncServerBannedIps(active.id, serverBans);
+          }
+          if (mounted) {
+            final hw = context.read<HardwareTelemetryProvider>();
+            await hw.sampleServer(serverProvider: serverProvider, server: active, notify: false);
           }
         }
       };

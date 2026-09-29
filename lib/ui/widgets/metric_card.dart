@@ -8,6 +8,8 @@ class MetricCard extends StatelessWidget {
   final IconData icon;
   final Color accentColor;
   final VoidCallback? onTap;
+  final VoidCallback? onInfoTap;
+  final String? infoTooltip;
 
   const MetricCard({
     super.key,
@@ -17,15 +19,18 @@ class MetricCard extends StatelessWidget {
     required this.icon,
     this.accentColor = AppColors.primary,
     this.onTap,
+    this.onInfoTap,
+    this.infoTooltip,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final effectiveTap = onTap ?? onInfoTap;
 
     return InkWell(
-      onTap: onTap,
+      onTap: effectiveTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -49,7 +54,6 @@ class MetricCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   padding: const EdgeInsets.all(6),
@@ -65,7 +69,6 @@ class MetricCard extends StatelessWidget {
                     title.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
                     style: TextStyle(
                       color: isDark ? AppColors.textMuted : AppColors.lightTextMuted,
                       fontSize: 10,
@@ -74,6 +77,29 @@ class MetricCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (onInfoTap != null) ...[
+                  const SizedBox(width: 4),
+                  Tooltip(
+                    message: infoTooltip ?? 'Metric information',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: onInfoTap,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.info_outline_rounded,
+                            size: 15,
+                            color: isDark
+                                ? AppColors.textMuted.withValues(alpha: 0.7)
+                                : AppColors.lightTextMuted.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
             const SizedBox(height: 6),

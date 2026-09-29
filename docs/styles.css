@@ -462,40 +462,82 @@ h1, h2, h3, h4, h5, h6 {
 .hero-cmd-widget {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 18px;
-  background: rgba(15, 21, 34, 0.9);
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 16px;
+  background: rgba(15, 21, 34, 0.88);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--text-main);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  max-width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hero-cmd-widget:hover {
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 4px 28px rgba(0, 229, 255, 0.15);
+}
+
+.hero-cmd-widget .cmd-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .cmd-prefix {
   color: var(--cyan);
   font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.cmd-text {
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-main);
+  user-select: all;
 }
 
 .cmd-copy-btn {
-  background: rgba(34, 49, 78, 0.6);
-  border: 1px solid var(--border-subtle);
+  background: rgba(30, 107, 255, 0.15);
+  border: 1px solid rgba(30, 107, 255, 0.3);
   color: var(--text-muted);
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
   transition: all var(--transition-fast);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 0.75rem;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .cmd-copy-btn:hover {
   background: var(--cyan);
   color: #000;
   border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+}
+
+.cmd-copy-btn .copy-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
 }
 
 /* Stats Counter Row */
@@ -1147,6 +1189,29 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.85rem;
 }
 
+.cis-remediation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: var(--radius-sm);
+  gap: 16px;
+  transition: all var(--transition-fast);
+}
+
+.cis-remediation-text {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.cis-remediation-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* ==========================================================================
    Features Grid Section
    ========================================================================== */
@@ -1407,6 +1472,15 @@ h1, h2, h3, h4, h5, h6 {
 .platform-icon {
   font-size: 2.2rem;
   color: var(--cyan);
+}
+
+.platform-download-cta {
+  text-align: center;
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 /* ==========================================================================
@@ -1722,6 +1796,42 @@ h1, h2, h3, h4, h5, h6 {
     gap: 12px;
     text-align: center;
   }
+
+  /* Hero & Command Snippet */
+  .hero-cmd-widget {
+    display: flex;
+    width: 100%;
+    max-width: 560px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  /* Grid adaptations */
+  .features-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .deploy-steps-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .arch-visual-container {
+    padding: 24px 18px;
+  }
+
+  .cis-remediation-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    gap: 12px;
+  }
+
+  .cis-remediation-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @keyframes slideDownMenu {
@@ -1735,7 +1845,51 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@media (max-width: 640px) {
+  .sandbox-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .tab-btn {
+    width: 100%;
+    padding: 9px 8px;
+    font-size: 0.8rem;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .tab-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .terminal-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .terminal-theme-picker {
+    gap: 4px;
+  }
+
+  .showcase-title-tag {
+    font-size: 0.72rem;
+  }
+}
+
 @media (max-width: 480px) {
+  /* Layout Container */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Header adjustments */
   .brand-text {
     font-size: 1.1rem;
     letter-spacing: 0.04em;
@@ -1749,6 +1903,279 @@ h1, h2, h3, h4, h5, h6 {
   .nav-actions .nav-download-btn {
     padding: 6px 10px;
     font-size: 0.78rem;
+  }
+
+  /* Hero Section Responsiveness */
+  .hero-section {
+    padding: 48px 0 36px;
+  }
+
+  .hero-pill-badge {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .hero-headline {
+    font-size: clamp(1.85rem, 6.8vw, 2.5rem);
+    line-height: 1.15;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 16px;
+  }
+
+  .hero-subhead {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 24px;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Hero Command Widget */
+  .hero-cmd-widget {
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 12px;
+    gap: 8px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .hero-cmd-widget .cmd-body {
+    gap: 6px;
+  }
+
+  .hero-cmd-widget .cmd-copy-btn {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+  }
+
+  /* Section Spacing & Headings */
+  .interactive-section,
+  .features-section,
+  .arch-section,
+  .deployment-section,
+  .platforms-section,
+  .faq-section {
+    padding: 50px 0;
+  }
+
+  .section-head {
+    margin-bottom: 30px;
+  }
+
+  .section-title {
+    font-size: 1.65rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .section-subtitle {
+    font-size: 0.92rem;
+  }
+
+  /* Interactive Sandbox */
+  .sandbox-display {
+    min-height: 420px;
+  }
+
+  .terminal-window {
+    height: auto;
+    min-height: 400px;
+  }
+
+  .terminal-body {
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    height: 320px;
+  }
+
+  .terminal-quickbar {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+
+  .quick-cmd-btn {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+
+  .terminal-input-bar {
+    padding: 8px 12px;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .feature-card {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .feature-title {
+    font-size: 1.1rem;
+  }
+
+  .feature-desc {
+    font-size: 0.88rem;
+  }
+
+  /* Deployment Steps */
+  .deploy-steps-container {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .deploy-step-card {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .code-snippet-box {
+    font-size: 0.72rem;
+    padding: 10px 12px;
+    padding-top: 36px;
+  }
+
+  /* CIS Benchmark Scanner Layout */
+  .cis-scanner-layout {
+    padding: 14px 12px;
+    height: auto;
+    min-height: 480px;
+  }
+
+  .cis-controls-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .cis-controls-banner .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cis-checks-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cis-rule-card {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+
+  /* Platform Download CTA */
+  .platform-download-cta {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .platform-download-cta .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Call to Action Banner */
+  .cta-banner-section {
+    padding: 50px 0 70px;
+  }
+
+  .cta-banner {
+    padding: 36px 18px;
+  }
+
+  .cta-title {
+    font-size: 1.55rem;
+    line-height: 1.25;
+  }
+
+  .cta-desc {
+    font-size: 0.92rem;
+    margin-bottom: 24px;
+  }
+
+  /* FAQ Accordion */
+  .faq-question {
+    padding: 16px 18px;
+    font-size: 0.92rem;
+    gap: 12px;
+  }
+
+  .faq-answer {
+    padding: 0 18px;
+    font-size: 0.88rem;
+  }
+
+  .faq-item.active .faq-answer {
+    padding: 0 18px 16px;
+  }
+
+  /* Spotlight Download Card */
+  .spotlight-card {
+    padding: 20px 16px;
+    margin-bottom: 40px;
+  }
+
+  .spotlight-title {
+    font-size: 1.5rem;
+  }
+
+  .spotlight-main-btn {
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .meta-hash-box code {
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-cmd-widget {
+    padding: 6px 10px;
+    gap: 6px;
+    font-size: 0.74rem;
+  }
+
+  .hero-cmd-widget .cmd-copy-btn {
+    padding: 3px 6px;
+    font-size: 0.68rem;
+  }
+
+  .sandbox-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .p-tab-btn {
+    font-size: 0.82rem;
+    padding: 8px 10px;
   }
 }
 

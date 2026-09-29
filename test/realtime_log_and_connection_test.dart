@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:aegis/models/auth_event.dart';
-import 'package:aegis/models/server_profile.dart';
 import 'package:aegis/models/security_policy.dart';
 import 'package:aegis/services/log_parser_service.dart';
 import 'package:aegis/services/ssh_service.dart';

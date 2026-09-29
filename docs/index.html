@@ -101,11 +101,17 @@
         </div>
 
         <div class="hero-cmd-widget">
-          <span class="cmd-prefix">$</span>
-          <span>git clone https://github.com/AustinFascal/aegis.git</span>
+          <div class="cmd-body">
+            <span class="cmd-prefix" aria-hidden="true">$</span>
+            <span class="cmd-text" title="git clone https://github.com/AustinFascal/aegis.git">git clone https://github.com/AustinFascal/aegis.git</span>
+          </div>
           <button class="cmd-copy-btn" data-copy="git clone https://github.com/AustinFascal/aegis.git"
             aria-label="Copy Git Clone Command">
-            Copy
+            <svg class="copy-icon" width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            <span>Copy</span>
           </button>
         </div>
 
@@ -530,13 +536,12 @@ http {
                 </div>
               </div>
 
-              <div
-                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: var(--radius-sm);">
-                <div style="font-size: 0.85rem; color: var(--text-main);">
+              <div class="cis-remediation-banner">
+                <div class="cis-remediation-text">
                   ⚡ <strong>1-Tap Automated Remediation Playbook:</strong> Generate unified bash script to patch all
                   warnings.
                 </div>
-                <button class="btn btn-outline-cyan btn-sm"
+                <button class="btn btn-outline-cyan btn-sm cis-remediation-btn"
                   data-copy="curl -sSL https://raw.githubusercontent.com/AustinFascal/aegis/main/scripts/aegis_remediate.sh | bash">
                   Copy Remediation Command
                 </button>
@@ -873,7 +878,7 @@ sudo systemctl status aegis-agent</code>
           </div>
         </div>
 
-        <div style="text-align: center; margin-top: 36px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <div class="platform-download-cta">
           <a href="./download/" class="btn btn-primary">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>

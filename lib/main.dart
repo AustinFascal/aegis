@@ -7,6 +7,7 @@ import 'core/constants/app_theme.dart';
 import 'providers/server_provider.dart';
 import 'providers/policy_provider.dart';
 import 'providers/telemetry_provider.dart';
+import 'providers/hardware_telemetry_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/settings_provider.dart';
 import 'services/notification_service.dart';
@@ -121,6 +122,11 @@ class AegisApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ServerProvider()),
         ChangeNotifierProvider(create: (_) => PolicyProvider()),
         ChangeNotifierProvider(create: (_) => TelemetryProvider()),
+        ChangeNotifierProxyProvider<ServerProvider, HardwareTelemetryProvider>(
+          create: (_) => HardwareTelemetryProvider(),
+          update: (_, serverProvider, hwProvider) =>
+              (hwProvider ?? HardwareTelemetryProvider())..attachServerProvider(serverProvider),
+        ),
         initialSettingsProvider != null
             ? ChangeNotifierProvider<SettingsProvider>.value(value: initialSettingsProvider!)
             : ChangeNotifierProvider<SettingsProvider>(create: (_) => SettingsProvider()),

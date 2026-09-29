@@ -349,6 +349,21 @@ class SettingsProvider extends ChangeNotifier {
         'en':
             'Detect global IP abuse scores, Tor exit nodes, and botnet history',
       },
+      'hardware_telemetry_heading': {
+        'id': 'TELEMETRI PERANGKAT KERAS REALTIME',
+        'en': 'CONTINUOUS HARDWARE TELEMETRY',
+      },
+      'hardware_telemetry_sub': {
+        'id': 'Pengambilan sampel CPU multi-core, RAM, kesehatan partisi, & soket aktif',
+        'en': 'Continuous sampling of multi-core CPU, RAM, partition health, & active sockets',
+      },
+      'cpu_utilization': {'id': 'PENGGUNAAN CPU', 'en': 'CPU UTILIZATION'},
+      'ram_usage': {'id': 'PENGGUNAAN RAM', 'en': 'RAM USAGE'},
+      'partition_health': {'id': 'KESEHATAN PARTISI', 'en': 'PARTITION HEALTH'},
+      'active_sockets': {'id': 'SOKET AKTIF', 'en': 'ACTIVE SOCKETS'},
+      'uptime_label': {'id': 'UPTIME SISTEM', 'en': 'SYSTEM UPTIME'},
+      'sampling_live': {'id': 'LIVE SAMPLING', 'en': 'LIVE SAMPLING'},
+      'sampling_paused': {'id': 'DIJEDA', 'en': 'PAUSED'},
     };
 
     return dict[key]?[_language] ?? dict[key]?['id'] ?? key;

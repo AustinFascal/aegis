@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/Platform-Linux%20|%20Windows%20|%20Android%20|%20macOS-4E79A7?style=for-the-badge" alt="Platforms" />
   <img src="https://img.shields.io/badge/Security-Biometric%20%2B%20Secure%20Vault-00E5FF?style=for-the-badge" alt="Security" />
   <img src="https://img.shields.io/badge/License-Source--Available%20%2F%20Proprietary-red?style=for-the-badge" alt="License" />
-  <a href="https://austinfascal.github.io/aegis-project/"><img src="https://img.shields.io/badge/Landing%20Page-austinfascal.github.io%2Faegis--project-00E5FF?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Landing Page" /></a>
+  <a href="https://austinfascal.github.io/aegis/"><img src="https://img.shields.io/badge/Landing%20Page-austinfascal.github.io%2Faegis-00E5FF?style=for-the-badge&logo=google-chrome&logoColor=black" alt="Landing Page" /></a>
 </p>
 
 ---
@@ -559,25 +559,60 @@ Tap the share icon (`share`) or select **"Salin Laporan Audit"** in the options 
 
 ## 📦 Building Releases
 
-### Linux Desktop
+### ⚡ Automated Cloud CI/CD Releases (GitHub Actions)
+
+Aegis includes an automated multi-platform release pipeline defined in [`.github/workflows/release.yml`](.github/workflows/release.yml). Pushing a Git tag triggers automated compilation on cloud runners and publishes binaries directly to GitHub Releases:
+
+```bash
+# 1. Tag the release commit
+git tag v1.0.0
+
+# 2. Push the tag to trigger GitHub Actions
+git push origin v1.0.0
+```
+
+- **Linux**: Automatically compiled and packaged into `aegis-linux-x64.tar.gz`
+- **Android**: Automatically compiled into universal `aegis-android.apk`
+- **Zero-Maintenance Landing Page**: Downloads on the [Landing Page](https://austinfascal.github.io/aegis/) link directly to the permanent GitHub CDN endpoints (`/releases/latest/download/...`), requiring zero HTML edits across future releases.
+
+---
+
+### 🛠️ Local Manual Builds
+
+For offline compilation or local development testing:
+
+#### Linux Desktop
 ```bash
 flutter build linux --release
 # Output binary bundle: build/linux/x64/release/bundle/
 ```
+> For complete packaging, dependency details, and desktop launcher setup, see the [Linux Build & Distribution Guide](DEPLOYMENT_SETUP.md).
 
-### Android APK / App Bundle
+#### Android APK & App Bundle
 ```bash
-# Release APK
+# Universal Release APK (for web downloads & sideloading)
 flutter build apk --release
 # Output: build/app/outputs/flutter-apk/app-release.apk
 
-# App Bundle for Google Play
-flutter build appbundle --release
-```
+# Per-ABI Split APKs (smaller downloads: arm64-v8a, armeabi-v7a, x86_64)
+flutter build apk --release --split-per-abi
 
-### Windows Desktop (via GitHub Actions)
+# App Bundle for Google Play Console
+flutter build appbundle --release
+# Output: build/app/outputs/bundle/release/app-release.aab
+```
+> For production keystore signing, Doze mode optimization, and sideloading instructions, see the [Android Build, Sign & Distribution Guide](DEPLOYMENT_SETUP_ANDROID.md).
+
+#### Windows Desktop (via GitHub Actions)
 > [!NOTE]
 > Flutter Windows desktop applications cannot be cross-compiled directly from Linux hosts. Use the provided GitHub Actions workflow on a `windows-latest` runner to compile release `.exe` and `.zip` artifacts automatically.
+
+---
+
+### 📖 Platform Deployment & Setup Guides
+- 🐧 [Linux Build & Distribution Guide](DEPLOYMENT_SETUP.md)
+- 📱 [Android Build, Sign & Distribution Guide](DEPLOYMENT_SETUP_ANDROID.md)
+- 🌐 [Landing Page & Download Center Setup Guide](LANDING_SETUP.md)
 
 ---
 

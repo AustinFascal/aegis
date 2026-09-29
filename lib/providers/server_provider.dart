@@ -1,5 +1,6 @@
 import '../models/security_policy.dart';
 import '../models/auth_event.dart';
+import '../models/hardware_telemetry.dart';
 import '../services/log_parser_service.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -850,6 +851,27 @@ class ServerProvider extends ChangeNotifier {
       profile: targetServer,
       credential: cred,
       sudoPassword: effectiveSudo,
+      totpSecret: totpSecret,
+      onPrompt2FA: onPrompt2FA,
+    );
+  }
+
+  /// Samples real-time hardware telemetry directly from the target server
+  Future<HardwareTelemetry?> fetchHardwareTelemetry({
+    ServerProfile? server,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+  }) async {
+    final targetServer = server ?? activeServer;
+    if (targetServer == null) return null;
+
+    final cred = await getCredentialForServer(targetServer);
+    if (cred == null || cred.trim().isEmpty) return null;
+
+    final totpSecret = await get2FASecretForServer(targetServer);
+
+    return await _sshService.fetchHardwareTelemetry(
+      profile: targetServer,
+      credential: cred.trim(),
       totpSecret: totpSecret,
       onPrompt2FA: onPrompt2FA,
     );

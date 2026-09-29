@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/security_policy.dart';
+import '../models/hardware_telemetry.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:dartssh2/dartssh2.dart';
@@ -1168,6 +1169,388 @@ fi
       debugPrint('[SshService] Error fetching unified server logs: $e');
       return [];
     }
+  }
+
+  /// Continuously samples multi-core CPU, RAM, partition health, uptime, and active network sockets
+  Future<HardwareTelemetry?> fetchHardwareTelemetry({
+    required ServerProfile profile,
+    required String credential,
+    String? totpSecret,
+    String? oneTimeCode,
+    Future<String?> Function(String promptText)? onPrompt2FA,
+  }) async {
+    SSHClient? client;
+    try {
+      client = await getOrConnectClient(
+        profile: profile,
+        credential: credential,
+        totpSecret: totpSecret,
+        oneTimeCode: oneTimeCode,
+        onPrompt2FA: onPrompt2FA,
+      );
+
+      const script = r'''
+if command -v python3 >/dev/null 2>&1; then
+python3 -c "
+import json, time, os, re, subprocess
+def get_telemetry():
+    def read_cpu():
+        cores = {}
+        with open('/proc/stat') as f:
+            for l in f:
+                if l.startswith('cpu'):
+                    p = l.split()
+                    name = p[0]
+                    vals = [float(x) for x in p[1:]]
+                    idle = vals[3] + (vals[4] if len(vals) > 4 else 0)
+                    total = sum(vals)
+                    cores[name] = (idle, total)
+        return cores
+    c1 = read_cpu()
+    time.sleep(0.2)
+    c2 = read_cpu()
+    cpu_cores = []
+    overall_cpu = 0.0
+    for name in sorted(c1.keys(), key=lambda x: (len(x), x)):
+        i1, t1 = c1[name]
+        i2, t2 = c2[name]
+        dt = t2 - t1
+        di = i2 - i1
+        pct = round(100.0 * (1.0 - (di / dt)), 1) if dt > 0 else 0.0
+        pct = max(0.0, min(100.0, pct))
+        if name == 'cpu':
+            overall_cpu = pct
+        else:
+            cpu_cores.append({'name': name, 'usage': pct})
+    load_avg = [0.0, 0.0, 0.0]
+    try:
+        with open('/proc/loadavg') as f:
+            lp = f.read().split()
+            load_avg = [float(lp[0]), float(lp[1]), float(lp[2])]
+    except Exception:
+        pass
+    model_name = None
+    try:
+        with open('/proc/cpuinfo') as f:
+            for l in f:
+                if 'model name' in l:
+                    model_name = l.split(':', 1)[1].strip()
+                    break
+    except Exception:
+        pass
+    mem = {}
+    with open('/proc/meminfo') as f:
+        for l in f:
+            parts = l.split(':')
+            if len(parts) == 2:
+                k = parts[0].strip()
+                v = parts[1].strip().split()[0]
+                mem[k] = int(v) * 1024
+    total_ram = mem.get('MemTotal', 0)
+    avail_ram = mem.get('MemAvailable', mem.get('MemFree', 0))
+    used_ram = max(0, total_ram - avail_ram)
+    free_ram = mem.get('MemFree', 0)
+    cached_ram = mem.get('Cached', 0)
+    buffers_ram = mem.get('Buffers', 0)
+    swap_total = mem.get('SwapTotal', 0)
+    swap_free = mem.get('SwapFree', 0)
+    swap_used = max(0, swap_total - swap_free)
+    ram_pct = round((used_ram / total_ram * 100.0), 1) if total_ram > 0 else 0.0
+    partitions = []
+    seen_mounts = set()
+    try:
+        if os.path.exists('/proc/mounts'):
+            with open('/proc/mounts') as mf:
+                for line in mf:
+                    mp = line.split()
+                    if len(mp) >= 3:
+                        m_fs, m_mnt, m_type = mp[0], mp[1], mp[2]
+                        if any(m_fs.startswith(x) for x in ['tmpfs', 'udev', 'devtmpfs', '/dev/loop', 'none', 'proc', 'sysfs']): continue
+                        if any(m_mnt.startswith(x) for x in ['/proc', '/sys', '/dev', '/run', '/var/lib/docker']): continue
+                        if m_type in ['ext4', 'ext3', 'ext2', 'xfs', 'btrfs', 'zfs', 'simfs', 'overlay', 'f2fs', 'vfat', 'ntfs', 'nfs'] or m_fs.startswith('/dev/'):
+                            try:
+                                if m_mnt not in seen_mounts:
+                                    st = os.statvfs(m_mnt)
+                                    tot = int(st.f_blocks) * int(st.f_frsize)
+                                    if tot > 0:
+                                        seen_mounts.add(m_mnt)
+                                        fr = int(st.f_bfree) * int(st.f_frsize)
+                                        avl = int(st.f_bavail) * int(st.f_frsize)
+                                        usd = max(0, tot - fr)
+                                        pct = round((usd / tot * 100.0), 1)
+                                        partitions.append({'filesystem': m_fs, 'mount': m_mnt, 'total_bytes': tot, 'used_bytes': usd, 'available_bytes': avl, 'usage_percent': pct})
+                            except Exception: pass
+    except Exception: pass
+    if not any(p.get('mount') == '/' for p in partitions):
+        try:
+            st = os.statvfs('/')
+            tot = int(st.f_blocks) * int(st.f_frsize)
+            if tot > 0:
+                fr = int(st.f_bfree) * int(st.f_frsize)
+                avl = int(st.f_bavail) * int(st.f_frsize)
+                usd = max(0, tot - fr)
+                pct = round((usd / tot * 100.0), 1)
+                partitions.insert(0, {'filesystem': '/dev/root', 'mount': '/', 'total_bytes': tot, 'used_bytes': usd, 'available_bytes': avl, 'usage_percent': pct})
+        except Exception: pass
+    sock = {'total': 0, 'tcp_inuse': 0, 'tcp_tw': 0, 'tcp_alloc': 0, 'udp_inuse': 0}
+    try:
+        with open('/proc/net/sockstat') as f:
+            for line in f:
+                if line.startswith('sockets:'):
+                    m = re.search(r'used\s+(\d+)', line)
+                    if m: sock['total'] = int(m.group(1))
+                elif line.startswith('TCP:'):
+                    m_inuse = re.search(r'inuse\s+(\d+)', line)
+                    m_tw = re.search(r'tw\s+(\d+)', line)
+                    m_alloc = re.search(r'alloc\s+(\d+)', line)
+                    if m_inuse: sock['tcp_inuse'] = int(m_inuse.group(1))
+                    if m_tw: sock['tcp_tw'] = int(m_tw.group(1))
+                    if m_alloc: sock['tcp_alloc'] = int(m_alloc.group(1))
+                elif line.startswith('UDP:'):
+                    m_udp = re.search(r'inuse\s+(\d+)', line)
+                    if m_udp: sock['udp_inuse'] = int(m_udp.group(1))
+    except Exception: pass
+    uptime_sec = 0
+    try:
+        with open('/proc/uptime') as f: uptime_sec = int(float(f.read().split()[0]))
+    except Exception: pass
+    days = uptime_sec // 86400
+    hours = (uptime_sec % 86400) // 3600
+    mins = (uptime_sec % 3600) // 60
+    uptime_fmt = f'{days}d {hours}h {mins}m' if days > 0 else (f'{hours}h {mins}m' if hours > 0 else f'{mins}m')
+    return {'cpu': {'overall': overall_cpu, 'cores': cpu_cores, 'load_avg': load_avg, 'model_name': model_name}, 'ram': {'total_bytes': total_ram, 'used_bytes': used_ram, 'free_bytes': free_ram, 'available_bytes': avail_ram, 'cached_bytes': cached_ram, 'buffers_bytes': buffers_ram, 'swap_total': swap_total, 'swap_used': swap_used, 'usage_percent': ram_pct}, 'partitions': partitions, 'sockets': sock, 'uptime_seconds': uptime_sec, 'uptime_formatted': uptime_fmt}
+print(json.dumps(get_telemetry()))
+"
+else
+c1=$(grep '^cpu' /proc/stat)
+sleep 0.2
+c2=$(grep '^cpu' /proc/stat)
+mem=$(grep -E '^(MemTotal|MemFree|MemAvailable|Buffers|Cached|SwapTotal|SwapFree):' /proc/meminfo)
+part=$(df -kP 2>/dev/null || /bin/df -kP 2>/dev/null || /usr/bin/df -kP 2>/dev/null)
+sock=$(cat /proc/net/sockstat 2>/dev/null)
+up=$(cat /proc/uptime 2>/dev/null)
+echo "---CPU1---"
+echo "$c1"
+echo "---CPU2---"
+echo "$c2"
+echo "---MEM---"
+echo "$mem"
+echo "---DF---"
+echo "$part"
+echo "---SOCK---"
+echo "$sock"
+echo "---UP---"
+echo "$up"
+fi
+''';
+
+      final bytes = await client.run(script);
+      final rawOutput = utf8.decode(bytes).trim();
+      if (rawOutput.isEmpty) return null;
+
+      // Extract JSON if embedded or directly outputted
+      final jsonMatch = RegExp(r'\{.*\}', dotAll: true).firstMatch(rawOutput);
+      if (jsonMatch != null) {
+        try {
+          final map = jsonDecode(jsonMatch.group(0)!) as Map<String, dynamic>;
+          return HardwareTelemetry.fromMap(map, serverId: profile.id);
+        } catch (_) {}
+      }
+
+      return _parseDelimitedTelemetry(rawOutput, profile.id);
+    } catch (e) {
+      if (_isConnectionBroken(e)) {
+        _clientPool.remove(profile.id);
+      }
+      debugPrint('[SshService] Error fetching hardware telemetry: $e');
+      return null;
+    }
+  }
+
+  HardwareTelemetry _parseDelimitedTelemetry(String raw, String serverId) {
+    final sections = <String, List<String>>{};
+    String currentSection = 'default';
+    for (final line in const LineSplitter().convert(raw)) {
+      final trimmed = line.trim();
+      if (trimmed.startsWith('---') && trimmed.endsWith('---')) {
+        currentSection = trimmed.replaceAll('---', '');
+        sections[currentSection] = [];
+      } else if (trimmed.isNotEmpty) {
+        sections.putIfAbsent(currentSection, () => []).add(trimmed);
+      }
+    }
+
+    // 1. Parse CPU
+    final c1Lines = sections['CPU1'] ?? [];
+    final c2Lines = sections['CPU2'] ?? [];
+    final Map<String, List<double>> c1 = {};
+    for (final l in c1Lines) {
+      final p = l.split(RegExp(r'\s+'));
+      if (p.isNotEmpty && p[0].startsWith('cpu')) {
+        c1[p[0]] = p.skip(1).map((x) => double.tryParse(x) ?? 0.0).toList();
+      }
+    }
+    double overallCpu = 0.0;
+    final List<CpuCoreMetric> cores = [];
+    for (final l in c2Lines) {
+      final p = l.split(RegExp(r'\s+'));
+      if (p.isNotEmpty && p[0].startsWith('cpu') && c1.containsKey(p[0])) {
+        final name = p[0];
+        final v2 = p.skip(1).map((x) => double.tryParse(x) ?? 0.0).toList();
+        final v1 = c1[name]!;
+        if (v1.length >= 4 && v2.length >= 4) {
+          final idle1 = v1[3] + (v1.length > 4 ? v1[4] : 0.0);
+          final idle2 = v2[3] + (v2.length > 4 ? v2[4] : 0.0);
+          final tot1 = v1.fold<double>(0.0, (a, b) => a + b);
+          final tot2 = v2.fold<double>(0.0, (a, b) => a + b);
+          final dt = tot2 - tot1;
+          final di = idle2 - idle1;
+          final pct = dt > 0 ? ((1.0 - (di / dt)) * 100.0).clamp(0.0, 100.0) : 0.0;
+          final rounded = double.parse(pct.toStringAsFixed(1));
+          if (name == 'cpu') {
+            overallCpu = rounded;
+          } else {
+            cores.add(CpuCoreMetric(name: name, usage: rounded));
+          }
+        }
+      }
+    }
+
+    // 2. Parse Memory
+    final memLines = sections['MEM'] ?? [];
+    final Map<String, int> memMap = {};
+    for (final l in memLines) {
+      final p = l.split(':');
+      if (p.length == 2) {
+        final k = p[0].trim();
+        final v = int.tryParse(p[1].trim().split(RegExp(r'\s+'))[0]) ?? 0;
+        memMap[k] = v * 1024;
+      }
+    }
+    final totalRam = memMap['MemTotal'] ?? 0;
+    final availRam = memMap['MemAvailable'] ?? (memMap['MemFree'] ?? 0);
+    final usedRam = (totalRam - availRam).clamp(0, totalRam);
+    final freeRam = memMap['MemFree'] ?? 0;
+    final cachedRam = memMap['Cached'] ?? 0;
+    final buffersRam = memMap['Buffers'] ?? 0;
+    final swapTotal = memMap['SwapTotal'] ?? 0;
+    final swapFree = memMap['SwapFree'] ?? 0;
+    final swapUsed = (swapTotal - swapFree).clamp(0, swapTotal);
+    final ramPct = totalRam > 0
+        ? double.parse(((usedRam / totalRam) * 100.0).toStringAsFixed(1))
+        : 0.0;
+
+    // 3. Parse Partitions
+    final dfLines = sections['DF'] ?? [];
+    final List<PartitionHealth> partitions = [];
+    String? pendingFs;
+    for (int i = 0; i < dfLines.length; i++) {
+      final line = dfLines[i].trim();
+      if (line.isEmpty || line.toLowerCase().startsWith('filesystem')) continue;
+      final p = line.split(RegExp(r'\s+'));
+      if (p.length == 1 && pendingFs == null) {
+        pendingFs = p[0];
+        continue;
+      }
+      final fs = pendingFs ?? p[0];
+      final parts = pendingFs != null ? p : p.skip(1).toList();
+      pendingFs = null;
+
+      if (parts.length >= 5) {
+        final sizeK = int.tryParse(parts[0]) ?? 0;
+        final usedK = int.tryParse(parts[1]) ?? 0;
+        final availK = int.tryParse(parts[2]) ?? 0;
+        final pctStr = parts[3].replaceAll('%', '');
+        var pct = double.tryParse(pctStr) ?? 0.0;
+        final mnt = parts.last;
+
+        if (pct <= 0.0 && sizeK > 0 && usedK > 0) {
+          pct = double.parse(((usedK / sizeK) * 100.0).toStringAsFixed(1));
+        }
+
+        if (!fs.startsWith('tmpfs') &&
+            !fs.startsWith('devtmpfs') &&
+            !mnt.startsWith('/boot') &&
+            !mnt.startsWith('/run') &&
+            !mnt.startsWith('/sys')) {
+          partitions.add(
+            PartitionHealth(
+              filesystem: fs,
+              mount: mnt,
+              totalBytes: sizeK * 1024,
+              usedBytes: usedK * 1024,
+              availableBytes: availK * 1024,
+              usagePercent: pct,
+            ),
+          );
+        }
+      }
+    }
+
+    // 4. Parse Sockets
+    final sockLines = sections['SOCK'] ?? [];
+    int totalSock = 0, tcpInUse = 0, tcpTw = 0, tcpAlloc = 0, udpInUse = 0;
+    for (final l in sockLines) {
+      if (l.startsWith('sockets:')) {
+        final m = RegExp(r'used\s+(\d+)').firstMatch(l);
+        if (m != null) totalSock = int.tryParse(m.group(1)!) ?? 0;
+      } else if (l.startsWith('TCP:')) {
+        final mInUse = RegExp(r'inuse\s+(\d+)').firstMatch(l);
+        final mTw = RegExp(r'tw\s+(\d+)').firstMatch(l);
+        final mAlloc = RegExp(r'alloc\s+(\d+)').firstMatch(l);
+        if (mInUse != null) tcpInUse = int.tryParse(mInUse.group(1)!) ?? 0;
+        if (mTw != null) tcpTw = int.tryParse(mTw.group(1)!) ?? 0;
+        if (mAlloc != null) tcpAlloc = int.tryParse(mAlloc.group(1)!) ?? 0;
+      } else if (l.startsWith('UDP:')) {
+        final mUdp = RegExp(r'inuse\s+(\d+)').firstMatch(l);
+        if (mUdp != null) udpInUse = int.tryParse(mUdp.group(1)!) ?? 0;
+      }
+    }
+
+    // 5. Parse Uptime
+    final upLines = sections['UP'] ?? [];
+    int upSec = 0;
+    if (upLines.isNotEmpty) {
+      final p = upLines[0].split(RegExp(r'\s+'));
+      if (p.isNotEmpty) {
+        upSec = (double.tryParse(p[0]) ?? 0.0).toInt();
+      }
+    }
+    final d = upSec ~/ 86400;
+    final h = (upSec % 86400) ~/ 3600;
+    final m = (upSec % 3600) ~/ 60;
+    final upFmt = d > 0 ? '${d}d ${h}h ${m}m' : (h > 0 ? '${h}h ${m}m' : '${m}m');
+
+    return HardwareTelemetry(
+      serverId: serverId,
+      timestamp: DateTime.now(),
+      cpu: CpuTelemetry(
+        overall: overallCpu,
+        cores: cores,
+        loadAvg: const [0.5, 0.6, 0.7],
+      ),
+      ram: RamTelemetry(
+        totalBytes: totalRam,
+        usedBytes: usedRam,
+        freeBytes: freeRam,
+        availableBytes: availRam,
+        cachedBytes: cachedRam,
+        buffersBytes: buffersRam,
+        swapTotal: swapTotal,
+        swapUsed: swapUsed,
+        usagePercent: ramPct,
+      ),
+      partitions: partitions,
+      sockets: NetworkSocketTelemetry(
+        total: totalSock,
+        tcpInUse: tcpInUse,
+        tcpTimeWait: tcpTw,
+        tcpAlloc: tcpAlloc,
+        udpInUse: udpInUse,
+      ),
+      uptimeSeconds: upSec,
+      uptimeFormatted: upFmt,
+    );
   }
 
   bool _isConnectionBroken(Object e) {

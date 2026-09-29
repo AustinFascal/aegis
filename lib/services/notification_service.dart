@@ -143,8 +143,10 @@ class NotificationService {
           eventMap['body'] = body;
           _fcmEventController.add(eventMap);
 
+          final notifId = ip.isNotEmpty ? (ip.hashCode.abs() % 100000) : message.hashCode;
+
           showSecurityAlert(
-            id: message.hashCode,
+            id: notifId,
             title: title,
             body: body,
             payload: ip.isNotEmpty ? ip : (data['action'] ?? ''),
@@ -203,6 +205,7 @@ class NotificationService {
       priority: Priority.high,
       ticker: 'Security Alert',
       enableVibration: true,
+      tag: payload != null && payload.isNotEmpty ? payload : null,
       styleInformation: BigTextStyleInformation(body),
       actions: const <AndroidNotificationAction>[
         AndroidNotificationAction(

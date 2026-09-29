@@ -62,8 +62,9 @@ server_agent/config*.json
 
 # Internal Documentation & Notes
 GITHUB_SETUP.md
-LANDING_SETUP.md
 DEPLOYMENT_SETUP.md
+DEPLOYMENT_SETUP_ANDROID.md
+LANDING_SETUP.md
 INTERNAL*.md
 PRIVATE*.md
 COMPANY*.md
@@ -161,4 +162,15 @@ audit_export*.json
 export*.csv
 downloads/
 sftp_cache/
-DEPLOYMENT_SETUP_ANDROID.md
+
+# ==========================================
+# Release Binary Installers (Distributed via GitHub Releases)
+# ==========================================
+docs/releases/**/*.apk
+docs/releases/**/*.tar.gz
+docs/releases/**/*.zip
+docs/releases/**/*.exe
+docs/releases/**/*.dmg
+!docs/releases/**/.gitkeep
+*.apk
+*.tar.gz
