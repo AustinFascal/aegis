@@ -1,33 +1,33 @@
 {
-  "tag_name": "v1.0.0",
-  "published_at": "2026-09-29T09:01:55Z",
+  "tag_name": "v1.0.1",
+  "published_at": "2026-09-30T02:37:10Z",
   "assets": {
     "android": {
       "file_name": "aegis-android.apk",
-      "sha256": "3f15b0ac7539f82d1ab4fa8ff89a081432aa7169435510bd3516f550cb5ce1bc",
-      "size_bytes": 66077935,
-      "size_human": "63.0 MB",
+      "sha256": "492b92ecaa75e50e6855c59fcdb8c0fce30181f687e50973eddce23bca0c0e57",
+      "size_bytes": 66143499,
+      "size_human": "63.1 MB",
       "download_url": "https://github.com/AustinFascal/aegis/releases/latest/download/aegis-android.apk"
     },
     "linux": {
       "file_name": "aegis-linux-x64.tar.gz",
-      "sha256": "009dcde10fdd3612953bb4a14dbe209345dd9f1d4875c25b4683cc376954a87e",
-      "size_bytes": 12629625,
-      "size_human": "12.6 MB",
+      "sha256": "b6dec8e3fce92a72394c76e342c4d2a9ff2b62d5e428b5a64edae2c4fe17de68",
+      "size_bytes": 12645196,
+      "size_human": "12.1 MB",
       "download_url": "https://github.com/AustinFascal/aegis/releases/latest/download/aegis-linux-x64.tar.gz"
     },
     "windows": {
       "file_name": "aegis-windows-x64.zip",
-      "sha256": null,
-      "size_bytes": null,
-      "size_human": null,
+      "sha256": "93d10f41e8e50a648a5281e62c1c84695d296fd50c365d2169c8abca428963a2",
+      "size_bytes": 16174511,
+      "size_human": "15.4 MB",
       "download_url": "https://github.com/AustinFascal/aegis/releases/latest/download/aegis-windows-x64.zip"
     },
     "macos": {
       "file_name": "aegis-macos-universal.zip",
-      "sha256": null,
-      "size_bytes": null,
-      "size_human": null,
+      "sha256": "f0ce42ccf405f7f7a5796415089b29106db7e86fe421e4f2c75f003bb4d3adbf",
+      "size_bytes": 24388954,
+      "size_human": "23.3 MB",
       "download_url": "https://github.com/AustinFascal/aegis/releases/latest/download/aegis-macos-universal.zip"
     }
   }
