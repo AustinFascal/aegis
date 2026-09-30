@@ -24,9 +24,10 @@ class AegisHeader extends HTMLElement {
 
           <ul class="nav-menu" id="navMenu">
             <li><a href="${homeUrl}#features" class="nav-link ${activePage === 'features' ? 'active' : ''}">Features</a></li>
-            <li><a href="${downloadUrl}" class="nav-link ${activePage === 'download' ? 'active' : ''}">Download</a></li>
             <li><a href="${homeUrl}#architecture" class="nav-link ${activePage === 'architecture' ? 'active' : ''}">Architecture</a></li>
             <li><a href="${homeUrl}#deployment" class="nav-link ${activePage === 'deployment' ? 'active' : ''}">Agent Setup</a></li>
+            <li><a href="${homeUrl}#platforms" class="nav-link ${activePage === 'platforms' ? 'active' : ''}">Platforms</a></li>
+            <li><a href="${downloadUrl}" class="nav-link ${activePage === 'download' ? 'active' : ''}">Download</a></li>
             <li><a href="${homeUrl}#faq" class="nav-link ${activePage === 'faq' ? 'active' : ''}">FAQ</a></li>
             <li class="nav-menu-mobile-extra">
               <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center; gap: 8px;">
@@ -152,28 +153,33 @@ class AegisFooter extends HTMLElement {
             <ul class="footer-links">
               <li><a href="${homeUrl}#hero">Overview</a></li>
               <li><a href="${homeUrl}#features">Features</a></li>
-              <li><a href="${homeUrl}#sandbox">Interactive Demo</a></li>
-              <li><a href="${downloadUrl}">Download Client</a></li>
+              <li><a href="${homeUrl}#architecture">Architecture</a></li>
+              <li><a href="${homeUrl}#deployment">Agent Setup</a></li>
+              <li><a href="${homeUrl}#platforms">Supported Platforms</a></li>
+              <li><a href="${homeUrl}#faq">FAQ</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Supported Platforms</div>
+            <ul class="footer-links">
+              <li><a href="${downloadUrl}">Android Mobile (APK)</a></li>
+              <li><a href="${downloadUrl}">Linux Desktop (.tar.gz)</a></li>
+              <li><a href="${downloadUrl}">Windows 64-bit (.zip)</a></li>
+              <li><a href="${downloadUrl}">macOS Universal (.zip)</a></li>
+              <li><a href="${downloadUrl}#changelog">Release Hashes & Notes</a></li>
             </ul>
           </div>
 
           <div>
             <div class="footer-col-title">Resources</div>
             <ul class="footer-links">
+              <li><a href="${downloadUrl}">Download Center</a></li>
+              <li><a href="${downloadUrl}#changelog">Release Changelog</a></li>
               <li><a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
               <li><a href="https://github.com/AustinFascal/aegis/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a></li>
               <li><a href="https://github.com/AustinFascal/aegis/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
               <li><a href="https://github.com/AustinFascal/aegis/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <div class="footer-col-title">SecOps Tools</div>
-            <ul class="footer-links">
-              <li><a href="${homeUrl}#sandbox">VT100 Terminal</a></li>
-              <li><a href="${homeUrl}#sandbox">SFTP File Manager</a></li>
-              <li><a href="${homeUrl}#sandbox">AbuseIPDB Threat Radar</a></li>
-              <li><a href="${homeUrl}#deployment">Python Agent</a></li>
             </ul>
           </div>
         </div>
