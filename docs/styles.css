@@ -2691,6 +2691,24 @@ aegis-footer {
   border: 1px solid rgba(255, 179, 0, 0.3);
 }
 
+.cl-tag-docs {
+  background: rgba(160, 174, 192, 0.15);
+  color: #CBD5E0;
+  border: 1px solid rgba(160, 174, 192, 0.3);
+}
+
+.cl-tag-perf {
+  background: rgba(186, 104, 200, 0.15);
+  color: #CE93D8;
+  border: 1px solid rgba(186, 104, 200, 0.3);
+}
+
+.cl-tag-ci {
+  background: rgba(66, 153, 225, 0.15);
+  color: #90CDF4;
+  border: 1px solid rgba(66, 153, 225, 0.3);
+}
+
 @media (max-width: 992px) {
   .spotlight-card {
     grid-template-columns: 1fr;

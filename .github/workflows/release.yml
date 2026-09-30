@@ -335,6 +335,30 @@ jobs:
           }
           EOF
 
+      - name: Generate Automated Release Notes
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          git fetch --tags --unshallow 2>/dev/null || git fetch --tags
+          PREV_TAG=$(git describe --tags --abbrev=0 "${TAG_NAME}^" 2>/dev/null || echo "")
+          echo "Previous tag: $PREV_TAG"
+          
+          NOTES_FILE="release_notes.md"
+          echo "### What's Changed in Aegis ${TAG_NAME}" > $NOTES_FILE
+          echo "" >> $NOTES_FILE
+          
+          if [ -n "$PREV_TAG" ]; then
+            git log "${PREV_TAG}..HEAD" --no-merges --pretty=format:"* %s (%h)" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            echo "**Full Changelog**: https://github.com/AustinFascal/aegis/compare/${PREV_TAG}...${TAG_NAME}" >> $NOTES_FILE
+          else
+            git log -n 20 --no-merges --pretty=format:"* %s (%h)" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            echo "**Full Changelog**: https://github.com/AustinFascal/aegis/commits/${TAG_NAME}" >> $NOTES_FILE
+          fi
+          cat $NOTES_FILE
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -342,7 +366,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
-          generate_release_notes: true
+          body_path: release_notes.md
           files: |
             aegis-android.apk
             aegis-*.apk

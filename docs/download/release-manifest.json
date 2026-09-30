@@ -30,5 +30,103 @@
       "size_human": "23.3 MB",
       "download_url": "https://github.com/AustinFascal/aegis/releases/latest/download/aegis-macos-universal.zip"
     }
-  }
+  },
+  "changelog": [
+    {
+      "tag": "v1.0.1",
+      "date": "September 30, 2026",
+      "title": "Aegis v1.0.1 — Multiplatform Desktop & CI Automation",
+      "is_latest": true,
+      "html_url": "https://github.com/AustinFascal/aegis/releases/tag/v1.0.1",
+      "entries": [
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Automated Multiplatform Builds:",
+          "desc": "Full CI/CD compilation matrix producing release binaries for Android (APK), Linux (tarball), Windows (x64 zip), and macOS (universal zip)."
+        },
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Dynamic Checksum Verification:",
+          "desc": "Real-time SHA256 integrity checks, exact file sizes, and 1-click clipboard hashing on web download page directly from GitHub Release digests."
+        },
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Tag-Driven Dynamic Versioning:",
+          "desc": "App versions on Settings screen automatically synchronize to git release tags at compile-time without manual code updates."
+        },
+        {
+          "type": "fix",
+          "tag": "FIX",
+          "title": "Windows MSVC Coroutine Deprecation:",
+          "desc": "Configured _SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS to resolve MSVC STL1011 static assertion errors on Windows 64-bit runners."
+        },
+        {
+          "type": "fix",
+          "tag": "FIX",
+          "title": "macOS Ad-Hoc Signing:",
+          "desc": "Resolved compilation CLI flags and enabled ad-hoc code signing for seamless macOS Universal execution."
+        },
+        {
+          "type": "docs",
+          "tag": "DOCS",
+          "title": "Multiplatform Documentation:",
+          "desc": "Comprehensive release setup guide and troubleshooting reference for automated multi-OS builds."
+        }
+      ]
+    },
+    {
+      "tag": "v1.0.0",
+      "date": "September 28, 2026",
+      "title": "Aegis v1.0.0 — Official Stable Launch",
+      "is_latest": false,
+      "html_url": "https://github.com/AustinFascal/aegis/releases/tag/v1.0.0",
+      "entries": [
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Interactive VT100 SSH Terminal:",
+          "desc": "Hardware-accelerated true cell buffer with curses/TUI support (htop, vim, tmux), dynamic SIGWINCH viewport reflow, and 4 Hacker Themes."
+        },
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Native SFTP v3 Remote Explorer:",
+          "desc": "Live breadcrumbs, in-app remote text/config editor, upload/download streams, and dotfile visibility toggle."
+        },
+        {
+          "type": "sec",
+          "tag": "SECURITY",
+          "title": "17 CIS Linux Hardening Benchmarks:",
+          "desc": "Automated compliance checks, dynamic Letter Grades (A+ to F), and 1-tap executable remediation playbook generator."
+        },
+        {
+          "type": "sec",
+          "tag": "SECURITY",
+          "title": "AbuseIPDB Global Threat Intelligence:",
+          "desc": "Automated Tor exit node and Botnet C2 detection with private subnet filtering."
+        },
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Zero-Knowledge Biometric Vault:",
+          "desc": "Hardware-backed keystore integration (Fingerprint, Face Unlock, and Keychain) with encrypted local storage."
+        },
+        {
+          "type": "feat",
+          "tag": "NEW",
+          "title": "Firebase Cloud Messaging:",
+          "desc": "Instant mobile push alert dispatcher hooked directly into Fail2ban auth.log threat incidents."
+        },
+        {
+          "type": "fix",
+          "tag": "FIX",
+          "title": "Ergonomic Mobile Keypad:",
+          "desc": "Triple-dot action menu eliminating text overflow on small screens."
+        }
+      ]
+    }
+  ]
 }

@@ -417,63 +417,129 @@
         <div style="text-align: center; margin-bottom: 30px;">
           <span class="section-badge">Version History</span>
           <h2 style="font-size: 2rem; color: #FFF; margin-top: 8px;">Release Notes & Changelog</h2>
+          <p class="text-muted" style="font-size: 0.9rem; max-width: 600px; margin: 8px auto 0;">
+            Live release tracking synchronized directly with GitHub Releases.
+          </p>
         </div>
 
-        <!-- v1.0.0 Block -->
-        <div class="cl-version-block" style="margin-bottom: 70px;">
-          <div class="cl-version-header">
-            <div class="cl-version-title">
-              <span>v1.0.0</span>
-              <span class="brand-badge" style="background: rgba(30, 107, 255, 0.15); border-color: rgba(30, 107, 255, 0.4); color: var(--blue);">CURRENT STABLE</span>
+        <!-- Dynamic Container for Version Blocks -->
+        <div id="changelog-entries">
+          <!-- Fallback v1.0.1 Block -->
+          <div class="cl-version-block" style="margin-bottom: 24px;">
+            <div class="cl-version-header">
+              <div class="cl-version-title">
+                <span>v1.0.1</span>
+                <span class="brand-badge" style="background: rgba(0, 230, 118, 0.15); border-color: rgba(0, 230, 118, 0.4); color: var(--emerald);">LATEST STABLE</span>
+              </div>
+              <div class="text-dim" style="font-size: 0.82rem; font-family: var(--font-mono);">September 30, 2026</div>
             </div>
-            <div class="text-dim" style="font-size: 0.82rem; font-family: var(--font-mono);">September 28, 2026</div>
+            <ul class="cl-entry-list">
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Automated Multiplatform Builds:</strong> Full CI/CD compilation matrix producing release binaries for Android (APK), Linux (tarball), Windows (x64 zip), and macOS (universal zip).
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Dynamic Checksum Verification:</strong> Real-time SHA256 integrity checks, exact file sizes, and 1-click clipboard hashing on web download page directly from GitHub Release digests.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Tag-Driven Dynamic Versioning:</strong> App versions on Settings screen automatically synchronize to git release tags at compile-time without manual code updates.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-fix">FIX</span>
+                <div>
+                  <strong>Windows MSVC Coroutine Deprecation:</strong> Configured <code>_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS</code> to resolve MSVC STL1011 static assertion errors on Windows 64-bit runners.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-fix">FIX</span>
+                <div>
+                  <strong>macOS Ad-Hoc Signing:</strong> Resolved compilation CLI flags and enabled ad-hoc code signing for seamless macOS Universal execution.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-docs">DOCS</span>
+                <div>
+                  <strong>Multiplatform Documentation:</strong> Comprehensive release setup guide and troubleshooting reference for automated multi-OS builds.
+                </div>
+              </li>
+            </ul>
+            <div style="padding: 12px 26px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end;">
+              <a href="https://github.com/AustinFascal/aegis/releases/tag/v1.0.1" target="_blank" rel="noopener noreferrer" style="color: var(--blue); font-size: 0.82rem; font-family: var(--font-mono); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>View Release on GitHub</span>
+                <span>→</span>
+              </a>
+            </div>
           </div>
-          <ul class="cl-entry-list">
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-feat">NEW</span>
-              <div>
-                <strong>Interactive VT100 SSH Terminal:</strong> Hardware-accelerated true cell buffer with curses/TUI support (<code>htop</code>, <code>vim</code>, <code>tmux</code>), dynamic SIGWINCH viewport reflow, and 4 Hacker Themes.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-feat">NEW</span>
-              <div>
-                <strong>Native SFTP v3 Remote Explorer:</strong> Live breadcrumbs, in-app remote text/config editor, upload/download streams, and dotfile visibility toggle.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-sec">SECURITY</span>
-              <div>
-                <strong>17 CIS Linux Hardening Benchmarks:</strong> Automated compliance checks, dynamic Letter Grades (A+ to F), and 1-tap executable remediation playbook generator.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-sec">SECURITY</span>
-              <div>
-                <strong>AbuseIPDB Global Threat Intelligence:</strong> Automated Tor exit node and Botnet C2 detection with private subnet filtering.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-feat">NEW</span>
-              <div>
-                <strong>Zero-Knowledge Biometric Vault:</strong> Hardware-backed keystore integration (Fingerprint, Face Unlock, and Keychain) with encrypted local storage.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-feat">NEW</span>
-              <div>
-                <strong>Firebase Cloud Messaging:</strong> Instant mobile push alert dispatcher hooked directly into Fail2ban auth.log threat incidents.
-              </div>
-            </li>
-            <li class="cl-entry-item">
-              <span class="cl-tag cl-tag-fix">FIX</span>
-              <div>
-                <strong>Ergonomic Mobile Keypad:</strong> Triple-dot action menu eliminating text overflow on small screens.
-              </div>
-            </li>
-          </ul>
-        </div>
 
+          <!-- Fallback v1.0.0 Block -->
+          <div class="cl-version-block" style="margin-bottom: 24px;">
+            <div class="cl-version-header">
+              <div class="cl-version-title">
+                <span>v1.0.0</span>
+                <span class="brand-badge" style="background: rgba(255, 255, 255, 0.05); border-color: var(--border-subtle); color: var(--text-dim);">STABLE</span>
+              </div>
+              <div class="text-dim" style="font-size: 0.82rem; font-family: var(--font-mono);">September 28, 2026</div>
+            </div>
+            <ul class="cl-entry-list">
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Interactive VT100 SSH Terminal:</strong> Hardware-accelerated true cell buffer with curses/TUI support (<code>htop</code>, <code>vim</code>, <code>tmux</code>), dynamic SIGWINCH viewport reflow, and 4 Hacker Themes.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Native SFTP v3 Remote Explorer:</strong> Live breadcrumbs, in-app remote text/config editor, upload/download streams, and dotfile visibility toggle.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-sec">SECURITY</span>
+                <div>
+                  <strong>17 CIS Linux Hardening Benchmarks:</strong> Automated compliance checks, dynamic Letter Grades (A+ to F), and 1-tap executable remediation playbook generator.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-sec">SECURITY</span>
+                <div>
+                  <strong>AbuseIPDB Global Threat Intelligence:</strong> Automated Tor exit node and Botnet C2 detection with private subnet filtering.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Zero-Knowledge Biometric Vault:</strong> Hardware-backed keystore integration (Fingerprint, Face Unlock, and Keychain) with encrypted local storage.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-feat">NEW</span>
+                <div>
+                  <strong>Firebase Cloud Messaging:</strong> Instant mobile push alert dispatcher hooked directly into Fail2ban auth.log threat incidents.
+                </div>
+              </li>
+              <li class="cl-entry-item">
+                <span class="cl-tag cl-tag-fix">FIX</span>
+                <div>
+                  <strong>Ergonomic Mobile Keypad:</strong> Triple-dot action menu eliminating text overflow on small screens.
+                </div>
+              </li>
+            </ul>
+            <div style="padding: 12px 26px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end;">
+              <a href="https://github.com/AustinFascal/aegis/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer" style="color: var(--blue); font-size: 0.82rem; font-family: var(--font-mono); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>View Release on GitHub</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -495,13 +561,158 @@
       });
     }
 
-    // Dynamic GitHub Release metadata & SHA256 retrieval
+    // Helper function to format release date
+    function formatReleaseDate(dateStr) {
+      if (!dateStr) return '';
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (_) {
+        return dateStr;
+      }
+    }
+
+    // Helper to parse Markdown release body into styled bullet items
+    function parseReleaseBody(body) {
+      if (!body) return [];
+      const lines = body.split('\n');
+      const entries = [];
+      for (let rawLine of lines) {
+        let line = rawLine.trim();
+        if (!line) continue;
+        if (line.startsWith('#')) continue;
+        if (line.toLowerCase().includes('full changelog') && line.includes('http')) continue;
+        if (line.startsWith('*') || line.startsWith('-') || line.startsWith('•')) {
+          line = line.replace(/^[\*\-•]\s*/, '').trim();
+        }
+
+        let type = 'feat';
+        let tag = 'NEW';
+        const lower = line.toLowerCase();
+        if (lower.startsWith('**feat') || lower.includes('feat(') || lower.startsWith('feat:') || lower.includes('feature')) {
+          type = 'feat';
+          tag = 'NEW';
+        } else if (lower.startsWith('**fix') || lower.includes('fix(') || lower.startsWith('fix:') || lower.includes('bug')) {
+          type = 'fix';
+          tag = 'FIX';
+        } else if (lower.startsWith('**sec') || lower.includes('sec(') || lower.includes('security') || lower.includes('hardening')) {
+          type = 'sec';
+          tag = 'SECURITY';
+        } else if (lower.startsWith('**perf') || lower.includes('perf(') || lower.includes('performance')) {
+          type = 'perf';
+          tag = 'PERF';
+        } else if (lower.startsWith('**doc') || lower.includes('doc(') || lower.startsWith('docs:')) {
+          type = 'docs';
+          tag = 'DOCS';
+        } else if (lower.startsWith('**ci') || lower.includes('ci(') || lower.includes('workflow') || lower.includes('build')) {
+          type = 'ci';
+          tag = 'CI/CD';
+        }
+
+        let formatted = line
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--blue); text-decoration: underline;">$1</a>');
+
+        entries.push({ type, tag, text: formatted });
+      }
+      return entries;
+    }
+
+    // Helper to render dynamic changelog blocks
+    function renderDynamicChangelog(releasesList, fallbackManifestList) {
+      if (!Array.isArray(releasesList) || releasesList.length === 0) return;
+      const container = document.getElementById('changelog-entries');
+      if (!container) return;
+
+      const GITHUB_REPO = 'AustinFascal/aegis';
+      let html = '';
+
+      releasesList.forEach((rel, index) => {
+        const isLatest = (index === 0);
+        const tag = rel.tag_name || rel.tag || 'v1.0.0';
+        const url = rel.html_url || `https://github.com/${GITHUB_REPO}/releases/tag/${tag}`;
+        let dateStr = rel.date;
+        if (!dateStr && rel.published_at) {
+          dateStr = formatReleaseDate(rel.published_at);
+        }
+        if (!dateStr) dateStr = 'Latest Release';
+
+        const badgeStyle = isLatest
+          ? 'background: rgba(0, 230, 118, 0.15); border-color: rgba(0, 230, 118, 0.4); color: var(--emerald);'
+          : 'background: rgba(255, 255, 255, 0.05); border-color: var(--border-subtle); color: var(--text-dim);';
+        const badgeText = isLatest ? 'LATEST STABLE' : 'STABLE';
+
+        let entryItems = [];
+        if (Array.isArray(rel.entries) && rel.entries.length > 0) {
+          entryItems = rel.entries.map(e => ({
+            type: e.type || 'feat',
+            tag: e.tag || 'NEW',
+            text: `<strong>${e.title || ''}</strong> ${e.desc || ''}`
+          }));
+        } else if (rel.body) {
+          entryItems = parseReleaseBody(rel.body);
+        }
+
+        // If body parsing was empty, look for fallback curated entries in manifest
+        if (entryItems.length === 0 && Array.isArray(fallbackManifestList)) {
+          const fb = fallbackManifestList.find(c => c.tag === tag);
+          if (fb && Array.isArray(fb.entries)) {
+            entryItems = fb.entries.map(e => ({
+              type: e.type || 'feat',
+              tag: e.tag || 'NEW',
+              text: `<strong>${e.title || ''}</strong> ${e.desc || ''}`
+            }));
+            if (fb.date && !rel.date) dateStr = fb.date;
+          }
+        }
+
+        if (entryItems.length === 0) {
+          entryItems.push({
+            type: 'feat',
+            tag: 'UPDATE',
+            text: `Official release ${tag}. See complete changes and commit log on GitHub.`
+          });
+        }
+
+        html += `
+          <div class="cl-version-block" style="margin-bottom: 24px;">
+            <div class="cl-version-header">
+              <div class="cl-version-title">
+                <span>${tag}</span>
+                <span class="brand-badge" style="${badgeStyle}">${badgeText}</span>
+              </div>
+              <div class="text-dim" style="font-size: 0.82rem; font-family: var(--font-mono);">${dateStr}</div>
+            </div>
+            <ul class="cl-entry-list">
+              ${entryItems.map(item => `
+                <li class="cl-entry-item">
+                  <span class="cl-tag cl-tag-${item.type}">${item.tag}</span>
+                  <div>${item.text}</div>
+                </li>
+              `).join('')}
+            </ul>
+            <div style="padding: 12px 26px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end;">
+              <a href="${url}" target="_blank" rel="noopener noreferrer" style="color: var(--blue); font-size: 0.82rem; font-family: var(--font-mono); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>View Release on GitHub</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // Dynamic GitHub Release metadata, SHA256 & Changelog retrieval
     async function loadDynamicReleaseData() {
       const GITHUB_REPO = 'AustinFascal/aegis';
-      const API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+      const API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases`;
       const LOCAL_MANIFEST = './release-manifest.json';
 
       let releaseData = null;
+      let changelogData = null;
 
       function formatBytes(bytes) {
         if (!bytes || isNaN(bytes)) return null;
@@ -514,89 +725,100 @@
           headers: { 'Accept': 'application/vnd.github.v3+json' }
         });
         if (res.ok) {
-          const data = await res.json();
-          const assets = data.assets || [];
+          const releases = await res.json();
+          if (Array.isArray(releases) && releases.length > 0) {
+            changelogData = releases;
+            const data = releases[0];
+            const assets = data.assets || [];
 
-          const androidAsset = assets.find(a => a.name === 'aegis-android.apk');
-          const linuxAsset = assets.find(a => a.name === 'aegis-linux-x64.tar.gz');
-          const windowsAsset = assets.find(a => a.name === 'aegis-windows-x64.zip' || a.name.includes('windows'));
-          const macosAsset = assets.find(a => a.name === 'aegis-macos-universal.zip' || a.name.includes('macos'));
+            const androidAsset = assets.find(a => a.name === 'aegis-android.apk');
+            const linuxAsset = assets.find(a => a.name === 'aegis-linux-x64.tar.gz');
+            const windowsAsset = assets.find(a => a.name === 'aegis-windows-x64.zip' || a.name.includes('windows'));
+            const macosAsset = assets.find(a => a.name === 'aegis-macos-universal.zip' || a.name.includes('macos'));
 
-          let androidSha = null;
-          let linuxSha = null;
-          let windowsSha = null;
-          let macosSha = null;
+            let androidSha = null;
+            let linuxSha = null;
+            let windowsSha = null;
+            let macosSha = null;
 
-          if (androidAsset && androidAsset.digest && androidAsset.digest.startsWith('sha256:')) {
-            androidSha = androidAsset.digest.substring(7);
-          }
-          if (linuxAsset && linuxAsset.digest && linuxAsset.digest.startsWith('sha256:')) {
-            linuxSha = linuxAsset.digest.substring(7);
-          }
-          if (windowsAsset && windowsAsset.digest && windowsAsset.digest.startsWith('sha256:')) {
-            windowsSha = windowsAsset.digest.substring(7);
-          }
-          if (macosAsset && macosAsset.digest && macosAsset.digest.startsWith('sha256:')) {
-            macosSha = macosAsset.digest.substring(7);
-          }
-
-          // Fallback to checksums.txt if digest was not present
-          const checksumsAsset = assets.find(a => a.name === 'checksums.txt');
-          if ((!androidSha || !linuxSha || !windowsSha || !macosSha) && checksumsAsset) {
-            try {
-              const cRes = await fetch(checksumsAsset.browser_download_url);
-              if (cRes.ok) {
-                const text = await cRes.text();
-                text.split('\n').forEach(line => {
-                  const parts = line.trim().split(/\s+/);
-                  if (parts.length >= 2) {
-                    const [hash, file] = parts;
-                    if (file.includes('android.apk')) androidSha = hash;
-                    if (file.includes('linux-x64.tar.gz')) linuxSha = hash;
-                    if (file.includes('windows') && file.endsWith('.zip')) windowsSha = hash;
-                    if (file.includes('macos') && file.endsWith('.zip')) macosSha = hash;
-                  }
-                });
-              }
-            } catch (_) {}
-          }
-
-          releaseData = {
-            tag: data.tag_name || 'v1.0.0',
-            android: {
-              sha: androidSha,
-              size: androidAsset ? formatBytes(androidAsset.size) : null,
-              url: androidAsset ? androidAsset.browser_download_url : null
-            },
-            linux: {
-              sha: linuxSha,
-              size: linuxAsset ? formatBytes(linuxAsset.size) : null,
-              url: linuxAsset ? linuxAsset.browser_download_url : null
-            },
-            windows: {
-              sha: windowsSha,
-              size: windowsAsset ? formatBytes(windowsAsset.size) : null,
-              url: windowsAsset ? windowsAsset.browser_download_url : null
-            },
-            macos: {
-              sha: macosSha,
-              size: macosAsset ? formatBytes(macosAsset.size) : null,
-              url: macosAsset ? macosAsset.browser_download_url : null
+            if (androidAsset && androidAsset.digest && androidAsset.digest.startsWith('sha256:')) {
+              androidSha = androidAsset.digest.substring(7);
             }
-          };
+            if (linuxAsset && linuxAsset.digest && linuxAsset.digest.startsWith('sha256:')) {
+              linuxSha = linuxAsset.digest.substring(7);
+            }
+            if (windowsAsset && windowsAsset.digest && windowsAsset.digest.startsWith('sha256:')) {
+              windowsSha = windowsAsset.digest.substring(7);
+            }
+            if (macosAsset && macosAsset.digest && macosAsset.digest.startsWith('sha256:')) {
+              macosSha = macosAsset.digest.substring(7);
+            }
+
+            // Fallback to checksums.txt if digest was not present
+            const checksumsAsset = assets.find(a => a.name === 'checksums.txt');
+            if ((!androidSha || !linuxSha || !windowsSha || !macosSha) && checksumsAsset) {
+              try {
+                const cRes = await fetch(checksumsAsset.browser_download_url);
+                if (cRes.ok) {
+                  const text = await cRes.text();
+                  text.split('\n').forEach(line => {
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length >= 2) {
+                      const [hash, file] = parts;
+                      if (file.includes('android.apk')) androidSha = hash;
+                      if (file.includes('linux-x64.tar.gz')) linuxSha = hash;
+                      if (file.includes('windows') && file.endsWith('.zip')) windowsSha = hash;
+                      if (file.includes('macos') && file.endsWith('.zip')) macosSha = hash;
+                    }
+                  });
+                }
+              } catch (_) {}
+            }
+
+            releaseData = {
+              tag: data.tag_name || 'v1.0.1',
+              android: {
+                sha: androidSha,
+                size: androidAsset ? formatBytes(androidAsset.size) : null,
+                url: androidAsset ? androidAsset.browser_download_url : null
+              },
+              linux: {
+                sha: linuxSha,
+                size: linuxAsset ? formatBytes(linuxAsset.size) : null,
+                url: linuxAsset ? linuxAsset.browser_download_url : null
+              },
+              windows: {
+                sha: windowsSha,
+                size: windowsAsset ? formatBytes(windowsAsset.size) : null,
+                url: windowsAsset ? windowsAsset.browser_download_url : null
+              },
+              macos: {
+                sha: macosSha,
+                size: macosAsset ? formatBytes(macosAsset.size) : null,
+                url: macosAsset ? macosAsset.browser_download_url : null
+              }
+            };
+          }
         }
       } catch (err) {
         console.warn('[Aegis] GitHub API rate-limited or unreachable, using local release manifest.', err);
       }
 
       // 2. Fallback to local manifest if API failed or missing fields
-      if (!releaseData || !releaseData.android?.sha || !releaseData.linux?.sha) {
-        try {
-          const fallbackRes = await fetch(LOCAL_MANIFEST);
-          if (fallbackRes.ok) {
-            const manifest = await fallbackRes.json();
+      let manifestChangelog = null;
+      try {
+        const fallbackRes = await fetch(LOCAL_MANIFEST);
+        if (fallbackRes.ok) {
+          const manifest = await fallbackRes.json();
+          if (Array.isArray(manifest.changelog)) {
+            manifestChangelog = manifest.changelog;
+          }
+          if (!changelogData && manifestChangelog) {
+            changelogData = manifestChangelog;
+          }
+          if (!releaseData || !releaseData.android?.sha || !releaseData.linux?.sha) {
             releaseData = {
-              tag: manifest.tag_name || 'v1.0.0',
+              tag: manifest.tag_name || 'v1.0.1',
               android: {
                 sha: manifest.assets?.android?.sha256,
                 size: manifest.assets?.android?.size_human || formatBytes(manifest.assets?.android?.size_bytes),
@@ -619,7 +841,12 @@
               }
             };
           }
-        } catch (_) {}
+        }
+      } catch (_) {}
+
+      // Render dynamic changelog
+      if (changelogData) {
+        renderDynamicChangelog(changelogData, manifestChangelog);
       }
 
       if (!releaseData) return;
