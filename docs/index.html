@@ -85,14 +85,12 @@
         </p>
 
         <div class="hero-cta-group">
-          <a href="#sandbox" class="btn btn-primary" id="heroDemoBtn">
+          <a href="./download/" class="btn btn-primary" id="heroDownloadBtn">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            Explore Interactive Sandbox
+            Download Aegis
           </a>
           <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer"
             class="btn btn-secondary" id="heroGithubBtn">
@@ -207,351 +205,7 @@
       </div>
     </section>
 
-    <!-- ==========================================================================
-         Interactive Command Center & Sandbox Section
-         ========================================================================== -->
-    <section class="interactive-section" id="sandbox">
-      <div class="container">
-        <div class="section-head">
-          <span class="section-badge">Live Interactive Simulator</span>
-          <h2 class="section-title">Test-Drive the <span class="gradient-text-cyan">Aegis Experience</span></h2>
-          <p class="section-subtitle">
-            Experience Aegis's terminal emulation, remote SFTP editor, live anomaly threat forensics, and CIS benchmark
-            hardening directly in your browser.
-          </p>
-        </div>
 
-        <!-- Sandbox Tabs -->
-        <div class="sandbox-tabs">
-          <button class="tab-btn active" data-tab="tab-terminal" id="tabTerminalBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            VT100 SSH Terminal
-          </button>
-          <button class="tab-btn" data-tab="tab-sftp" id="tabSftpBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
-            SFTP Remote Editor
-          </button>
-          <button class="tab-btn" data-tab="tab-forensics" id="tabForensicsBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            Threat Radar & AbuseIPDB
-          </button>
-          <button class="tab-btn" data-tab="tab-cis" id="tabCisBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-            CIS Benchmark Scanner
-          </button>
-        </div>
-
-        <!-- Sandbox Display Container -->
-        <div class="sandbox-display">
-
-          <!-- 1. Terminal Panel -->
-          <div class="sandbox-tab-content active" id="tab-terminal">
-            <div class="terminal-window">
-              <div class="terminal-header">
-                <div class="showcase-title-tag">
-                  <span>TERMINAL // <strong>srv-prod-01</strong> (xterm-256color)</span>
-                </div>
-                <div class="terminal-theme-picker" title="Switch Terminal Color Palette">
-                  <span class="text-dim" style="font-size: 0.75rem; margin-right: 4px;">Theme:</span>
-                  <div class="theme-pill theme-oled" data-theme="oled" title="Cyber OLED"></div>
-                  <div class="theme-pill theme-matrix" data-theme="matrix" title="Matrix Green"></div>
-                  <div class="theme-pill theme-monokai" data-theme="monokai" title="Monokai Pro"></div>
-                  <div class="theme-pill theme-nord" data-theme="nord" title="Nord Glacier"></div>
-                </div>
-              </div>
-
-              <div class="terminal-quickbar">
-                <span class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">SecOps
-                  Quickbar:</span>
-                <button class="quick-cmd-btn" data-cmd="htop">htop</button>
-                <button class="quick-cmd-btn" data-cmd="aegis status">aegis status</button>
-                <button class="quick-cmd-btn" data-cmd="fail2ban">fail2ban</button>
-                <button class="quick-cmd-btn" data-cmd="cis-audit">cis-audit</button>
-                <button class="quick-cmd-btn" data-cmd="auth-log">auth-log</button>
-                <button class="quick-cmd-btn" data-cmd="df -h">df -h</button>
-                <button class="quick-cmd-btn" data-cmd="docker ps">docker ps</button>
-                <button class="quick-cmd-btn" data-cmd="clear">clear</button>
-              </div>
-
-              <div class="terminal-body" id="terminalBody">
-                <div class="term-line"><span class="term-prompt">Welcome to Aegis VT100 Interactive SSH Client
-                    v1.0</span></div>
-                <div class="term-line"><span class="term-dim">Session encrypted with ChaCha20-Poly1305 / ED25519 Key
-                    Vault</span></div>
-                <div class="term-line"><span class="term-success">Type 'help' or click any SecOps Quickbar command
-                    above.</span></div>
-                <div class="term-line"> </div>
-                <div class="term-line"><span class="term-prompt">austin@srv-prod-01:~$</span> <span
-                    class="term-cmd">aegis status</span></div>
-                <div class="term-line"><span class="term-success">● aegis-agent.service - Aegis Zero-Trust Telemetry
-                    Daemon</span></div>
-                <div class="term-line"> Active: <span class="term-success">active (running)</span>; Zero-Trust Enclave
-                  status: HEALTHY (0 egress leaks)</div>
-                <div class="term-line"><span class="term-cyan">[AEGIS-CORE] Direct DartSSH2 tunnel validated over port
-                    22.</span></div>
-              </div>
-
-              <div class="terminal-input-bar">
-                <span class="term-prompt">austin@srv-prod-01:~$</span>
-                <input type="text" class="term-cli-input" id="terminalInput"
-                  placeholder="Type a command (e.g. htop, fail2ban, cis-audit, clear) and press Enter..."
-                  autocomplete="off">
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. SFTP Remote Explorer Panel -->
-          <div class="sandbox-tab-content" id="tab-sftp">
-            <div class="sftp-layout">
-              <div class="sftp-sidebar">
-                <div class="sftp-path-bar">
-                  <span>📂</span>
-                  <span>/etc/nginx</span>
-                </div>
-                <div class="sftp-file-list">
-                  <div class="sftp-file-item active" data-filename="nginx.conf">
-                    <div class="sftp-file-info">
-                      <span>📄</span>
-                      <span>nginx.conf</span>
-                    </div>
-                    <span class="sftp-file-meta">0644 • 1.4 KB</span>
-                  </div>
-                  <div class="sftp-file-item" data-filename="aegis_agent.py">
-                    <div class="sftp-file-info">
-                      <span>🐍</span>
-                      <span>aegis_agent.py</span>
-                    </div>
-                    <span class="sftp-file-meta">0755 • 6.2 KB</span>
-                  </div>
-                  <div class="sftp-file-item" data-filename="mysqld.cnf">
-                    <div class="sftp-file-info">
-                      <span>🐬</span>
-                      <span>mysqld.cnf</span>
-                    </div>
-                    <span class="sftp-file-meta">0640 • 890 B</span>
-                  </div>
-                  <div class="sftp-file-item" data-filename="remediate_cis.sh">
-                    <div class="sftp-file-info">
-                      <span>⚙️</span>
-                      <span>remediate_cis.sh</span>
-                    </div>
-                    <span class="sftp-file-meta">0700 • 2.1 KB</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="sftp-editor-pane">
-                <div class="editor-header">
-                  <div>
-                    <span class="text-cyan" id="editorFilename">nginx.conf</span>
-                    <span class="text-dim" style="font-size: 0.72rem; margin-left: 8px;"
-                      id="editorFilepath">/etc/nginx/nginx.conf</span>
-                  </div>
-                  <button class="btn btn-primary btn-sm" id="saveEditorBtn">Save Remote</button>
-                </div>
-                <pre class="editor-code-area" id="editorCodeArea"># Aegis Hardened Nginx Reverse Proxy Configuration
-user nginx;
-worker_processes auto;
-pid /run/nginx.pid;
-
-events {
-    worker_connections 2048;
-    use epoll;
-    multi_accept on;
-}
-
-http {
-    # Zero-Trust TLS 1.3 Profile
-    ssl_protocols TLSv1.3;
-    ssl_prefer_server_ciphers off;
-    ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256';
-
-    # Rate Limiting against DoS
-    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
-    limit_conn_zone $binary_remote_addr zone=conn_limit:10m;
-
-    # Security Headers
-    add_header X-Frame-Options "DENY" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
-
-    server {
-        listen 443 ssl http2;
-        server_name telemetry.aegis.internal;
-    }
-}</pre>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Threat Forensics & AbuseIPDB Panel -->
-          <div class="sandbox-tab-content" id="tab-forensics">
-            <div class="forensics-layout">
-              <div class="forensics-log-stream">
-                <div class="audit-card threat-high">
-                  <div class="audit-header">
-                    <span class="text-crimson font-bold">⚠️ CRITICAL: SSH BRUTE-FORCE ASSAULT</span>
-                    <span class="audit-score-badge badge-crimson">AbuseIPDB Score: 100% (TOR EXIT NODE)</span>
-                  </div>
-                  <div class="text-muted">Origin: <strong>185.220.101.4</strong> (Frankfurt, DE) | 14 Failed SSH
-                    attempts in 6s</div>
-                  <div class="text-dim" style="font-size: 0.72rem;">Action: Banned in fail2ban [sshd] • FCM Dispatch
-                    triggered to Aegis Client</div>
-                </div>
-
-                <div class="audit-card threat-high">
-                  <div class="audit-header">
-                    <span class="text-crimson font-bold">⚠️ UNAUTHORIZED ROOT ACCESS ATTEMPT</span>
-                    <span class="audit-score-badge badge-crimson">AbuseIPDB Score: 94% (BOTNET C2)</span>
-                  </div>
-                  <div class="text-muted">Origin: <strong>45.154.255.89</strong> (Moscow, RU) | Target: root / sshd port
-                    22</div>
-                  <div class="text-dim" style="font-size: 0.72rem;">Action: Blocked by Zero-Trust policy • Null routed
-                    via iptables</div>
-                </div>
-
-                <div class="audit-card threat-medium">
-                  <div class="audit-header">
-                    <span class="text-amber font-bold">⚠️ REVERSE PROXY SCAN DETECTED</span>
-                    <span class="audit-score-badge badge-amber">AbuseIPDB Score: 48% (SUSPICIOUS)</span>
-                  </div>
-                  <div class="text-muted">Origin: <strong>194.26.29.112</strong> | URI: /.env, /wp-admin, /phpmyadmin
-                    probe</div>
-                  <div class="text-dim" style="font-size: 0.72rem;">Action: Nginx rate limiter dropped 28 requests</div>
-                </div>
-
-                <div class="audit-card threat-low">
-                  <div class="audit-header">
-                    <span class="text-emerald font-bold">✓ AUTHORIZED CLIENT HANDSHAKE</span>
-                    <span class="audit-score-badge badge-emerald">SAFE // PRIVATE SUBNET</span>
-                  </div>
-                  <div class="text-muted">Origin: <strong>10.8.0.2</strong> (Aegis Mobile Client via WireGuard Tunnel)
-                  </div>
-                  <div class="text-dim" style="font-size: 0.72rem;">Biometric SHA256 Token Validated • Telemetry Stream
-                    OK</div>
-                </div>
-              </div>
-
-              <div class="forensics-side-radar">
-                <div class="radar-circle">
-                  <div class="radar-sweep"></div>
-                  <div class="radar-blip" style="top: 30%; left: 65%;"></div>
-                  <div class="radar-blip" style="top: 70%; left: 25%;"></div>
-                </div>
-                <div>
-                  <div class="font-bold text-cyan" style="font-family: var(--font-heading);">Real-Time Threat Radar
-                  </div>
-                  <div class="text-dim" style="font-size: 0.78rem;">Live AbuseIPDB Heuristics Active</div>
-                </div>
-                <div class="brand-badge"
-                  style="background: rgba(255, 23, 68, 0.1); border-color: rgba(255, 23, 68, 0.4); color: var(--crimson);">
-                  <span class="pulse-dot"
-                    style="background: var(--crimson); box-shadow: 0 0 8px var(--crimson);"></span>
-                  AUTOMATED DEFENSE ON
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. CIS Benchmark Scanner Panel -->
-          <div class="sandbox-tab-content" id="tab-cis">
-            <div class="cis-scanner-layout">
-              <div class="cis-controls-banner">
-                <div class="cis-score-display">
-                  <div class="cis-grade-circle" id="cisGradeCircle">A+</div>
-                  <div>
-                    <h3 class="text-emerald" id="cisScorePercent">96% Compliance Score</h3>
-                    <p class="text-muted" style="font-size: 0.85rem;">CIS Linux Benchmark & NIST SP 800-123 Standards
-                    </p>
-                  </div>
-                </div>
-                <button class="btn btn-primary" id="runCisAuditBtn">
-                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Re-Run CIS Audit
-                </button>
-              </div>
-
-              <div class="cis-checks-grid">
-                <div class="cis-rule-card">
-                  <div>
-                    <strong style="color: #FFF;">OpenSSH: Disable Root Login</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">PermitRootLogin no</div>
-                  </div>
-                  <span class="audit-score-badge badge-emerald">PASS</span>
-                </div>
-
-                <div class="cis-rule-card">
-                  <div>
-                    <strong style="color: #FFF;">OpenSSH: Enforce Key Authentication</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">PasswordAuthentication no</div>
-                  </div>
-                  <span class="audit-score-badge badge-emerald">PASS</span>
-                </div>
-
-                <div class="cis-rule-card">
-                  <div>
-                    <strong style="color: #FFF;">Kernel: ASLR Memory Randomization</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">kernel.randomize_va_space = 2</div>
-                  </div>
-                  <span class="audit-score-badge badge-emerald">PASS</span>
-                </div>
-
-                <div class="cis-rule-card">
-                  <div>
-                    <strong style="color: #FFF;">Kernel: TCP SYN Flood Protection</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">net.ipv4.tcp_syncookies = 1</div>
-                  </div>
-                  <span class="audit-score-badge badge-emerald">PASS</span>
-                </div>
-
-                <div class="cis-rule-card">
-                  <div>
-                    <strong style="color: #FFF;">Database: MySQL Loopback Binding</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">bind-address = 127.0.0.1</div>
-                  </div>
-                  <span class="audit-score-badge badge-emerald">PASS</span>
-                </div>
-
-                <div class="cis-rule-card" data-fail="true">
-                  <div>
-                    <strong style="color: #FFF;">Filesystem: /etc/shadow Permissions</strong>
-                    <div class="text-dim" style="font-size: 0.72rem;">Enforce 0640 or 0000 mode</div>
-                  </div>
-                  <span class="audit-score-badge badge-amber">WARNING</span>
-                </div>
-              </div>
-
-              <div class="cis-remediation-banner">
-                <div class="cis-remediation-text">
-                  ⚡ <strong>1-Tap Automated Remediation Playbook:</strong> Generate unified bash script to patch all
-                  warnings.
-                </div>
-                <button class="btn btn-outline-cyan btn-sm cis-remediation-btn"
-                  data-copy="curl -sSL https://raw.githubusercontent.com/AustinFascal/aegis/main/scripts/aegis_remediate.sh | bash">
-                  Copy Remediation Command
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
 
     <!-- ==========================================================================
          Key Features Grid Section
@@ -853,7 +507,7 @@ sudo systemctl status aegis-agent</code>
             <div class="platform-icon">📱</div>
             <h3 class="font-bold text-main">Android Mobile</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Android 8.0+ with Biometrics & FCM Push Alerts</p>
-            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download APK (v1.0.0)</a>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download APK</a>
           </div>
 
           <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
@@ -863,33 +517,28 @@ sudo systemctl status aegis-agent</code>
             <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.tar.gz)</a>
           </div>
 
-          <div class="platform-card">
+          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="platform-icon">🪟</div>
             <h3 class="font-bold text-main">Windows Desktop</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Windows 10 / 11 64-bit with Credential Vault integration</p>
-            <span class="badge-coming-soon">Coming Soon</span>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.zip)</a>
           </div>
 
-          <div class="platform-card">
+          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="platform-icon">🍏</div>
-            <h3 class="font-bold text-main">macOS</h3>
+            <h3 class="font-bold text-main">macOS Universal</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Apple Silicon & Intel with Touch ID Keychain</p>
-            <span class="badge-coming-soon">Coming Soon</span>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.zip)</a>
           </div>
         </div>
 
-        <div class="platform-download-cta">
-          <a href="./download/" class="btn btn-primary">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="platform-download-cta" style="margin-top: 36px; text-align: center;">
+          <a href="./download/" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; font-size: 1rem;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            Download for Linux (.tar.gz)
-          </a>
-          <a href="./download/" class="btn btn-secondary">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-            </svg>
-            Download Android APK (v1.0.0)
+            <span>Visit Downloads Center (All Platforms, SHA256 Hashes & Notes)</span>
+            <span>→</span>
           </a>
         </div>
       </div>
@@ -988,9 +637,6 @@ sudo systemctl status aegis-agent</code>
                   d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
               </svg>
               Star on GitHub
-            </a>
-            <a href="./download/" class="btn btn-secondary">
-              Download Linux / Android Clients
             </a>
           </div>
         </div>

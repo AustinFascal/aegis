@@ -24,7 +24,6 @@ class AegisHeader extends HTMLElement {
 
           <ul class="nav-menu" id="navMenu">
             <li><a href="${homeUrl}#features" class="nav-link ${activePage === 'features' ? 'active' : ''}">Features</a></li>
-            <li><a href="${homeUrl}#sandbox" class="nav-link ${activePage === 'sandbox' ? 'active' : ''}">Interactive Sandbox</a></li>
             <li><a href="${downloadUrl}" class="nav-link ${activePage === 'download' ? 'active' : ''}">Download</a></li>
             <li><a href="${homeUrl}#architecture" class="nav-link ${activePage === 'architecture' ? 'active' : ''}">Architecture</a></li>
             <li><a href="${homeUrl}#deployment" class="nav-link ${activePage === 'deployment' ? 'active' : ''}">Agent Setup</a></li>
