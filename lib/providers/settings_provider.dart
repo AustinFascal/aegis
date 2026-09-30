@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import '../core/constants/app_version.dart';
 import '../core/security/secure_vault.dart';
 
 class SettingsProvider extends ChangeNotifier {
   final SecureVault _vault = SecureVault();
+
+  String get appVersion => AppVersion.formatted;
+  String get appBuildNumber => AppVersion.buildNumber;
+  String get appVersionFull => AppVersion.fullDisplay;
 
   // Indonesian as the primary default language
   String _language = 'id'; // 'id' (Default) or 'en'
@@ -51,6 +56,7 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     try {
+      await AppVersion.init();
       final savedLang = await _vault.getPolicy('settings_lang');
       if (savedLang != null && (savedLang == 'en' || savedLang == 'id')) {
         _language = savedLang;

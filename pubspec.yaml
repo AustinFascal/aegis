@@ -49,6 +49,7 @@ dependencies:
   file_picker: ^13.1.0
   xterm: ^4.0.0
   restart_app: ^1.10.1
+  package_info_plus: ^10.2.1
 
 dev_dependencies:
   flutter_test:

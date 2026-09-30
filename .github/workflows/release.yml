@@ -77,8 +77,27 @@ jobs:
           EOF
           fi
 
+      # ----------------------------------------------------
+      # 1b. Synchronize App Version with Git Release Tag
+      # ----------------------------------------------------
+      - name: Configure Version from Tag
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          VERSION_NAME="${TAG_NAME#v}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}"
+          echo "Configuring Aegis version: ${VERSION_NAME}+${BUILD_NUMBER} from tag ${TAG_NAME}"
+          sed -i "s/^version: .*/version: ${VERSION_NAME}+${BUILD_NUMBER}/" pubspec.yaml
+          grep "^version:" pubspec.yaml
+
       - name: Build Android Release APK
-        run: flutter build apk --release
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          VERSION_NAME="${TAG_NAME#v}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}"
+          flutter build apk --release \
+            --build-name="${VERSION_NAME}" \
+            --build-number="${BUILD_NUMBER}" \
+            --dart-define=APP_VERSION="${TAG_NAME}"
 
       - name: Prepare Android Artifacts
         run: |
@@ -95,7 +114,14 @@ jobs:
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev
 
       - name: Build Linux Desktop Bundle
-        run: flutter build linux --release
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          VERSION_NAME="${TAG_NAME#v}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}"
+          flutter build linux --release \
+            --build-name="${VERSION_NAME}" \
+            --build-number="${BUILD_NUMBER}" \
+            --dart-define=APP_VERSION="${TAG_NAME}"
 
       - name: Package Linux Desktop Tarball
         run: |

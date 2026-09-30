@@ -1607,7 +1607,7 @@ class SettingsScreen extends StatelessWidget {
               const AegisLogo(size: 16),
               const SizedBox(width: 6),
               Text(
-                'AEGIS v1.0.0',
+                'AEGIS ${settings.appVersion}',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
