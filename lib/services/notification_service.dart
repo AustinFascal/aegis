@@ -103,17 +103,21 @@ class NotificationService {
       linux: linuxInit,
     );
 
-    await _localNotifications.initialize(
-      settings: initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        if (response.payload != null && response.payload!.isNotEmpty) {
-          _actionController.add(NotificationActionData(
-            actionId: response.actionId ?? 'view',
-            payload: response.payload!,
-          ));
-        }
-      },
-    );
+    try {
+      await _localNotifications.initialize(
+        settings: initSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          if (response.payload != null && response.payload!.isNotEmpty) {
+            _actionController.add(NotificationActionData(
+              actionId: response.actionId ?? 'view',
+              payload: response.payload!,
+            ));
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint('[NotificationService] Local notifications unavailable on this platform: $e');
+    }
 
     // 2. Initialize FCM (Safely handling platforms where Firebase isn't yet configured)
     try {

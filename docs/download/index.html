@@ -88,12 +88,12 @@
           <button class="p-tab-btn" data-os="windows" id="tabWindowsBtn">
             <span>🪟</span>
             <span>Windows</span>
-            <span class="badge" style="background: rgba(255, 179, 0, 0.15); color: var(--amber); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Soon</span>
+            <span class="badge" id="tabWindowsBadge" style="background: rgba(0, 214, 104, 0.2); color: var(--emerald); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Available</span>
           </button>
           <button class="p-tab-btn" data-os="macos" id="tabMacosBtn">
             <span>🍏</span>
             <span>macOS</span>
-            <span class="badge" style="background: rgba(255, 179, 0, 0.15); color: var(--amber); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Soon</span>
+            <span class="badge" id="tabMacosBadge" style="background: rgba(0, 214, 104, 0.2); color: var(--emerald); font-size: 0.68rem; padding: 2px 7px; border-radius: 999px; margin-left: 4px;">Available</span>
           </button>
         </div>
       </div>
@@ -160,9 +160,9 @@
         <!-- 2. Windows Spotlight -->
         <div class="spotlight-panel" id="spotlight-windows">
           <div class="spotlight-info">
-            <div class="spotlight-badge" style="border-color: rgba(255, 179, 0, 0.4); color: var(--amber);">
-              <span class="pulse-dot" style="background: var(--amber);"></span>
-              <span>WINDOWS CLIENT • COMING SOON</span>
+            <div class="spotlight-badge" id="windows-spotlight-badge" style="border-color: rgba(0, 214, 104, 0.4); color: var(--emerald);">
+              <span class="pulse-dot" style="background: var(--emerald);"></span>
+              <span>OFFICIAL WINDOWS RELEASE • AVAILABLE NOW</span>
             </div>
             <h2 class="spotlight-title">
               <span>🪟</span>
@@ -172,27 +172,16 @@
               Native Windows 64-bit application with Windows Credential Manager integration, crisp ClearType font rendering, and seamless SSH key management.
             </p>
             <div class="spotlight-cta-box">
-              <!-- Windows download packages will be available upon official release
-              <a href="../releases/windows/aegis-windows-x64-setup.exe" class="spotlight-main-btn" download>
+              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-windows-x64.zip" class="spotlight-main-btn" id="windows-download-btn">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                <span>Download Windows Installer (.exe)</span>
-                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">38 MB</span>
+                <span>Download Windows Bundle (.zip)</span>
+                <span id="windows-download-size" style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">28 MB</span>
               </a>
               <div class="spotlight-alt-links">
-                <span>Also available as:</span>
-                <a href="../releases/windows/aegis-windows-x64.zip" download>Portable Archive (.zip)</a>
-              </div>
-              -->
-              <div class="spotlight-coming-soon-btn">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span>Windows Installer</span>
-                </div>
-                <span class="badge-coming-soon">Coming Soon</span>
+                <span>Release package:</span>
+                <span style="color: var(--emerald); font-family: var(--font-mono); font-size: 0.82rem;">aegis-windows-x64.zip</span>
               </div>
             </div>
           </div>
@@ -200,7 +189,7 @@
           <div class="spotlight-meta-panel">
             <div class="meta-row">
               <span class="meta-label">Version</span>
-              <span class="meta-val">v1.0.0 Stable</span>
+              <span class="meta-val" id="windows-meta-version">v1.0.0 Stable</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Architecture</span>
@@ -213,9 +202,9 @@
             <div class="meta-hash-box">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="meta-label">SHA256 Checksum</span>
-                <button class="cmd-copy-btn" data-copy="7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069">Copy Hash</button>
+                <button class="cmd-copy-btn" id="windows-copy-btn" data-copy="Pending automated build">Copy Hash</button>
               </div>
-              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</code>
+              <code id="windows-sha" style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">Pending automated build</code>
             </div>
           </div>
         </div>
@@ -275,9 +264,9 @@
         <!-- 4. macOS Spotlight -->
         <div class="spotlight-panel" id="spotlight-macos">
           <div class="spotlight-info">
-            <div class="spotlight-badge" style="border-color: rgba(255, 179, 0, 0.4); color: var(--amber);">
-              <span class="pulse-dot" style="background: var(--amber);"></span>
-              <span>MACOS CLIENT • COMING SOON</span>
+            <div class="spotlight-badge" id="macos-spotlight-badge" style="border-color: rgba(0, 214, 104, 0.4); color: var(--emerald);">
+              <span class="pulse-dot" style="background: var(--emerald);"></span>
+              <span>OFFICIAL MACOS RELEASE • AVAILABLE NOW</span>
             </div>
             <h2 class="spotlight-title">
               <span>🍏</span>
@@ -287,27 +276,16 @@
               Universal binary compiled for Apple Silicon (M1/M2/M3/M4) and Intel with Touch ID Keychain authorization and native macOS menu bar integration.
             </p>
             <div class="spotlight-cta-box">
-              <!-- macOS download packages will be available upon official release
-              <a href="../releases/macos/aegis-macos-universal.dmg" class="spotlight-main-btn" download>
+              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-macos-universal.zip" class="spotlight-main-btn" id="macos-download-btn">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                <span>Download DMG Installer</span>
-                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">46 MB</span>
+                <span>Download macOS App (.zip)</span>
+                <span id="macos-download-size" style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">32 MB</span>
               </a>
               <div class="spotlight-alt-links">
-                <span>Also available as:</span>
-                <a href="../releases/macos/aegis-macos-universal.zip" download>Portable App Archive (.zip)</a>
-              </div>
-              -->
-              <div class="spotlight-coming-soon-btn">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  <span>macOS DMG Installer</span>
-                </div>
-                <span class="badge-coming-soon">Coming Soon</span>
+                <span>Release package:</span>
+                <span style="color: var(--emerald); font-family: var(--font-mono); font-size: 0.82rem;">aegis-macos-universal.zip</span>
               </div>
             </div>
           </div>
@@ -315,7 +293,7 @@
           <div class="spotlight-meta-panel">
             <div class="meta-row">
               <span class="meta-label">Version</span>
-              <span class="meta-val">v1.0.0 Stable</span>
+              <span class="meta-val" id="macos-meta-version">v1.0.0 Stable</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Binary Type</span>
@@ -328,9 +306,9 @@
             <div class="meta-hash-box">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="meta-label">SHA256 Checksum</span>
-                <button class="cmd-copy-btn" data-copy="5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8">Copy Hash</button>
+                <button class="cmd-copy-btn" id="macos-copy-btn" data-copy="Pending automated build">Copy Hash</button>
               </div>
-              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8</code>
+              <code id="macos-sha" style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">Pending automated build</code>
             </div>
           </div>
         </div>
@@ -379,31 +357,35 @@
             </div>
           </div>
 
-          <div class="platform-simple-card" onclick="switchSpotlight('windows')">
+          <div class="platform-simple-card" onclick="switchSpotlight('windows')" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="p-card-top">
-              <div class="p-card-icon">🪟</div>
+              <div class="p-card-icon" style="background: rgba(30, 107, 255, 0.12); color: var(--blue);">🪟</div>
               <div>
                 <strong style="color: #FFF; font-size: 1.05rem;">Windows 64-bit</strong>
-                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">Setup.exe • zip</div>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">
+                  <span id="grid-windows-file">aegis-windows-x64.zip</span> • <span id="grid-windows-size">28 MB</span>
+                </div>
               </div>
             </div>
-            <div class="p-card-btn" style="color: var(--amber);">
-              <span>Coming Soon</span>
-              <span>⏳</span>
+            <div class="p-card-btn" id="grid-windows-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
+              <span>Download (.zip)</span>
+              <span>↓</span>
             </div>
           </div>
 
-          <div class="platform-simple-card" onclick="switchSpotlight('macos')">
+          <div class="platform-simple-card" onclick="switchSpotlight('macos')" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="p-card-top">
-              <div class="p-card-icon">🍏</div>
+              <div class="p-card-icon" style="background: rgba(30, 107, 255, 0.12); color: var(--blue);">🍏</div>
               <div>
-                <strong style="color: #FFF; font-size: 1.05rem;">macOS</strong>
-                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">DMG • universal zip</div>
+                <strong style="color: #FFF; font-size: 1.05rem;">macOS Universal</strong>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">
+                  <span id="grid-macos-file">aegis-macos-universal.zip</span> • <span id="grid-macos-size">32 MB</span>
+                </div>
               </div>
             </div>
-            <div class="p-card-btn" style="color: var(--amber);">
-              <span>Coming Soon</span>
-              <span>⏳</span>
+            <div class="p-card-btn" id="grid-macos-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
+              <span>Download (.zip)</span>
+              <span>↓</span>
             </div>
           </div>
         </div>
@@ -537,9 +519,13 @@
 
           const androidAsset = assets.find(a => a.name === 'aegis-android.apk');
           const linuxAsset = assets.find(a => a.name === 'aegis-linux-x64.tar.gz');
+          const windowsAsset = assets.find(a => a.name === 'aegis-windows-x64.zip' || a.name.includes('windows'));
+          const macosAsset = assets.find(a => a.name === 'aegis-macos-universal.zip' || a.name.includes('macos'));
 
           let androidSha = null;
           let linuxSha = null;
+          let windowsSha = null;
+          let macosSha = null;
 
           if (androidAsset && androidAsset.digest && androidAsset.digest.startsWith('sha256:')) {
             androidSha = androidAsset.digest.substring(7);
@@ -547,10 +533,16 @@
           if (linuxAsset && linuxAsset.digest && linuxAsset.digest.startsWith('sha256:')) {
             linuxSha = linuxAsset.digest.substring(7);
           }
+          if (windowsAsset && windowsAsset.digest && windowsAsset.digest.startsWith('sha256:')) {
+            windowsSha = windowsAsset.digest.substring(7);
+          }
+          if (macosAsset && macosAsset.digest && macosAsset.digest.startsWith('sha256:')) {
+            macosSha = macosAsset.digest.substring(7);
+          }
 
           // Fallback to checksums.txt if digest was not present
           const checksumsAsset = assets.find(a => a.name === 'checksums.txt');
-          if ((!androidSha || !linuxSha) && checksumsAsset) {
+          if ((!androidSha || !linuxSha || !windowsSha || !macosSha) && checksumsAsset) {
             try {
               const cRes = await fetch(checksumsAsset.browser_download_url);
               if (cRes.ok) {
@@ -561,6 +553,8 @@
                     const [hash, file] = parts;
                     if (file.includes('android.apk')) androidSha = hash;
                     if (file.includes('linux-x64.tar.gz')) linuxSha = hash;
+                    if (file.includes('windows') && file.endsWith('.zip')) windowsSha = hash;
+                    if (file.includes('macos') && file.endsWith('.zip')) macosSha = hash;
                   }
                 });
               }
@@ -578,6 +572,16 @@
               sha: linuxSha,
               size: linuxAsset ? formatBytes(linuxAsset.size) : null,
               url: linuxAsset ? linuxAsset.browser_download_url : null
+            },
+            windows: {
+              sha: windowsSha,
+              size: windowsAsset ? formatBytes(windowsAsset.size) : null,
+              url: windowsAsset ? windowsAsset.browser_download_url : null
+            },
+            macos: {
+              sha: macosSha,
+              size: macosAsset ? formatBytes(macosAsset.size) : null,
+              url: macosAsset ? macosAsset.browser_download_url : null
             }
           };
         }
@@ -602,6 +606,16 @@
                 sha: manifest.assets?.linux?.sha256,
                 size: manifest.assets?.linux?.size_human || formatBytes(manifest.assets?.linux?.size_bytes),
                 url: manifest.assets?.linux?.download_url
+              },
+              windows: {
+                sha: manifest.assets?.windows?.sha256,
+                size: manifest.assets?.windows?.size_human || formatBytes(manifest.assets?.windows?.size_bytes),
+                url: manifest.assets?.windows?.download_url
+              },
+              macos: {
+                sha: manifest.assets?.macos?.sha256,
+                size: manifest.assets?.macos?.size_human || formatBytes(manifest.assets?.macos?.size_bytes),
+                url: manifest.assets?.macos?.download_url
               }
             };
           }
@@ -621,6 +635,12 @@
 
         const androidMetaVer = document.getElementById('android-meta-version');
         if (androidMetaVer) androidMetaVer.textContent = `${tag} Stable`;
+
+        const windowsMetaVer = document.getElementById('windows-meta-version');
+        if (windowsMetaVer) windowsMetaVer.textContent = `${tag} Stable`;
+
+        const macosMetaVer = document.getElementById('macos-meta-version');
+        if (macosMetaVer) macosMetaVer.textContent = `${tag} Stable`;
       }
 
       // Linux dynamic values
@@ -660,6 +680,46 @@
         if (releaseData.android.url) {
           const dlBtn = document.getElementById('android-download-btn');
           if (dlBtn) dlBtn.href = releaseData.android.url;
+        }
+      }
+
+      // Windows dynamic values
+      if (releaseData.windows) {
+        if (releaseData.windows.sha) {
+          const codeEl = document.getElementById('windows-sha');
+          if (codeEl) codeEl.textContent = releaseData.windows.sha;
+          const copyBtn = document.getElementById('windows-copy-btn');
+          if (copyBtn) copyBtn.setAttribute('data-copy', releaseData.windows.sha);
+        }
+        if (releaseData.windows.size) {
+          const sizeEl = document.getElementById('windows-download-size');
+          if (sizeEl) sizeEl.textContent = releaseData.windows.size;
+          const gridWindowsSize = document.getElementById('grid-windows-size');
+          if (gridWindowsSize) gridWindowsSize.textContent = releaseData.windows.size;
+        }
+        if (releaseData.windows.url) {
+          const dlBtn = document.getElementById('windows-download-btn');
+          if (dlBtn) dlBtn.href = releaseData.windows.url;
+        }
+      }
+
+      // macOS dynamic values
+      if (releaseData.macos) {
+        if (releaseData.macos.sha) {
+          const codeEl = document.getElementById('macos-sha');
+          if (codeEl) codeEl.textContent = releaseData.macos.sha;
+          const copyBtn = document.getElementById('macos-copy-btn');
+          if (copyBtn) copyBtn.setAttribute('data-copy', releaseData.macos.sha);
+        }
+        if (releaseData.macos.size) {
+          const sizeEl = document.getElementById('macos-download-size');
+          if (sizeEl) sizeEl.textContent = releaseData.macos.size;
+          const gridMacosSize = document.getElementById('grid-macos-size');
+          if (gridMacosSize) gridMacosSize.textContent = releaseData.macos.size;
+        }
+        if (releaseData.macos.url) {
+          const dlBtn = document.getElementById('macos-download-btn');
+          if (dlBtn) dlBtn.href = releaseData.macos.url;
         }
       }
     }

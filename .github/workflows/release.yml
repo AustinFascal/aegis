@@ -10,8 +10,11 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
-    name: Build & Release Multiplatform Installers
+  # ====================================================
+  # 1. Build Android & Linux Artifacts (Ubuntu Runner)
+  # ====================================================
+  build-android-linux:
+    name: Build Android APK & Linux Desktop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -32,9 +35,7 @@ jobs:
       - name: Install Flutter Dependencies
         run: flutter pub get
 
-      # ----------------------------------------------------
-      # 1. Setup Android Google Services Configuration
-      # ----------------------------------------------------
+      # Setup Android Google Services
       - name: Setup Android Google Services
         env:
           GOOGLE_SERVICES_SECRET: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -77,9 +78,7 @@ jobs:
           EOF
           fi
 
-      # ----------------------------------------------------
-      # 1b. Synchronize App Version with Git Release Tag
-      # ----------------------------------------------------
+      # Configure Version from Tag
       - name: Configure Version from Tag
         run: |
           TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
@@ -105,9 +104,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk aegis-android.apk
           cp build/app/outputs/flutter-apk/app-release.apk aegis-${TAG_NAME}.apk
 
-      # ----------------------------------------------------
-      # 2. Build Linux Desktop Application
-      # ----------------------------------------------------
+      # Build Linux Desktop Application
       - name: Install Linux Build Dependencies
         run: |
           sudo apt-get update
@@ -129,19 +126,171 @@ jobs:
           tar -czf aegis-linux-x64.tar.gz -C build/linux/x64/release bundle --transform='s|^bundle|aegis|'
           cp aegis-linux-x64.tar.gz aegis-${TAG_NAME}-linux-x64.tar.gz
 
-      # ----------------------------------------------------
-      # 3. Generate SHA256 Checksums & Release Manifest
-      # ----------------------------------------------------
-      - name: Generate SHA256 Checksums and Manifest
+      - name: Upload Android & Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-android-linux
+          path: |
+            aegis-android.apk
+            aegis-*.apk
+            aegis-linux-x64.tar.gz
+            aegis-*-linux-x64.tar.gz
+          retention-days: 1
+
+  # ====================================================
+  # 2. Build Windows Desktop Artifacts (Windows Runner)
+  # ====================================================
+  build-windows:
+    name: Build Windows Desktop
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Windows Desktop Support
+        run: flutter config --enable-windows-desktop
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Configure Version & Build Windows
+        shell: pwsh
+        run: |
+          $TAG_NAME = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "v1.0.0" }
+          $VERSION_NAME = $TAG_NAME.TrimStart("v")
+          $BUILD_NUMBER = if ($env:GITHUB_RUN_NUMBER) { $env:GITHUB_RUN_NUMBER } else { "1" }
+          
+          # Update pubspec.yaml version
+          (Get-Content pubspec.yaml) -replace '^version: .*', "version: $VERSION_NAME+$BUILD_NUMBER" | Set-Content pubspec.yaml
+          
+          flutter build windows --release --build-name=$VERSION_NAME --build-number=$BUILD_NUMBER --dart-define=APP_VERSION=$TAG_NAME
+
+      - name: Package Windows Zip Archive
+        shell: pwsh
+        run: |
+          $TAG_NAME = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "v1.0.0" }
+          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "aegis-windows-x64.zip" -Force
+          Copy-Item "aegis-windows-x64.zip" -Destination "aegis-$TAG_NAME-windows-x64.zip"
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-windows
+          path: |
+            aegis-windows-x64.zip
+            aegis-*-windows-x64.zip
+          retention-days: 1
+
+  # ====================================================
+  # 3. Build macOS Desktop Artifacts (macOS Runner)
+  # ====================================================
+  build-macos:
+    name: Build macOS Desktop
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable macOS Desktop Support
+        run: flutter config --enable-macos-desktop
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Configure Version & Build macOS
         run: |
           TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
-          sha256sum aegis-android.apk aegis-linux-x64.tar.gz > checksums.txt
+          VERSION_NAME="${TAG_NAME#v}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}"
+          sed -i '' "s/^version: .*/version: ${VERSION_NAME}+${BUILD_NUMBER}/" pubspec.yaml
+          flutter build macos --release --no-codesign --build-name="${VERSION_NAME}" --build-number="${BUILD_NUMBER}" --dart-define=APP_VERSION="${TAG_NAME}"
+
+      - name: Package macOS Universal Zip
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/aegis.app aegis-macos-universal.zip
+          cp aegis-macos-universal.zip aegis-${TAG_NAME}-macos-universal.zip
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-macos
+          path: |
+            aegis-macos-universal.zip
+            aegis-*-macos-universal.zip
+          retention-days: 1
+
+  # ====================================================
+  # 4. Consolidate Checksums & Publish Unified Release
+  # ====================================================
+  publish-release:
+    name: Publish Multiplatform Release
+    needs: [build-android-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Android & Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-android-linux
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-windows
+        continue-on-error: true
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts-macos
+        continue-on-error: true
+
+      - name: Generate Multiplatform Checksums and Manifest
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
           
-          ANDROID_SHA=$(sha256sum aegis-android.apk | awk '{print $1}')
-          LINUX_SHA=$(sha256sum aegis-linux-x64.tar.gz | awk '{print $1}')
-          ANDROID_SIZE=$(stat -c%s aegis-android.apk)
-          LINUX_SIZE=$(stat -c%s aegis-linux-x64.tar.gz)
+          # List all artifacts present
+          ls -la
           
+          # Generate combined checksums.txt
+          sha256sum aegis-*.* > checksums.txt
+          cat checksums.txt
+
+          # Helper functions to extract sha and size safely
+          get_sha() {
+            if [ -f "$1" ]; then sha256sum "$1" | awk '{print $1}'; else echo ""; fi
+          }
+          get_size() {
+            if [ -f "$1" ]; then stat -c%s "$1"; else echo "null"; fi
+          }
+
+          ANDROID_SHA=$(get_sha aegis-android.apk)
+          ANDROID_SIZE=$(get_size aegis-android.apk)
+
+          LINUX_SHA=$(get_sha aegis-linux-x64.tar.gz)
+          LINUX_SIZE=$(get_size aegis-linux-x64.tar.gz)
+
+          WIN_SHA=$(get_sha aegis-windows-x64.zip)
+          WIN_SIZE=$(get_size aegis-windows-x64.zip)
+
+          MAC_SHA=$(get_sha aegis-macos-universal.zip)
+          MAC_SIZE=$(get_size aegis-macos-universal.zip)
+
           cat << EOF > release-manifest.json
           {
             "tag_name": "${TAG_NAME}",
@@ -150,20 +299,31 @@ jobs:
               "android": {
                 "file_name": "aegis-android.apk",
                 "sha256": "${ANDROID_SHA}",
-                "size_bytes": ${ANDROID_SIZE}
+                "size_bytes": ${ANDROID_SIZE},
+                "download_url": "https://github.com/AustinFascal/aegis/releases/download/${TAG_NAME}/aegis-android.apk"
               },
               "linux": {
                 "file_name": "aegis-linux-x64.tar.gz",
                 "sha256": "${LINUX_SHA}",
-                "size_bytes": ${LINUX_SIZE}
+                "size_bytes": ${LINUX_SIZE},
+                "download_url": "https://github.com/AustinFascal/aegis/releases/download/${TAG_NAME}/aegis-linux-x64.tar.gz"
+              },
+              "windows": {
+                "file_name": "aegis-windows-x64.zip",
+                "sha256": "${WIN_SHA}",
+                "size_bytes": ${WIN_SIZE},
+                "download_url": "https://github.com/AustinFascal/aegis/releases/download/${TAG_NAME}/aegis-windows-x64.zip"
+              },
+              "macos": {
+                "file_name": "aegis-macos-universal.zip",
+                "sha256": "${MAC_SHA}",
+                "size_bytes": ${MAC_SIZE},
+                "download_url": "https://github.com/AustinFascal/aegis/releases/download/${TAG_NAME}/aegis-macos-universal.zip"
               }
             }
           }
           EOF
 
-      # ----------------------------------------------------
-      # 4. Publish GitHub Release with Direct Asset Attachments
-      # ----------------------------------------------------
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -177,6 +337,10 @@ jobs:
             aegis-*.apk
             aegis-linux-x64.tar.gz
             aegis-*-linux-x64.tar.gz
+            aegis-windows-x64.zip
+            aegis-*-windows-x64.zip
+            aegis-macos-universal.zip
+            aegis-*-macos-universal.zip
             checksums.txt
             release-manifest.json
         env:
