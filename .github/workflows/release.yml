@@ -143,6 +143,9 @@ jobs:
   build-windows:
     name: Build Windows Desktop
     runs-on: windows-latest
+    env:
+      CL: "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
+      _CL_: "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -163,7 +166,10 @@ jobs:
         shell: pwsh
         env:
           CL: "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
+          _CL_: "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
         run: |
+          $env:CL = "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
+          $env:_CL_ = "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
           $TAG_NAME = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "v1.0.0" }
           $VERSION_NAME = $TAG_NAME.TrimStart("v")
           $BUILD_NUMBER = if ($env:GITHUB_RUN_NUMBER) { $env:GITHUB_RUN_NUMBER } else { "1" }
@@ -177,7 +183,8 @@ jobs:
         shell: pwsh
         run: |
           $TAG_NAME = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "v1.0.0" }
-          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "aegis-windows-x64.zip" -Force
+          $RELEASE_DIR = if (Test-Path "build\windows\x64\runner\Release") { "build\windows\x64\runner\Release\*" } else { "build\windows\runner\Release\*" }
+          Compress-Archive -Path $RELEASE_DIR -DestinationPath "aegis-windows-x64.zip" -Force
           Copy-Item "aegis-windows-x64.zip" -Destination "aegis-$TAG_NAME-windows-x64.zip"
 
       - name: Upload Windows Artifacts
