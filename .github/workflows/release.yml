@@ -161,6 +161,8 @@ jobs:
 
       - name: Configure Version & Build Windows
         shell: pwsh
+        env:
+          CL: "/D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS"
         run: |
           $TAG_NAME = if ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME } else { "v1.0.0" }
           $VERSION_NAME = $TAG_NAME.TrimStart("v")
@@ -215,12 +217,14 @@ jobs:
           VERSION_NAME="${TAG_NAME#v}"
           BUILD_NUMBER="${GITHUB_RUN_NUMBER:-1}"
           sed -i '' "s/^version: .*/version: ${VERSION_NAME}+${BUILD_NUMBER}/" pubspec.yaml
-          flutter build macos --release --no-codesign --build-name="${VERSION_NAME}" --build-number="${BUILD_NUMBER}" --dart-define=APP_VERSION="${TAG_NAME}"
+          flutter build macos --release --build-name="${VERSION_NAME}" --build-number="${BUILD_NUMBER}" --dart-define=APP_VERSION="${TAG_NAME}"
 
       - name: Package macOS Universal Zip
         run: |
           TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
-          ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/aegis.app aegis-macos-universal.zip
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -maxdepth 1 | head -n 1)
+          echo "Packaging macOS bundle from: $APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" aegis-macos-universal.zip
           cp aegis-macos-universal.zip aegis-${TAG_NAME}-macos-universal.zip
 
       - name: Upload macOS Artifacts
