@@ -113,131 +113,19 @@
           </button>
         </div>
 
-        <!-- Mobile App Showcase Frame -->
+        <!-- Mobile Phone Mockup Frame -->
         <div class="hero-mobile-showcase">
           <div class="mobile-showcase-glow" aria-hidden="true"></div>
 
-          <!-- Floating Telemetry Chips (Desktop visual accents) -->
-          <div class="mobile-floating-chip chip-left" aria-hidden="true">
-            <div class="chip-icon text-cyan">
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-              </svg>
-            </div>
-            <div class="chip-content">
-              <span class="chip-label">Zero-Trust Sentinel</span>
-              <span class="chip-val text-emerald">CIS Hardened • Active</span>
-            </div>
-          </div>
-
-          <div class="mobile-floating-chip chip-right" aria-hidden="true">
-            <div class="chip-icon text-emerald">
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-              </svg>
-            </div>
-            <div class="chip-content">
-              <span class="chip-label">Telemetry Pulse</span>
-              <span class="chip-val text-cyan">&lt; 12ms Direct Loop</span>
-            </div>
-          </div>
-
-          <!-- Mobile Device Chassis Frame -->
           <div class="mobile-phone-chassis">
-            <!-- Dynamic Island / Top Speaker Notch -->
             <div class="mobile-island">
               <span class="island-camera"></span>
             </div>
-
-            <!-- Screen Display Area -->
             <div class="mobile-phone-screen">
               <img src="./assets/images/app_screenshot_mobile.png" 
-                   alt="Aegis Mobile App Interface Preview" 
+                   alt="Aegis Mobile App Screenshot" 
                    class="mobile-screen-img"
-                   id="mobileAppScreenshotImg"
-                   onerror="this.style.display='none'; document.getElementById('mobileScreenshotFallback').style.display='flex';"
-                   onload="this.style.display='block'; document.getElementById('mobileScreenshotFallback').style.display='none';" />
-
-              <!-- High-Fidelity Interactive Preview Placeholder (Active when screenshot is yet to be provided) -->
-              <div class="mobile-screen-placeholder" id="mobileScreenshotFallback">
-                <div class="phone-status-bar">
-                  <span class="phone-time">09:41</span>
-                  <div class="phone-status-icons">
-                    <span>5G</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 18.25A10.97 10.97 0 011 12C1 5.92 5.92 1 12 1s11 4.92 11 11c0 2.33-.72 4.49-1.95 6.27l-.62-.62A9.957 9.957 0 0021 12c0-4.97-4.03-9-9-9z"/>
-                    </svg>
-                    <span>100%</span>
-                  </div>
-                </div>
-
-                <div class="phone-app-header">
-                  <div class="phone-brand-row">
-                    <img src="./assets/images/aegis_logo.png" alt="Aegis Logo" class="phone-app-logo">
-                    <div>
-                      <div class="phone-app-title">AEGIS MOBILE</div>
-                      <div class="phone-app-subtitle">Zero-Trust Telemetry Client</div>
-                    </div>
-                  </div>
-                  <span class="phone-status-badge">SECURE</span>
-                </div>
-
-                <!-- Telemetry Mini Card -->
-                <div class="phone-node-card">
-                  <div class="phone-card-top">
-                    <span class="node-name">srv-prod-sg-01</span>
-                    <span class="node-ping text-emerald">● 8ms</span>
-                  </div>
-                  <div class="phone-metric-grid">
-                    <div class="phone-metric-box">
-                      <span class="metric-key">CPU</span>
-                      <span class="metric-num text-cyan">24%</span>
-                      <div class="metric-meter"><div style="width: 24%; background: var(--cyan);"></div></div>
-                    </div>
-                    <div class="phone-metric-box">
-                      <span class="metric-key">RAM</span>
-                      <span class="metric-num text-emerald">4.2G</span>
-                      <div class="metric-meter"><div style="width: 42%; background: var(--emerald);"></div></div>
-                    </div>
-                    <div class="phone-metric-box">
-                      <span class="metric-key">THREATS</span>
-                      <span class="metric-num text-amber">0 BLOCKED</span>
-                      <div class="metric-meter"><div style="width: 100%; background: var(--emerald);"></div></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Hardening & Audit Mini Card -->
-                <div class="phone-security-card">
-                  <div class="security-card-header">
-                    <span>CIS BENCHMARK HARDENING</span>
-                    <span class="text-emerald">94/100</span>
-                  </div>
-                  <div class="security-rules-list">
-                    <div class="sec-item"><span class="text-emerald">✓</span> SSH Root Login Disabled</div>
-                    <div class="sec-item"><span class="text-emerald">✓</span> Password Auth Off (Ed25519)</div>
-                    <div class="sec-item"><span class="text-emerald">✓</span> UFW Firewall Active (22, 443)</div>
-                    <div class="sec-item"><span class="text-emerald">✓</span> AbuseIPDB Dynamic Banning</div>
-                  </div>
-                </div>
-
-                <!-- Quick Terminal Action -->
-                <div class="phone-quick-actions">
-                  <div class="phone-action-pill text-cyan">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    <span>Open Console</span>
-                  </div>
-                  <div class="phone-action-pill text-emerald">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                    <span>SFTP Pull</span>
-                  </div>
-                </div>
-
-                <div class="phone-screenshot-hint">
-                  <span>📱 Replace with your app screenshot:</span>
-                  <code>assets/images/app_screenshot_mobile.png</code>
-                </div>
-              </div>
+                   id="mobileAppScreenshot">
             </div>
           </div>
         </div>
