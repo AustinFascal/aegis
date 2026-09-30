@@ -104,7 +104,39 @@ jobs:
           cp aegis-linux-x64.tar.gz aegis-${TAG_NAME}-linux-x64.tar.gz
 
       # ----------------------------------------------------
-      # 3. Publish GitHub Release with Direct Asset Attachments
+      # 3. Generate SHA256 Checksums & Release Manifest
+      # ----------------------------------------------------
+      - name: Generate SHA256 Checksums and Manifest
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          sha256sum aegis-android.apk aegis-linux-x64.tar.gz > checksums.txt
+          
+          ANDROID_SHA=$(sha256sum aegis-android.apk | awk '{print $1}')
+          LINUX_SHA=$(sha256sum aegis-linux-x64.tar.gz | awk '{print $1}')
+          ANDROID_SIZE=$(stat -c%s aegis-android.apk)
+          LINUX_SIZE=$(stat -c%s aegis-linux-x64.tar.gz)
+          
+          cat << EOF > release-manifest.json
+          {
+            "tag_name": "${TAG_NAME}",
+            "published_at": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+            "assets": {
+              "android": {
+                "file_name": "aegis-android.apk",
+                "sha256": "${ANDROID_SHA}",
+                "size_bytes": ${ANDROID_SIZE}
+              },
+              "linux": {
+                "file_name": "aegis-linux-x64.tar.gz",
+                "sha256": "${LINUX_SHA}",
+                "size_bytes": ${LINUX_SIZE}
+              }
+            }
+          }
+          EOF
+
+      # ----------------------------------------------------
+      # 4. Publish GitHub Release with Direct Asset Attachments
       # ----------------------------------------------------
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -119,5 +151,7 @@ jobs:
             aegis-*.apk
             aegis-linux-x64.tar.gz
             aegis-*-linux-x64.tar.gz
+            checksums.txt
+            release-manifest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

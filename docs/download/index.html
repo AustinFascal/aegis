@@ -62,7 +62,7 @@
       <div class="container">
         <div class="hero-pill-badge">
           <span>🚀</span>
-          <span>LATEST STABLE RELEASE • V1.0.0</span>
+          <span id="hero-release-pill">LATEST STABLE RELEASE • V1.0.0</span>
         </div>
 
         <h1 class="download-hero-title">
@@ -120,12 +120,12 @@
               Hardware-accelerated GTK3 desktop client with native Secret Service keychain integration, virtual cell VT100 xterm terminal, and direct SFTP file management.
             </p>
             <div class="spotlight-cta-box">
-              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-linux-x64.tar.gz" class="spotlight-main-btn">
+              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-linux-x64.tar.gz" class="spotlight-main-btn" id="linux-download-btn">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
                 <span>Download for Linux (.tar.gz)</span>
-                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">13 MB</span>
+                <span id="linux-download-size" style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">12.6 MB</span>
               </a>
               <div class="spotlight-alt-links">
                 <span>Release package:</span>
@@ -137,7 +137,7 @@
           <div class="spotlight-meta-panel">
             <div class="meta-row">
               <span class="meta-label">Version</span>
-              <span class="meta-val">v1.0.0 Stable</span>
+              <span class="meta-val" id="linux-meta-version">v1.0.0 Stable</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Architecture</span>
@@ -150,9 +150,9 @@
             <div class="meta-hash-box">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="meta-label">SHA256 Checksum</span>
-                <button class="cmd-copy-btn" data-copy="bfc717118df740d79051b31107214ef81c6ea801dbfba2f621c6786d3d364bda">Copy Hash</button>
+                <button class="cmd-copy-btn" id="linux-copy-btn" data-copy="009dcde10fdd3612953bb4a14dbe209345dd9f1d4875c25b4683cc376954a87e">Copy Hash</button>
               </div>
-              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">bfc717118df740d79051b31107214ef81c6ea801dbfba2f621c6786d3d364bda</code>
+              <code id="linux-sha" style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">009dcde10fdd3612953bb4a14dbe209345dd9f1d4875c25b4683cc376954a87e</code>
             </div>
           </div>
         </div>
@@ -235,12 +235,12 @@
               High-performance mobile client with Fingerprint / Face ID Biometric Vault, ergonomic on-screen terminal ribbon, and instant Firebase push alerts.
             </p>
             <div class="spotlight-cta-box">
-              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-android.apk" class="spotlight-main-btn">
+              <a href="https://github.com/AustinFascal/aegis/releases/latest/download/aegis-android.apk" class="spotlight-main-btn" id="android-download-btn">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
                 <span>Download Android APK</span>
-                <span style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">62 MB</span>
+                <span id="android-download-size" style="font-family: var(--font-mono); font-size: 0.85rem; opacity: 0.85;">63.0 MB</span>
               </a>
               <div class="spotlight-alt-links">
                 <span>Release package:</span>
@@ -252,7 +252,7 @@
           <div class="spotlight-meta-panel">
             <div class="meta-row">
               <span class="meta-label">Version</span>
-              <span class="meta-val">v1.0.0 Stable</span>
+              <span class="meta-val" id="android-meta-version">v1.0.0 Stable</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Target Architecture</span>
@@ -265,9 +265,9 @@
             <div class="meta-hash-box">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="meta-label">SHA256 Checksum</span>
-                <button class="cmd-copy-btn" data-copy="6fb80613598ef951d28849639b3554f46bf4768ed4e5562ebec14b4889ac1bd3">Copy Hash</button>
+                <button class="cmd-copy-btn" id="android-copy-btn" data-copy="3f15b0ac7539f82d1ab4fa8ff89a081432aa7169435510bd3516f550cb5ce1bc">Copy Hash</button>
               </div>
-              <code style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">6fb80613598ef951d28849639b3554f46bf4768ed4e5562ebec14b4889ac1bd3</code>
+              <code id="android-sha" style="color: var(--blue); font-size: 0.75rem; word-break: break-all;">3f15b0ac7539f82d1ab4fa8ff89a081432aa7169435510bd3516f550cb5ce1bc</code>
             </div>
           </div>
         </div>
@@ -352,7 +352,9 @@
               <div class="p-card-icon" style="background: rgba(0, 214, 104, 0.12); color: var(--emerald);">📱</div>
               <div>
                 <strong style="color: #FFF; font-size: 1.05rem;">Android Mobile</strong>
-                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">aegis-v1.0.0.apk • 64.7 MB</div>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">
+                  <span id="grid-android-file">aegis-android.apk</span> • <span id="grid-android-size">63.0 MB</span>
+                </div>
               </div>
             </div>
             <div class="p-card-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
@@ -366,7 +368,9 @@
               <div class="p-card-icon" style="background: rgba(30, 107, 255, 0.12); color: var(--blue);">🐧</div>
               <div>
                 <strong style="color: #FFF; font-size: 1.05rem;">Linux Desktop</strong>
-                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">aegis-v1.0.0-linux-x64.tar.gz • 13 MB</div>
+                <div class="text-dim" style="font-size: 0.75rem; font-family: var(--font-mono);">
+                  <span id="grid-linux-file">aegis-linux-x64.tar.gz</span> • <span id="grid-linux-size">12.6 MB</span>
+                </div>
               </div>
             </div>
             <div class="p-card-btn" style="background: linear-gradient(135deg, var(--blue) 0%, var(--emerald) 100%); color: #FFF; border: none;">
@@ -495,7 +499,7 @@
   <!-- Reusable Footer Component -->
   <aegis-footer base-path="../"></aegis-footer>
 
-  <!-- Interactive Logic for Platform Tabs & Clipboard -->
+  <!-- Interactive Logic for Platform Tabs, Dynamic Hashes & Clipboard -->
   <script>
     function switchSpotlight(os) {
       // Update tab buttons
@@ -509,7 +513,158 @@
       });
     }
 
-    // Smart OS detection: default to Linux or Android
+    // Dynamic GitHub Release metadata & SHA256 retrieval
+    async function loadDynamicReleaseData() {
+      const GITHUB_REPO = 'AustinFascal/aegis';
+      const API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+      const LOCAL_MANIFEST = './release-manifest.json';
+
+      let releaseData = null;
+
+      function formatBytes(bytes) {
+        if (!bytes || isNaN(bytes)) return null;
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      }
+
+      // 1. Fetch live metadata from GitHub Releases API
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const assets = data.assets || [];
+
+          const androidAsset = assets.find(a => a.name === 'aegis-android.apk');
+          const linuxAsset = assets.find(a => a.name === 'aegis-linux-x64.tar.gz');
+
+          let androidSha = null;
+          let linuxSha = null;
+
+          if (androidAsset && androidAsset.digest && androidAsset.digest.startsWith('sha256:')) {
+            androidSha = androidAsset.digest.substring(7);
+          }
+          if (linuxAsset && linuxAsset.digest && linuxAsset.digest.startsWith('sha256:')) {
+            linuxSha = linuxAsset.digest.substring(7);
+          }
+
+          // Fallback to checksums.txt if digest was not present
+          const checksumsAsset = assets.find(a => a.name === 'checksums.txt');
+          if ((!androidSha || !linuxSha) && checksumsAsset) {
+            try {
+              const cRes = await fetch(checksumsAsset.browser_download_url);
+              if (cRes.ok) {
+                const text = await cRes.text();
+                text.split('\n').forEach(line => {
+                  const parts = line.trim().split(/\s+/);
+                  if (parts.length >= 2) {
+                    const [hash, file] = parts;
+                    if (file.includes('android.apk')) androidSha = hash;
+                    if (file.includes('linux-x64.tar.gz')) linuxSha = hash;
+                  }
+                });
+              }
+            } catch (_) {}
+          }
+
+          releaseData = {
+            tag: data.tag_name || 'v1.0.0',
+            android: {
+              sha: androidSha,
+              size: androidAsset ? formatBytes(androidAsset.size) : null,
+              url: androidAsset ? androidAsset.browser_download_url : null
+            },
+            linux: {
+              sha: linuxSha,
+              size: linuxAsset ? formatBytes(linuxAsset.size) : null,
+              url: linuxAsset ? linuxAsset.browser_download_url : null
+            }
+          };
+        }
+      } catch (err) {
+        console.warn('[Aegis] GitHub API rate-limited or unreachable, using local release manifest.', err);
+      }
+
+      // 2. Fallback to local manifest if API failed or missing fields
+      if (!releaseData || !releaseData.android?.sha || !releaseData.linux?.sha) {
+        try {
+          const fallbackRes = await fetch(LOCAL_MANIFEST);
+          if (fallbackRes.ok) {
+            const manifest = await fallbackRes.json();
+            releaseData = {
+              tag: manifest.tag_name || 'v1.0.0',
+              android: {
+                sha: manifest.assets?.android?.sha256,
+                size: manifest.assets?.android?.size_human || formatBytes(manifest.assets?.android?.size_bytes),
+                url: manifest.assets?.android?.download_url
+              },
+              linux: {
+                sha: manifest.assets?.linux?.sha256,
+                size: manifest.assets?.linux?.size_human || formatBytes(manifest.assets?.linux?.size_bytes),
+                url: manifest.assets?.linux?.download_url
+              }
+            };
+          }
+        } catch (_) {}
+      }
+
+      if (!releaseData) return;
+
+      // 3. Dynamically update DOM elements
+      const tag = releaseData.tag;
+      if (tag) {
+        const pill = document.getElementById('hero-release-pill');
+        if (pill) pill.textContent = `LATEST STABLE RELEASE • ${tag.toUpperCase()}`;
+
+        const linuxMetaVer = document.getElementById('linux-meta-version');
+        if (linuxMetaVer) linuxMetaVer.textContent = `${tag} Stable`;
+
+        const androidMetaVer = document.getElementById('android-meta-version');
+        if (androidMetaVer) androidMetaVer.textContent = `${tag} Stable`;
+      }
+
+      // Linux dynamic values
+      if (releaseData.linux) {
+        if (releaseData.linux.sha) {
+          const codeEl = document.getElementById('linux-sha');
+          if (codeEl) codeEl.textContent = releaseData.linux.sha;
+          const copyBtn = document.getElementById('linux-copy-btn');
+          if (copyBtn) copyBtn.setAttribute('data-copy', releaseData.linux.sha);
+        }
+        if (releaseData.linux.size) {
+          const sizeEl = document.getElementById('linux-download-size');
+          if (sizeEl) sizeEl.textContent = releaseData.linux.size;
+          const gridLinuxSize = document.getElementById('grid-linux-size');
+          if (gridLinuxSize) gridLinuxSize.textContent = releaseData.linux.size;
+        }
+        if (releaseData.linux.url) {
+          const dlBtn = document.getElementById('linux-download-btn');
+          if (dlBtn) dlBtn.href = releaseData.linux.url;
+        }
+      }
+
+      // Android dynamic values
+      if (releaseData.android) {
+        if (releaseData.android.sha) {
+          const codeEl = document.getElementById('android-sha');
+          if (codeEl) codeEl.textContent = releaseData.android.sha;
+          const copyBtn = document.getElementById('android-copy-btn');
+          if (copyBtn) copyBtn.setAttribute('data-copy', releaseData.android.sha);
+        }
+        if (releaseData.android.size) {
+          const sizeEl = document.getElementById('android-download-size');
+          if (sizeEl) sizeEl.textContent = releaseData.android.size;
+          const gridAndroidSize = document.getElementById('grid-android-size');
+          if (gridAndroidSize) gridAndroidSize.textContent = releaseData.android.size;
+        }
+        if (releaseData.android.url) {
+          const dlBtn = document.getElementById('android-download-btn');
+          if (dlBtn) dlBtn.href = releaseData.android.url;
+        }
+      }
+    }
+
+    // Smart OS detection & initialization
     document.addEventListener('DOMContentLoaded', () => {
       let detectedOs = 'linux';
       const userAgent = navigator.userAgent.toLowerCase();
@@ -538,6 +693,9 @@
           });
         });
       });
+
+      // Fetch dynamic release metadata & SHA256 digests
+      loadDynamicReleaseData();
     });
   </script>
 </body>
