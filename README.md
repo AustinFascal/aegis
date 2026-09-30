@@ -613,6 +613,18 @@ flutter build appbundle --release
 - 🐧 [Linux Build & Distribution Guide](DEPLOYMENT_SETUP.md)
 - 📱 [Android Build, Sign & Distribution Guide](DEPLOYMENT_SETUP_ANDROID.md)
 - 🌐 [Landing Page & Download Center Setup Guide](LANDING_SETUP.md)
+- 🚀 [Release Setup & Automated Versioning Guide](RELEASE_SETUP.md)
+
+### 🚀 Automated Releases & Dynamic Versioning
+
+Aegis utilizes a tag-driven release pipeline configured in `.github/workflows/release.yml`:
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
+- **Cloud Compilation**: Compiles universal Android APKs and Linux desktop tarballs in GitHub Actions.
+- **Dynamic In-App Versioning**: Automatically injects the tag into `pubspec.yaml` and the in-app Settings screen footer (`AEGIS v1.0.1`) with zero manual code edits.
+- **Cryptographic Checksums**: Generates `checksums.txt` and `release-manifest.json`, dynamically synchronizing live SHA256 hashes to the web download page.
 
 ---
 
