@@ -68,68 +68,90 @@
          ========================================================================== -->
     <section class="hero-section" id="hero">
       <div class="container">
-        <div class="hero-pill-badge">
-          <span>🛡️</span>
-          <span>ENTERPRISE SEC-OPS TELEMETRY SUITE</span>
-        </div>
-
-        <h1 class="hero-headline">
-          Autonomous <span class="gradient-text-cyber">Zero-Trust Guardian</span> for Distributed Server Fleets
-        </h1>
-
-        <p class="hero-subhead">
-          AEGIS (Automated Enterprise Guardian for Infrastructure Systems) bridges lightweight server-side telemetry
-          daemons with a high-performance Flutter desktop & mobile client. Monitor SSH, MySQL, and Nginx in real time,
-          thwart brute-force assaults with global threat intelligence, and harden Linux nodes with CIS benchmark
-          compliance.
-        </p>
-
-        <div class="hero-cta-group">
-          <a href="./download/" class="btn btn-primary" id="heroDownloadBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-            </svg>
-            Download Aegis
-          </a>
-          <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer"
-            class="btn btn-secondary" id="heroGithubBtn">
-            View Source Code
-          </a>
-        </div>
-
-        <div class="hero-cmd-widget">
-          <div class="cmd-body">
-            <span class="cmd-prefix" aria-hidden="true">$</span>
-            <span class="cmd-text" title="git clone https://github.com/AustinFascal/aegis.git">git clone https://github.com/AustinFascal/aegis.git</span>
-          </div>
-          <button class="cmd-copy-btn" data-copy="git clone https://github.com/AustinFascal/aegis.git"
-            aria-label="Copy Git Clone Command">
-            <svg class="copy-icon" width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-            </svg>
-            <span>Copy</span>
-          </button>
-        </div>
-
-        <!-- Mobile Phone Mockup Frame -->
-        <div class="hero-mobile-showcase">
-          <div class="mobile-showcase-glow" aria-hidden="true"></div>
-
-          <div class="mobile-phone-chassis">
-            <div class="mobile-island">
-              <span class="island-camera"></span>
+        <div class="hero-grid">
+          <!-- Left Column: Hero Content -->
+          <div class="hero-content">
+            <div class="hero-pill-badge">
+              <span>🛡️</span>
+              <span>ENTERPRISE SEC-OPS TELEMETRY SUITE</span>
             </div>
-            <div class="mobile-phone-screen">
-              <img src="./assets/images/app_screenshot_mobile.png" 
-                   alt="Aegis Mobile App Screenshot" 
-                   class="mobile-screen-img"
-                   id="mobileAppScreenshot">
+
+            <h1 class="hero-headline">
+              Autonomous <span class="gradient-text-cyber">Zero-Trust Guardian</span> for Your Server
+            </h1>
+
+            <p class="hero-subhead">
+              AEGIS (Automated Enterprise Guardian for Infrastructure Systems) bridges lightweight server-side telemetry
+              daemons with a high-performance Flutter desktop & mobile client. Monitor SSH, MySQL, and Nginx in real
+              time,
+              thwart brute-force assaults with global threat intelligence, and harden Linux nodes with CIS benchmark
+              compliance.
+            </p>
+
+            <div class="hero-cta-group">
+              <a href="./download/" class="btn btn-primary" id="heroDownloadBtn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download Aegis
+              </a>
+              <a href="https://github.com/AustinFascal/aegis" target="_blank" rel="noopener noreferrer"
+                class="btn btn-secondary" id="heroGithubBtn">
+                View Source Code
+              </a>
+            </div>
+
+            <div class="hero-cmd-widget">
+              <div class="cmd-body">
+                <span class="cmd-prefix" aria-hidden="true">$</span>
+                <span class="cmd-text" title="git clone https://github.com/AustinFascal/aegis.git">git clone
+                  https://github.com/AustinFascal/aegis.git</span>
+              </div>
+              <button class="cmd-copy-btn" data-copy="git clone https://github.com/AustinFascal/aegis.git"
+                aria-label="Copy Git Clone Command">
+                <svg class="copy-icon" width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span>Copy</span>
+              </button>
             </div>
           </div>
-        </div>
 
+          <!-- Right Column: Mobile Phone Frame Mockup -->
+          <div class="hero-mobile-col">
+            <div class="hero-mobile-showcase">
+              <div class="mobile-showcase-glow" aria-hidden="true"></div>
+
+              <div class="mobile-phone-chassis">
+                <div class="mobile-island">
+                  <span class="island-camera"></span>
+                </div>
+                <div class="mobile-phone-screen">
+                  <img src="" alt="Aegis Mobile App Screenshot" class="mobile-screen-img" id="mobileAppScreenshot"
+                    onload="if(this.getAttribute('src')) { this.style.display='block'; document.getElementById('mobileImgPlaceholder').style.display='none'; }">
+
+                  <!-- Image Placeholder Box (Visible until image URL is inserted) -->
+                  <div class="mobile-img-placeholder" id="mobileImgPlaceholder">
+                    <div class="placeholder-icon-wrap">
+                      <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div class="placeholder-title">App Screenshot</div>
+                    <div class="placeholder-sub">Mobile Portrait (9 : 19.5)</div>
+                    <div class="placeholder-badge">
+                      <span>Image Placeholder</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -371,7 +393,8 @@
             <div class="step-num">1</div>
             <h3 class="font-bold text-main" style="font-size: 1.1rem;">Download Server Agent</h3>
             <p class="text-muted" style="font-size: 0.88rem;">Clone the repository or copy the lightweight
-              <code>server_agent/</code> directory into <code>/opt/aegis-agent</code>.</p>
+              <code>server_agent/</code> directory into <code>/opt/aegis-agent</code>.
+            </p>
             <div class="code-snippet-box">
               <code>sudo mkdir -p /opt/aegis-agent
 sudo git clone https://github.com/AustinFascal/aegis.git /tmp/aegis
@@ -435,35 +458,45 @@ sudo systemctl status aegis-agent</code>
             <div class="platform-icon">📱</div>
             <h3 class="font-bold text-main">Android Mobile</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Android 8.0+ with Biometrics & FCM Push Alerts</p>
-            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download APK</a>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download
+              APK</a>
           </div>
 
-          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
+          <div class="platform-card"
+            style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="platform-icon">🐧</div>
             <h3 class="font-bold text-main">Linux Desktop</h3>
-            <p class="text-dim" style="font-size: 0.85rem;">Ubuntu, Debian, Fedora, Arch (Native GTK3 / Wayland / X11)</p>
-            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.tar.gz)</a>
+            <p class="text-dim" style="font-size: 0.85rem;">Ubuntu, Debian, Fedora, Arch (Native GTK3 / Wayland / X11)
+            </p>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download
+              (.tar.gz)</a>
           </div>
 
-          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
+          <div class="platform-card"
+            style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="platform-icon">🪟</div>
             <h3 class="font-bold text-main">Windows Desktop</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Windows 10 / 11 64-bit with Credential Vault integration</p>
-            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.zip)</a>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download
+              (.zip)</a>
           </div>
 
-          <div class="platform-card" style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
+          <div class="platform-card"
+            style="border-color: rgba(30, 107, 255, 0.4); background: rgba(30, 107, 255, 0.04);">
             <div class="platform-icon">🍏</div>
             <h3 class="font-bold text-main">macOS Universal</h3>
             <p class="text-dim" style="font-size: 0.85rem;">Apple Silicon & Intel with Touch ID Keychain</p>
-            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download (.zip)</a>
+            <a href="./download/" class="btn btn-primary btn-sm" style="font-size: 0.82rem; padding: 6px 16px;">Download
+              (.zip)</a>
           </div>
         </div>
 
         <div class="platform-download-cta" style="margin-top: 36px; text-align: center;">
-          <a href="./download/" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; font-size: 1rem;">
+          <a href="./download/" class="btn btn-primary"
+            style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; font-size: 1rem;">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             <span>Visit Downloads Center (All Platforms, SHA256 Hashes & Notes)</span>
             <span>→</span>
